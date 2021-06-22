@@ -1,0 +1,11 @@
+[
+  {
+    "name": "user1",
+    "pwhash": "$2b$10$KVfAS9MrkDVaILalGYl5FOv3heh197sdAzpcECiFibBl9k8CeitqG",
+    "active": true,
+    "admin": true,
+    "profile": {
+      "username": "user1"
+    }
+  }
+]
