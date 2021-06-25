@@ -15,4 +15,6 @@
 /media/
 media.tar.gz
 
+/sveltekit-example/
+
 .DS_Store
