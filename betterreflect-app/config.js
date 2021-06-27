@@ -9,6 +9,8 @@ const PORT = 4044;
 // -> how to create best?
 const SECRET = 'abcdefgh';
 
+const COOKIENAME = 'better-reflectapp-session';
+
 /*const USER = {
   name: 'rebootl',
   pwhash: '$2b$10$wbm.5m27QVoQKvVh1Lar4uabKplVvoZFGjKuKYFCQfqilkZ5ij9oi'
@@ -28,5 +30,5 @@ const STATICDIR = 'client/public';
 // (mediaDir is below staticDir)
 const MEDIADIR = 'media';
 
-export { PRODUCTION, PORT, SECRET, DBUSER, DBPASSWORD, DBURL,
+export { PRODUCTION, PORT, SECRET, COOKIENAME, DBUSER, DBPASSWORD, DBURL,
   DBNAME, STATICDIR, MEDIADIR  };

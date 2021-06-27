@@ -18,6 +18,9 @@
   },
   "type": "module",
   "dependencies": {
-    "mongodb": "^3.6.9"
+    "bcrypt": "^5.0.1",
+    "cookie": "^0.4.1",
+    "mongodb": "^3.6.9",
+    "uuid": "^8.3.2"
   }
 }

@@ -26,6 +26,7 @@
 
 <script>
 	//import getDb from '$lib/db';
+	import Login from '$lib/Login.svelte';
 	import { onMount } from 'svelte';
 
   let users = [];
@@ -56,5 +57,7 @@
 {#each users as u}
  {u.username}<br>
 {/each}
+
+<Login />
 
 <style></style>
