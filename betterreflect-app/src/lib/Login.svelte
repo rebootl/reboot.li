@@ -5,8 +5,8 @@
   let password = '';
 
   let loggedIn = $session.loggedIn;
-  console.log(session)
-  console.log(loggedIn)
+  //console.log(session)
+  //console.log(loggedIn)
 
   async function login() {
     try {
@@ -20,6 +20,9 @@
 			if (res.ok) {
         // -> what to do
         console.log('login successful')
+        username = '';
+        password = '';
+        loggedIn = true;
 				return;
 			}
 			const { message } = await res.json();
@@ -30,6 +33,20 @@
   }
 
   async function logout() {
+    try {
+      const res = await fetch('/logout.json', {
+        method: 'POST',
+      });
+			if (res.ok) {
+        console.log('logout successful')
+        loggedIn = false;
+				return;
+			}
+			const { message } = await res.json();
+	    console.warn(message);
+		} catch(error) {
+			console.error(error);
+		}
   }
 
 </script>

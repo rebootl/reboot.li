@@ -15,19 +15,20 @@ export async function handle({ request, resolve }) {
 
   const cookies = cookie.parse(request.headers.cookie || '');
   //console.log(cookies)
+  let r = null;
   if (cookies.hasOwnProperty(COOKIENAME) && db) {
     const c = await db.collection('sessions');
-    const r = await c.findOne({
+    r = await c.findOne({
       uuid: cookies[COOKIENAME]
     });
-    console.log(r);
-    if (r) {
-      request.locals.loggedIn = true;
-      request.locals.user = r.user;
-      request.locals.admin = r.admin;
-    } else {
-      request.locals.loggedIn = false;
-    }
+  }
+  if (r) {
+    request.locals.loggedIn = true;
+    request.locals.user = r.user;
+    request.locals.admin = r.admin;
+    request.locals.sessionId = cookies[COOKIENAME];
+  } else {
+    request.locals.loggedIn = false;
   }
 
 	return await resolve(request);

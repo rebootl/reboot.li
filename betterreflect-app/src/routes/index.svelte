@@ -52,10 +52,10 @@
 
 <h1>betterreflect-app</h1>
 
-<h2>list of users</h2>
+<h2>Users</h2>
 
 {#each users as u}
- {u.username}<br>
+ <a href="/entries/{u.username}">{u.username}</a><br>
 {/each}
 
 <Login />
