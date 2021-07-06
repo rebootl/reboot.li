@@ -7,6 +7,12 @@
   let limit = 5;
   let limitedEntries = entries.slice(0, limit);
 
+  $: update(entries);
+
+  function update() {
+    limitedEntries = entries.slice(0, limit);
+  }
+
   function addItems(e) {
     console.log('addItems')
     if (e[e.length - 1].intersectionRatio <= 0) return;

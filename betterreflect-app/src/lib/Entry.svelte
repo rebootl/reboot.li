@@ -22,8 +22,8 @@
   <p>oops entry type unknown: {entry.type}</p>
 {/if}
 
-<!--<div class="tagbox">
-{#each entry.topics as topic}<TopicTag>{topic}</TopicTag>{/each}
-{#each entry.tags as tag}<TagTag>{tag}</TagTag>{/each}
+<div class="tagbox">
+  {#each entry.topics as topic} {topic} |{/each}<br>
+  {#each entry.tags as tag} {tag} |{/each}
 </div>
-{entry.text}<br>-->
+<hr>
