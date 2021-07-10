@@ -28,6 +28,7 @@
   import Entries from '$lib/Entries.svelte';
   import Topics from '$lib/Topics.svelte';
   import Tags from '$lib/Tags.svelte';
+  import Types from '$lib/Types.svelte';
 
   export let user = '';
   export let entries = [];
@@ -39,9 +40,10 @@
   let tagsByTopics = {};
   let selectedTopics = new Set();
   let selectedTags = new Set();
+  let selectedType = 'all';
 
   $: setTopics(entries);
-  $: filterEntries(selectedTopics, selectedTags);
+  $: filterEntries(selectedTopics, selectedTags, selectedType);
 
   // create topics and tagsByTopics from entries
   function setTopics() {
@@ -98,9 +100,17 @@
   function filterEntries() {
     let f = entries;
     let t = [];
+
+    console.log(selectedType)
+    if (selectedType !== 'all') {
+      f = entries.filter((e) => e.type === selectedType);
+    } else {
+      f = entries;
+    }
+
     //console.log(selectedTopics)
     if (selectedTopics.size > 0) {
-      f = entries.filter((e) => {
+      f = f.filter((e) => {
         for (const t of e.topics) {
           if (selectedTopics.has(t)) return e;
         }
@@ -121,13 +131,27 @@
 
 </script>
 
-<h2>User: {user}</h2>
+<nav class="topics-tags">
+  <Topics {topics} on:change={(e) => selectTopic(e.detail)} />
+  <Tags {tags} on:change={(e) => selectedTags = e.detail} />
+</nav>
 
-<Topics {topics} on:change={(e) => selectTopic(e.detail)} />
-<Tags {tags} on:change={(e) => selectedTags = e.detail} />
+<main>
+  <h2>User: {user}</h2>
 
-<Entries entries={filteredEntries} />
+  <Types on:change={(e) => selectedType = e.detail} />
+
+  <Entries entries={filteredEntries} />
+</main>
 
 <style>
-
+  main {
+    margin-left: 220px;
+    padding: 0 20px 0 20px;
+  }
+  .topics-tags {
+    position: fixed;
+    width: 220px;
+    overflow: scroll;
+  }
 </style>

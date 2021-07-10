@@ -25,8 +25,6 @@
 </script>
 
 <script>
-	//import getDb from '$lib/db';
-	import Login from '$lib/Login.svelte';
 	import { onMount } from 'svelte';
 
   let users = [];
@@ -50,14 +48,25 @@
 	});
 </script>
 
-<h1>betterreflect-app</h1>
+<main>
+	<h2>Users</h2>
 
-<h2>Users</h2>
+	{#each users as u}
+		<div class="user">
+			<span class="material-icons icon">person</span>
+			<a href="/entries/{u.username}">{u.username}</a><br>
+		</div>
+	{/each}
+</main>
 
-{#each users as u}
- <a href="/entries/{u.username}">{u.username}</a><br>
-{/each}
-
-<Login />
-
-<style></style>
+<style>
+	main {
+		padding: 0 20px 0 20px;
+	}
+	.user {
+		margin-bottom: 5px;
+	}
+	.icon {
+		vertical-align: bottom;
+	}
+</style>

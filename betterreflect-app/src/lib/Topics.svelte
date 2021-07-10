@@ -32,6 +32,7 @@
 <style>
   .topics {
     display: flex;
+    flex-flow: column;
     flex-wrap: wrap;
     max-width: 100vw;
   }

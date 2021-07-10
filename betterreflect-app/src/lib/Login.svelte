@@ -51,15 +51,35 @@
 
 </script>
 
-{#if loggedIn}
-  <h2>Logout</h2>
+<div class="login-box">
+  {#if loggedIn}
+    <h2>Logout</h2>
 
-  <button on:click={logout}>Logout</button>
-{:else}
-  <h2>Login</h2>
+    <button on:click={logout}>Logout</button>
+  {:else}
+    <h2>Login</h2>
 
-  <input bind:value={username} placeholder="Username">
-  <input type="password" bind:value={password} placeholder="Password">
+    <input bind:value={username} placeholder="Username">
+    <input type="password" bind:value={password} placeholder="Password">
 
-  <button on:click={login}>Login</button>
-{/if}
+    <button on:click={login}>Login</button>
+  {/if}
+</div>
+
+<style>
+  .login-box {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 20px 20px;
+    background-color: var(--dialog-background-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+  }
+  input {
+    width: 160px;
+    margin-bottom: 10px;
+  }
+  button {
+    margin-top: 15px;
+  }
+</style>
