@@ -72,7 +72,7 @@
     flex-direction: column;
     padding: 0 20px 20px 20px;
     background-color: var(--dialog-background-color);
-    border: 1px solid var(--primary-color);
+    /*border: 1px solid var(--primary-color);*/
     border-radius: 5px;
   }
   input {

@@ -7,11 +7,17 @@
 
 <div class="grid-box">
   <header>
-    <a href="/" title="Home">
-      <img class="logo" alt="Logo" src="/static/betterreflect-app-logo.png" />
-    </a>
+    <!--<div class="icon-button">
+      <a href="/" title="Home">
+        <span class="material-icons">home</span>
+      </a>
+    </div>-->
+    <div class="icon-button"></div>
+    <div class="logo-box">
+      <img class="logo" alt="Logo" src="/static/betterreflect-app-logo-t3.png" />
+    </div>
 
-    <div class="login-button" on:click={() => showLogin = !showLogin}>
+    <div class="icon-button" on:click={() => showLogin = !showLogin}>
       <span class="material-icons">account_circle</span>
     </div>
     <div class="login-box" class:show={showLogin}>
@@ -19,7 +25,7 @@
     </div>
   </header>
 
-  <div class="content">
+  <div class="routed-content">
     <slot></slot>
   </div>
 </div>
@@ -34,9 +40,10 @@
 
     --header-background-color: #141417;
 
-    --dialog-background-color: #3e646b;
+    --dialog-background-color: #4f5260;
 
     --header-height: 48px;
+    --side-width: 220px;
 
     margin: 0;
     background-color: var(--background-color);
@@ -87,27 +94,38 @@
   }
   .grid-box {
     display: grid;
-  }
+    height: 100vh;
+    grid-template-rows: auto 1fr; /*var(--header-height) auto;*/
+    grid-template-areas:
+      "header"
+      "routed-content";
+    }
   header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    grid-area: header;
     display: flex;
     justify-content: space-between;
-    height: var(--header-height);
     background-color: var(--header-background-color);
   }
-  .logo {
-    width: var(--header-height);
-    height: var(--header-height);
-  }
-  .login-button {
+  .logo-box {
     display: flex;
     justify-content: center;
     align-items: center;
     width: var(--header-height);
     height: var(--header-height);
+  }
+  .logo {
+    width: calc(var(--header-height) - 10px);
+    height: calc(var(--header-height) - 10px);
+  }
+  .icon-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--header-height);
+    height: var(--header-height);
+  }
+  .icon-button a {
+    color: var(---text-color);
   }
   .login-box {
     display: none;
@@ -118,7 +136,8 @@
   .login-box.show {
     display: flex;
   }
-  .content {
-    margin-top: var(--header-height);
+  .routed-content {
+    grid-area: routed-content;
+    overflow-y: scroll;
   }
 </style>

@@ -29,6 +29,7 @@
   import Topics from '$lib/Topics.svelte';
   import Tags from '$lib/Tags.svelte';
   import Types from '$lib/Types.svelte';
+  import IconButton from '$lib/IconButton.svelte';
 
   export let user = '';
   export let entries = [];
@@ -131,27 +132,30 @@
 
 </script>
 
-<nav class="topics-tags">
+<nav class="sidenav">
+  <div class="back-button">
+    <IconButton href="/">people</IconButton>
+  </div>
+  <h2>{user}</h2>
   <Topics {topics} on:change={(e) => selectTopic(e.detail)} />
   <Tags {tags} on:change={(e) => selectedTags = e.detail} />
 </nav>
 
-<main>
-  <h2>User: {user}</h2>
-
+<main class="main">
   <Types on:change={(e) => selectedType = e.detail} />
 
   <Entries entries={filteredEntries} />
 </main>
 
 <style>
-  main {
+  .main {
     margin-left: 220px;
     padding: 0 20px 0 20px;
   }
-  .topics-tags {
+  .sidenav {
     position: fixed;
     width: 220px;
-    overflow: scroll;
+    height: 100%;
+    overflow-y: scroll;
   }
 </style>
