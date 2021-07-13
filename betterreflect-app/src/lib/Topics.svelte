@@ -33,16 +33,18 @@
   .topics {
     display: flex;
     flex-flow: column;
-    flex-wrap: wrap;
     max-width: 100vw;
+    border-top: 1px solid var(--side-line-color);
   }
   .topic {
-    box-sizing: border-box;
-    padding: 5px;
-    /*height: 35px;*/
-    border: 2px solid grey;
+    display: flex;
+    align-items: center;
+    padding: 5px 5px 5px 10px;
+    height: 35px;
+    border-bottom: 1px solid var(--side-line-color);
   }
   .selected {
-    border: 2px solid red;
+    /*border: 2px solid red;*/
+    background-color: var(--side-selected-color);
   }
 </style>

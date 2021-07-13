@@ -30,6 +30,7 @@
   import Tags from '$lib/Tags.svelte';
   import Types from '$lib/Types.svelte';
   import IconButton from '$lib/IconButton.svelte';
+  import HomeButton from '$lib/HomeButton.svelte';
 
   export let user = '';
   export let entries = [];
@@ -133,10 +134,10 @@
 </script>
 
 <nav class="sidenav">
-  <div class="back-button">
-    <IconButton href="/">people</IconButton>
+  <div class="home-button">
+    <HomeButton />
   </div>
-  <h2>{user}</h2>
+  <h2 class="username">{user}</h2>
   <Topics {topics} on:change={(e) => selectTopic(e.detail)} />
   <Tags {tags} on:change={(e) => selectedTags = e.detail} />
 </nav>
@@ -157,5 +158,11 @@
     width: 220px;
     height: 100%;
     overflow-y: scroll;
+  }
+  .home-button {
+    margin-top: 5px;
+  }
+  .username {
+    padding-left: 10px;
   }
 </style>

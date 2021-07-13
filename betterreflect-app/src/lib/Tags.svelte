@@ -24,7 +24,7 @@
   {#each tags as tag}
     <div class="tag" class:selected={selectedTags.has(tag)}
          on:click={selectTag(tag)}>
-      {tag}
+      <small>{tag}</small>
     </div>
   {/each}
 </div>
@@ -32,8 +32,7 @@
 <style>
   .tags {
     display: flex;
-    flex-wrap: wrap;
-    max-width: 100vw;
+    flex-flow: column;
     margin: 10px;
   }
   .tag {

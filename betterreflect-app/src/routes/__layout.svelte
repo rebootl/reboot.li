@@ -42,6 +42,9 @@
 
     --dialog-background-color: #4f5260;
 
+    --side-selected-color: #4f5260;
+    --side-line-color: #4f5260;
+
     --header-height: 48px;
     --side-width: 220px;
 
