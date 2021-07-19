@@ -33,7 +33,7 @@
   .tags {
     display: flex;
     flex-flow: column;
-    margin: 10px;
+    margin: 10px 15px 10px 15px;
     gap: 5px;
   }
   .tag {

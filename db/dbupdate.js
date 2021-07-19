@@ -15,6 +15,10 @@ const writeData = (f) => {
 
 for (const entry of data) {
   entry.user = 'rebootl';
+  if (entry.type === 'note')
+    entry.type = 'article'
+  if (entry.type === 'brokenlink')
+    entry.type = 'link'
 /*  if (entry.type === 'link' && entry.hasOwnProperty('url')) {
     entry.text = entry.url;
     delete entry.url;

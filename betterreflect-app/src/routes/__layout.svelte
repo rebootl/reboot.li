@@ -14,7 +14,7 @@
     </div>-->
     <div class="icon-button"></div>
     <div class="logo-box">
-      <img class="logo" alt="Logo" src="/static/betterreflect-app-logo-t3.png" />
+      <img class="logo" alt="Logo" src="/static/betterreflect-app-logo.png" />
     </div>
 
     <div class="icon-button" on:click={() => showLogin = !showLogin}>

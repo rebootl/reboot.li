@@ -46,10 +46,10 @@
 
   <div class="tagbox">
     {#each entry.topics as topic}
-      <small class="topic-label">{topic}</small>
+      <small class="topic-label label">{topic}</small>
     {/each}
     {#each entry.tags as tag}
-      <small class="tag-label">{tag}</small>
+      <small class="tag-label label">{tag}</small>
     {/each}
   </div>
 </div>
@@ -70,13 +70,14 @@
     display: flex;
     gap: 5px;
   }
-  .topic-label {
+  .label {
     padding: 0 5px 0 5px;
+  }
+  .topic-label {
     background-color: var(--main-topic-label-background-color);
     color: var(--main-topic-label-text-color);
   }
   .tag-label {
-    padding: 0 5px 0 5px;
     border: 1px solid var(--main-line-color);
     border-radius: 10px;
     color: var(--main-text-label-color);
