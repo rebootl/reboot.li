@@ -42,7 +42,7 @@
   let tagsByTopics = {};
   let selectedTopics = new Set();
   let selectedTags = new Set();
-  let selectedType = 'all';
+  let selectedType = 'any';
 
   $: setTopics(entries);
   $: filterEntries(selectedTopics, selectedTags, selectedType);
@@ -104,7 +104,7 @@
     let t = [];
 
     console.log(selectedType)
-    if (selectedType !== 'all') {
+    if (selectedType !== 'any') {
       f = entries.filter((e) => e.type === selectedType);
     } else {
       f = entries;
@@ -143,20 +143,18 @@
 </nav>
 
 <main class="main">
-  <Types on:change={(e) => selectedType = e.detail} />
+  <div class="typenav">
+    <Types on:change={(e) => selectedType = e.detail} />
+  </div>
 
   <Entries entries={filteredEntries} />
 </main>
 
 <style>
-  .main {
-    margin-left: 220px;
-    padding: 0 20px 0 20px;
-  }
   .sidenav {
     position: fixed;
     width: 220px;
-    height: 100%;
+    height: calc(100% - var(--header-height));
     overflow-y: scroll;
   }
   .home-button {
@@ -164,5 +162,12 @@
   }
   .username {
     padding-left: 10px;
+  }
+  .main {
+    margin-left: 220px;
+    padding: 0 20px 0 20px;
+  }
+  .typenav {
+    margin: 25px 0 20px 0;
   }
 </style>

@@ -34,15 +34,15 @@
     display: flex;
     flex-flow: column;
     margin: 10px;
+    gap: 5px;
   }
   .tag {
     box-sizing: border-box;
-    padding: 5px;
-    border: 1px solid grey;
-    border-radius: 5px;
+    padding: 5px 5px 5px 10px;
+    border: 1px solid var(--side-line-color);
+    border-radius: 10px;
   }
   .selected {
-    border: 1px solid red;
-    background-color: red;
+    background-color: var(--side-selected-color);
   }
 </style>

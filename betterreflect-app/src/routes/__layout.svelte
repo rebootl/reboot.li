@@ -45,6 +45,11 @@
     --side-selected-color: #4f5260;
     --side-line-color: #4f5260;
 
+    --main-line-color: #4f5260;
+    --main-topic-label-background-color: #4f5260;
+    --main-topic-label-text-color: #fff;
+    --main-text-label-color: #adadbc;
+
     --header-height: 48px;
     --side-width: 220px;
 
