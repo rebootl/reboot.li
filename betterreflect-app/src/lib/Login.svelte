@@ -70,16 +70,16 @@
   .login-box {
     display: flex;
     flex-direction: column;
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 20px 25px;
     background-color: var(--dialog-background-color);
     /*border: 1px solid var(--primary-color);*/
     border-radius: 5px;
   }
   input {
     width: 160px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
   button {
-    margin-top: 15px;
+    margin-top: 5px;
   }
 </style>
