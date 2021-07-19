@@ -1,17 +1,23 @@
 <script>
+  import marked from 'marked';
   import moment from 'moment';
 
-  //const md = window.markdownit();
   const dateFormat = 'MMM D YYYY - HH:mm';
+
+  let md;
 
   export let entry = {};
 
   let date = '';
+  let html = '';
 
   $: update(entry);
 
   function update() {
     date = moment(new Date(entry.date)).format(dateFormat);
+
+    if (entry.type === 'task' || entry.type === 'article')
+      html = marked(entry.text);
   }
 
 </script>
@@ -21,9 +27,9 @@
 
   <div class="entry-content">
     {#if entry.type === 'task'}
-      {entry.text}
+      {@html html}
     {:else if entry.type === 'article'}
-      {entry.text}
+      {@html html}
     {:else if entry.type === 'link'}
       <small><a href="{entry.text}">{entry.text}</a></small><br>
       {entry.title}<br>
