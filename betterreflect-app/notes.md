@@ -4,8 +4,6 @@
 
 ### Features
 
-* sort (optional pinned on top)
-* show / hide private entries
 * single-entry display
 * create new entry (comp. and endpoint)
 * edit entry (comp. and endpoint)
@@ -21,3 +19,6 @@
 
 
 ### Done/Fixed
+
+* sort (optional pinned on top) => DONE
+* show / hide private entries => DONE

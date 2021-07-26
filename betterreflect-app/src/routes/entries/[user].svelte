@@ -25,6 +25,8 @@
 </script>
 
 <script>
+  import { session } from '$app/stores';
+
   import Entries from '$lib/Entries.svelte';
   import Topics from '$lib/Topics.svelte';
   import Tags from '$lib/Tags.svelte';
@@ -35,6 +37,8 @@
   export let user = '';
   export let entries = [];
 
+  let loggedIn = $session.loggedIn;
+
   let filteredEntries = entries;
 
   let topics = [];
@@ -43,9 +47,12 @@
   let selectedTopics = new Set();
   let selectedTags = new Set();
   let selectedType = 'any';
+  let showPrivate = true;
+  let showPinned = true;
 
   $: setTopics(entries);
-  $: filterEntries(selectedTopics, selectedTags, selectedType);
+  $: filterEntries(selectedTopics, selectedTags, selectedType, showPrivate,
+      showPinned);
 
   // create topics and tagsByTopics from entries
   function setTopics() {
@@ -105,14 +112,14 @@
 
     console.log(selectedType)
     if (selectedType !== 'any') {
-      f = entries.filter((e) => e.type === selectedType);
+      f = entries.filter(e => e.type === selectedType);
     } else {
       f = entries;
     }
 
     //console.log(selectedTopics)
     if (selectedTopics.size > 0) {
-      f = f.filter((e) => {
+      f = f.filter(e => {
         for (const t of e.topics) {
           if (selectedTopics.has(t)) return e;
         }
@@ -121,14 +128,30 @@
 
     //console.log(selectedTags)
     if (selectedTags.size > 0) {
-      f = f.filter((e) => {
+      f = f.filter(e => {
         for (const t of e.tags) {
           if (selectedTags.has(t)) return e;
         }
       });
     }
 
-    filteredEntries = f;
+    // sort / pinned
+    let r;
+    if (showPinned) {
+      const p = f.filter(e => e.pinned).sort((a, b) => a.date - b.date);
+      const q = f.filter(e => !e.pinned).sort((a, b) => a.date - b.date);
+      r = [ ...p, ...q ];
+    } else {
+      r = f.sort((a, b) => a.date - b.date);
+    }
+
+    // filter private
+    if (showPrivate) {
+      filteredEntries = r;
+    } else {
+      filteredEntries = r.filter(e => !e.private);
+    }
+
   }
 
 </script>
@@ -143,8 +166,24 @@
 </nav>
 
 <main class="main">
-  <div class="typenav">
-    <Types on:change={(e) => selectedType = e.detail} />
+  <div class="entry-filters">
+    <div class="shownav">
+      <div>
+        <input type="checkbox" id="show-pinned" name="show-pinned" checked
+               on:click={() => showPinned = !showPinned}>
+        <label for="show-pinned">Show pinned on top</label>
+      </div>
+      {#if loggedIn}
+        <div>
+          <input type="checkbox" id="show-private" name="show-private" checked
+                 on:click={() => showPrivate = !showPrivate}>
+          <label for="show-private">Show private entries</label>
+        </div>
+      {/if}
+    </div>
+    <div class="typenav">
+      <Types on:change={(e) => selectedType = e.detail} />
+    </div>
   </div>
 
   <Entries entries={filteredEntries} />
@@ -167,7 +206,15 @@
     margin-left: 220px;
     padding: 0 20px 0 20px;
   }
-  .typenav {
-    margin: 25px 0 20px 0;
+  .entry-filters {
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    margin: 20px 0 20px 0;
+  }
+  .shownav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 </style>

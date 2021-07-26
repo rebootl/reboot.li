@@ -23,7 +23,23 @@
 </script>
 
 <div class="entry">
-  <div class="entry-header"><small>{date}</small></div>
+  <div class="entry-header">
+    <small>
+      {date}
+      {#if entry.pinned}
+        <span class="material-icons header-icon">adjust</span>
+        <!-- push_pin icon not working for some reason
+        -->
+        Pinned
+      {/if}
+      {#if entry.private}
+        <span class="material-icons header-icon">lock</span>
+        <!-- push_pin icon not working for some reason
+        -->
+        Private
+      {/if}
+    </small>
+  </div>
 
   <div class="entry-content">
     {#if entry.type === 'task'}
@@ -62,6 +78,11 @@
   .entry-header {
     color: var(--main-text-label-color);
     font-size: 0.85em;
+  }
+  .header-icon {
+    font-size: 1.2em;
+    margin-left: 5px;
+    vertical-align: sub;
   }
   .entry-content {
     margin: 10px 0 20px 0;
