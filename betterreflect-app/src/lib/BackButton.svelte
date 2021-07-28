@@ -1,16 +1,20 @@
 <script>
   import IconButton from './IconButton.svelte';
+
+  export let href = '';
+  export let icon = '';
+
 </script>
 
-<div class="home-button">
-  <a href="/" class="home-link">
+<div class="back-button">
+  <a {href} class="back-link">
     <span class="material-icons before-icon">navigate_before</span>
-    <IconButton>home</IconButton><small>Home</small>
+    <IconButton>{icon}</IconButton><small><slot></slot></small>
   </a>
 </div>
 
 <style>
-  .home-link {
+  .back-link {
     display: flex;
     align-items: center;
     display: flex;

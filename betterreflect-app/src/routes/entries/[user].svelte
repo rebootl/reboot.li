@@ -1,9 +1,10 @@
 <script context="module">
 
   export async function load({ page, fetch, session, context }) {
-    //console.log(page)
+
     const user = page.params.user;
   	const url = `/entries/${user}.json`;
+    const entryId = page.query.has('entryId') ? page.query.get('entryId') : '';
 
   	const res = await fetch(url);
 
@@ -11,7 +12,8 @@
   		return {
   			props: {
           user: user,
-  				entries: await res.json()
+  				entries: await res.json(),
+          entryId: entryId,
   			}
   		};
   	}
@@ -25,17 +27,18 @@
 </script>
 
 <script>
-  import { session } from '$app/stores';
-
   import Entries from '$lib/Entries.svelte';
+  import Entry from '$lib/Entry.svelte';
   import Topics from '$lib/Topics.svelte';
   import Tags from '$lib/Tags.svelte';
   import Types from '$lib/Types.svelte';
   import IconButton from '$lib/IconButton.svelte';
-  import HomeButton from '$lib/HomeButton.svelte';
+  import BackButton from '$lib/BackButton.svelte';
+  import { session } from '$app/stores';
 
   export let user = '';
   export let entries = [];
+  export let entryId = '';
 
   let loggedIn = $session.loggedIn;
 
@@ -49,6 +52,8 @@
   let selectedType = 'any';
   let showPrivate = true;
   let showPinned = true;
+  let entryNotFound = false;
+  let singleEntry = {};
 
   $: setTopics(entries);
   $: filterEntries(selectedTopics, selectedTags, selectedType, showPrivate,
@@ -107,15 +112,26 @@
   }
 
   function filterEntries() {
-    let f = entries;
-    let t = [];
+    if (entryId === '') {
+      singleEntry = {};
+      entryNotFound = false;
+      filteredEntries = getFilteredEntries();
+    } else {
+      singleEntry = entries.find(e => e.id === entryId);
+      if (!singleEntry) entryNotFound = true;
+      else entryNotFound = false;
+      filteredEntries = [];
+    }
+  }
 
-    console.log(selectedType)
+  function getFilteredEntries() {
+    let f = entries;
+
     if (selectedType !== 'any') {
       f = entries.filter(e => e.type === selectedType);
-    } else {
+    } /*else {
       f = entries;
-    }
+    }*/
 
     //console.log(selectedTopics)
     if (selectedTopics.size > 0) {
@@ -147,46 +163,59 @@
 
     // filter private
     if (showPrivate) {
-      filteredEntries = r;
+      return r;
     } else {
-      filteredEntries = r.filter(e => !e.private);
+      return r.filter(e => !e.private);
     }
-
   }
 
 </script>
 
 <nav class="sidenav">
-  <div class="home-button">
-    <HomeButton />
-  </div>
-  <h2 class="username">{user}</h2>
-  <Topics {topics} on:change={(e) => selectTopic(e.detail)} />
-  <Tags {tags} on:change={(e) => selectedTags = e.detail} />
+  {#if entryId === ''}
+    <div class="back-button">
+      <BackButton href='/' icon='home'>Home</BackButton>
+    </div>
+    <h2 class="username">{user}</h2>
+    <Topics {topics} on:change={(e) => selectTopic(e.detail)} />
+    <Tags {tags} on:change={(e) => selectedTags = e.detail} />
+  {:else}
+    <div class="back-button">
+      <BackButton href={'/entries/' + user} icon="person">{user}</BackButton>
+    </div>
+    <!--<h2 class="username">Entry</h2>-->
+  {/if}
 </nav>
 
 <main class="main">
-  <div class="entry-filters">
-    <div class="shownav">
-      <div>
-        <input type="checkbox" id="show-pinned" name="show-pinned" checked
-               on:click={() => showPinned = !showPinned}>
-        <label for="show-pinned">Show pinned on top</label>
-      </div>
-      {#if loggedIn}
+  {#if entryId === ''}
+    <div class="entry-filters">
+      <div class="shownav">
         <div>
-          <input type="checkbox" id="show-private" name="show-private" checked
-                 on:click={() => showPrivate = !showPrivate}>
-          <label for="show-private">Show private entries</label>
+          <input type="checkbox" id="show-pinned" name="show-pinned" checked
+                 on:click={() => showPinned = !showPinned}>
+          <label for="show-pinned">Show pinned on top</label>
         </div>
-      {/if}
+        {#if loggedIn}
+          <div>
+            <input type="checkbox" id="show-private" name="show-private" checked
+                   on:click={() => showPrivate = !showPrivate}>
+            <label for="show-private">Show private entries</label>
+          </div>
+        {/if}
+      </div>
+      <div class="typenav">
+        <Types on:change={(e) => selectedType = e.detail} />
+      </div>
     </div>
-    <div class="typenav">
-      <Types on:change={(e) => selectedType = e.detail} />
-    </div>
-  </div>
-
-  <Entries entries={filteredEntries} />
+    <Entries entries={filteredEntries} />
+  {:else}
+    {#if entryNotFound}
+      Oops, entry not found :(
+    {:else}
+      <Entry entry={singleEntry} />
+    {/if}
+  {/if}
 </main>
 
 <style>
@@ -196,7 +225,7 @@
     height: calc(100% - var(--header-height));
     overflow-y: scroll;
   }
-  .home-button {
+  .back-button {
     margin-top: 5px;
   }
   .username {

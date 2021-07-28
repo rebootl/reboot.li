@@ -1,20 +1,21 @@
 <script>
-  import marked from 'marked';
   import moment from 'moment';
+  import marked from 'marked';
 
   const dateFormat = 'MMM D YYYY - HH:mm';
-
-  let md;
 
   export let entry = {};
 
   let date = '';
   let html = '';
+  let url = '';
 
   $: update(entry);
 
   function update() {
     date = moment(new Date(entry.date)).format(dateFormat);
+
+    url = '/entries/' + entry.user + '?entryId=' + entry.id;
 
     if (entry.type === 'task' || entry.type === 'article')
       html = marked(entry.text);
@@ -26,6 +27,7 @@
   <div class="entry-header">
     <small>
       {date}
+      <a href={url}><span class="material-icons header-icon">link</span></a>
       {#if entry.pinned}
         <span class="material-icons header-icon">adjust</span>
         <!-- push_pin icon not working for some reason
@@ -34,8 +36,6 @@
       {/if}
       {#if entry.private}
         <span class="material-icons header-icon">lock</span>
-        <!-- push_pin icon not working for some reason
-        -->
         Private
       {/if}
     </small>

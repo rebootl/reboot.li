@@ -36,6 +36,7 @@
         bottomObserver.unobserve(triggerElement);
       }
       const el = document.querySelector('.entrieslist');
+      if (!el) return;
       const newTriggerElement = el.children[el.children.length - 3];
       if (newTriggerElement) {
         //console.log('add observer')
