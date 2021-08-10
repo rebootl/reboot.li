@@ -27,7 +27,9 @@
   <div class="entry-header">
     <small>
       {date}
-      <a href={url}><span class="material-icons header-icon">link</span></a>
+      <a href={url}>
+        <span class="material-icons header-icon">link</span>
+      </a>
       {#if entry.pinned}
         <span class="material-icons header-icon">adjust</span>
         <!-- push_pin icon not working for some reason

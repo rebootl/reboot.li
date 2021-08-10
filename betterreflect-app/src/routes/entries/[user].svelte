@@ -29,6 +29,7 @@
 <script>
   import Entries from '$lib/Entries.svelte';
   import Entry from '$lib/Entry.svelte';
+  import NewEntry from '$lib/NewEntry.svelte';
   import Topics from '$lib/Topics.svelte';
   import Tags from '$lib/Tags.svelte';
   import Types from '$lib/Types.svelte';
@@ -189,6 +190,9 @@
 
 <main class="main">
   {#if entryId === ''}
+    {#if loggedIn}
+      <NewEntry {topics} {tags} />
+    {/if}
     <div class="entry-filters">
       <div class="shownav">
         <div>

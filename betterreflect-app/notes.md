@@ -4,7 +4,6 @@
 
 ### Features
 
-* single-entry display
 * create new entry (comp. and endpoint)
 * edit entry (comp. and endpoint)
 * images (incl. access control)
@@ -20,5 +19,6 @@
 
 ### Done/Fixed
 
+* single-entry display => DONE
 * sort (optional pinned on top) => DONE
 * show / hide private entries => DONE
