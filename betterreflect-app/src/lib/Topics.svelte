@@ -1,4 +1,5 @@
 <script>
+  import Topic from './Topic.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -22,10 +23,10 @@
 
 <div class="topics">
   {#each topics as topic}
-    <div class="topic" class:selected={selectedTopics.has(topic)}
-         on:click={selectTopic(topic)}>
+    <Topic selected={selectedTopics.has(topic)}
+           on:click={() => selectTopic(topic)}>
       {topic}
-    </div>
+    </Topic>
   {/each}
 </div>
 
@@ -35,16 +36,5 @@
     flex-flow: column;
     max-width: 100vw;
     border-top: 1px solid var(--side-line-color);
-  }
-  .topic {
-    display: flex;
-    align-items: center;
-    padding: 5px 5px 5px 10px;
-    height: 35px;
-    border-bottom: 1px solid var(--side-line-color);
-  }
-  .selected {
-    /*border: 2px solid red;*/
-    background-color: var(--side-selected-color);
   }
 </style>

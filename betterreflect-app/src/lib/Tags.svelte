@@ -1,4 +1,5 @@
 <script>
+  import Tag from './Tag.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -22,10 +23,10 @@
 
 <div class="tags">
   {#each tags as tag}
-    <div class="tag" class:selected={selectedTags.has(tag)}
-         on:click={selectTag(tag)}>
-      <small>{tag}</small>
-    </div>
+    <Tag selected={selectedTags.has(tag)}
+         on:click={() => selectTag(tag)}>
+      {tag}
+    </Tag>
   {/each}
 </div>
 
@@ -35,14 +36,5 @@
     flex-flow: column;
     margin: 10px 15px 10px 15px;
     gap: 5px;
-  }
-  .tag {
-    box-sizing: border-box;
-    padding: 5px 5px 5px 10px;
-    border: 1px solid var(--side-line-color);
-    border-radius: 10px;
-  }
-  .selected {
-    background-color: var(--side-selected-color);
   }
 </style>
