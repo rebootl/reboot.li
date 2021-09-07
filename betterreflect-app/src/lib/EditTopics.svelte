@@ -1,4 +1,5 @@
 <script>
+  import Topic from '$lib/Topic.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -53,10 +54,10 @@
 </div>
 <div class="items">
   {#each items as item}
-    <div class="item" class:selected={selectedItems.includes(item)}
-         on:click={selectItem(item)}>
+    <Topic type="edit" selected={selectedItems.includes(item)}
+           on:click={selectItem(item)}>
       {item}
-    </div>
+    </Topic>
   {/each}
 </div>
 
@@ -64,15 +65,7 @@
   .items {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px;
-  }
-  .item {
-    display: flex;
-    align-items: center;
-    padding: 5px 10px 5px 10px;
-    height: 35px;
-    width: 120px;
-    border: 1px solid var(--side-line-color);
+    gap: 5px;
   }
   .newitem {
     background-color: var(--side-selected-color);
