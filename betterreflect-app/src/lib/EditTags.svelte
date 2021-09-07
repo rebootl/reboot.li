@@ -1,5 +1,6 @@
 <script>
-  import Tag from './Tag.svelte';
+  import Tag from '$lib/Tag.svelte';
+  import NewItems from '$lib/NewItems.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -10,7 +11,6 @@
   let items = [];
 
   let selectedItems = [];
-  let newItem = '';
   let newItems = [];
 
   $: updateTags(newTopics);
@@ -42,6 +42,7 @@
   }
 
   function selectItem(item) {
+    if (newItems.includes(item)) return;
     if (selectedItems.includes(item)) {
       selectedItems = selectedItems.filter(e => e !== item);
     } else {
@@ -55,33 +56,15 @@
     dispatch('change', [ ...selectedItems, ...newItems ]);
   }
 
-  function addItem() {
-    if (newItem === '') return;
-    if (newItems.includes(newItem)) return;
-    if (items.includes(newItem)) return;
-    newItems.push(newItem);
-    newItems = newItems;
-    dispatchChange();
-    newItem = '';
-  }
-
-  function removeItem(t) {
-    newItems = newItems.filter(e => e !== t);
+  function newItemsChanged(v) {
+    newItems = v;
     dispatchChange();
   }
 
 </script>
 
-<div class="items">
-  {#each newItems as item}
-    <div class="newitem">
-      <small>{item}</small>
-    </div>
-    <button on:click={() => removeItem(item)}>Remove</button>
-  {/each}
-  <input bind:value={newItem} placeholder="New Tag...">
-  <button on:click={() => addItem()}>Add</button>
-</div>
+<NewItems excludes={items} name="Tag"
+          on:change={(e) => newItemsChanged(e.detail)} />
 <div class="items">
   {#each items as item}
     <Tag selected={selectedItems.includes(item)}
@@ -96,10 +79,5 @@
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-  }
-  .newitem {
-    background-color: var(--side-selected-color);
-    border: 1px solid var(--side-line-color);
-    padding: 0 5px 0 5px;
   }
 </style>

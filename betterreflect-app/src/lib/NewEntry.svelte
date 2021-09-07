@@ -42,7 +42,7 @@
   </div>
   {#if showAddElements}
     <EditTypes />
-    <EditTopics items={topics} name="Topic"
+    <EditTopics items={topics}
                 on:change={(e) => setNewTopics(e.detail)} />
     <EditTags {tagsByTopics} {newTopics} on:change={(e) => setNewTags(e.detail)} />
 
