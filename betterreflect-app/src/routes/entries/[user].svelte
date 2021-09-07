@@ -191,7 +191,7 @@
 <main class="main">
   {#if entryId === ''}
     {#if loggedIn}
-      <NewEntry {topics} {tags} />
+      <NewEntry {topics} {tagsByTopics} />
     {/if}
     <div class="entry-filters">
       <div class="shownav">
