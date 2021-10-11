@@ -125,6 +125,14 @@
     }
   }
 
+  function sortByDate(a, b) {
+    return new Date(a.date) - new Date(b.date);
+  }
+
+  function sortByDateNewestFirst(a, b) {
+    return new Date(b.date) - new Date(a.date);
+  }
+
   function getFilteredEntries() {
     let f = entries;
 
@@ -155,11 +163,11 @@
     // sort / pinned
     let r;
     if (showPinned) {
-      const p = f.filter(e => e.pinned).sort((a, b) => a.date - b.date);
-      const q = f.filter(e => !e.pinned).sort((a, b) => a.date - b.date);
+      const p = f.filter(e => e.pinned).sort(sortByDateNewestFirst);
+      const q = f.filter(e => !e.pinned).sort(sortByDateNewestFirst);
       r = [ ...p, ...q ];
     } else {
-      r = f.sort((a, b) => a.date - b.date);
+      r = f.sort(sortByDateNewestFirst);
     }
 
     // filter private
@@ -168,6 +176,11 @@
     } else {
       return r.filter(e => !e.private);
     }
+  }
+
+  function addEntry(e) {
+    entries.unshift(e)
+    filteredEntries = getFilteredEntries();
   }
 
 </script>
@@ -191,7 +204,8 @@
 <main class="main">
   {#if entryId === ''}
     {#if loggedIn}
-      <NewEntry {topics} {tagsByTopics} />
+      <NewEntry {topics} {tagsByTopics}
+                on:created={(e) => addEntry(e.detail)} />
     {/if}
     <div class="entry-filters">
       <div class="shownav">

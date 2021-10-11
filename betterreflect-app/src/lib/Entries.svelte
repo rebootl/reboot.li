@@ -14,7 +14,7 @@
   }
 
   function addItems(e) {
-    console.log('addItems')
+    //console.log('addItems')
     if (e[e.length - 1].intersectionRatio <= 0) return;
 		limitedEntries = entries.slice(0, limitedEntries.length + limit);
   }

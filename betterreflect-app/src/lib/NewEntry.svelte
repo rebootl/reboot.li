@@ -3,6 +3,9 @@
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import { session } from '$app/stores';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   export let topics = [];
   export let tagsByTopics = {};
@@ -74,7 +77,6 @@
       });
       if (res.ok) {
         r = await res.json();
-        console.log(r)
       } else {
         const { message } = await res.json();
         new Error(message);
@@ -85,6 +87,7 @@
     if (!r) return;
 
     console.log('success!')
+    dispatch('created', r);
     reset();
   }
 
