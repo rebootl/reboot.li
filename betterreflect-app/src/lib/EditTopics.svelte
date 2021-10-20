@@ -6,8 +6,10 @@
   const dispatch = createEventDispatcher();
 
   export let items = [];
+  export let selected = [];
 
-  let selectedItems = [];
+  export let selectedItems = [];
+
   let newItems = [];
 
   function selectItem(item) {

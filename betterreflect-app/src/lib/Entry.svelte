@@ -1,6 +1,7 @@
 <script>
   import moment from 'moment';
   import marked from 'marked';
+  import { session } from '$app/stores';
 
   const dateFormat = 'MMM D YYYY - HH:mm';
 
@@ -41,6 +42,13 @@
         Private
       {/if}
     </small>
+    <small>
+      {#if $session.loggedIn}
+        <a href={url + '&edit'}>
+          <span class="material-icons header-icon">edit</span>
+        </a>
+      {/if}
+    </small>
   </div>
 
   <div class="entry-content">
@@ -78,6 +86,8 @@
     padding: 10px 0 10px 0;
   }
   .entry-header {
+    display: flex;
+    justify-content: space-between;
     color: var(--main-text-label-color);
     font-size: 0.85em;
   }

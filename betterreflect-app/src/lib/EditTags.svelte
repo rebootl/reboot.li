@@ -7,13 +7,22 @@
 
   export let tagsByTopics = [];
   export let newTopics = [];
+  export let selectedItems = [];
+  export let loadTopics = [];
 
   let items = [];
-
-  let selectedItems = [];
   let newItems = [];
 
   $: updateTags(newTopics);
+  $: loadEdit(loadTopics);
+
+  // -> use onmount instead?
+  function loadEdit() {
+    if (loadTopics) {
+      newTopics = loadTopics;
+      updateTags();
+    }
+  }
 
   function updateTags() {
     const r = [];

@@ -9,6 +9,8 @@
 
   export let topics = [];
   export let tagsByTopics = {};
+  export let edit = false;
+  export let entry = {};
 
   let showAddElements = true;
 
@@ -21,7 +23,28 @@
   let linkComment = '';
   let linkTitle = '';
 
+  let loadTopics = [];
+  let loadTags = [];
+
   $: textInput(text)
+  $: loadEntry(entry);
+
+  function loadEntry() {
+    if (!edit) return;
+    if (!entry) return;
+    type = entry.type;
+    if (type === 'link') {
+      linkComment = entry.commment;
+      linkTitle = entry.title;
+    } else {
+      text = entry.text;
+    }
+    loadTopics = entry.topics;
+    loadTags = entry.tags;
+    _private = entry.private;
+    pinned = entry.pinned;
+    showAddElements = true;
+  }
 
   function textInput() {
     if (text === '') showAddElements = false;
@@ -112,10 +135,13 @@
               bind:value={text}></textarea>
   </div>
   {#if showAddElements}
-    <EditTypes on:change={(e) => setType(e.detail)} />
-    <EditTopics items={topics}
+    <EditTypes selectedType={edit ? entry.type : 'any'}
+               on:change={(e) => setType(e.detail)} />
+    <EditTopics items={topics} selectedItems={loadTopics}
                 on:change={(e) => setNewTopics(e.detail)} />
-    <EditTags {tagsByTopics} {newTopics} on:change={(e) => setNewTags(e.detail)} />
+    <EditTags {tagsByTopics} {newTopics} {loadTopics}
+              selectedItems={loadTags}
+              on:change={(e) => setNewTags(e.detail)} />
     <div>
       <input type="checkbox" id="private-checkbox" name="private"
              bind:checked={_private}>

@@ -3,6 +3,8 @@
 
   const dispatch = createEventDispatcher();
 
+  export let selectedType = 'any';
+
   let types = [
     {
       icon: 'task_alt',
@@ -26,8 +28,6 @@
     }
   ];
 
-  let selectedType = 'any';
-
   function selectType(t) {
     selectedType = t;
     dispatch('change', t);
@@ -38,7 +38,7 @@
   Type:
   {#each types as type}
     <input type="radio" name="edittype" id={'edittypeselect-' + type.type}
-           checked={type.type === 'task'}
+           checked={type.type === selectedType}
            value={type.type}
            on:click={() => selectType(type.type)}>
     <label for={'edittypeselect-' + type.type}>{type.label}</label>

@@ -5,6 +5,7 @@
     const user = page.params.user;
   	const url = `/entries/${user}.json`;
     const entryId = page.query.has('entryId') ? page.query.get('entryId') : '';
+    const edit = page.query.has('edit');
 
   	const res = await fetch(url);
 
@@ -14,6 +15,7 @@
           user: user,
   				entries: await res.json(),
           entryId: entryId,
+          edit: edit,
   			}
   		};
   	}
@@ -40,6 +42,7 @@
   export let user = '';
   export let entries = [];
   export let entryId = '';
+  export let edit = false;
 
   let loggedIn = $session.loggedIn;
 
@@ -230,6 +233,8 @@
   {:else}
     {#if entryNotFound}
       Oops, entry not found :(
+    {:else if edit && loggedIn}
+      <NewEntry {topics} {tagsByTopics} edit={true} entry={singleEntry} />
     {:else}
       <Entry entry={singleEntry} />
     {/if}
