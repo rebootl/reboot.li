@@ -3,6 +3,8 @@
 
   const dispatch = createEventDispatcher();
 
+  export let selectedType = 'any';
+
   let types = [
     {
       icon: 'view_module',
@@ -31,8 +33,6 @@
     }
   ];
 
-  let selectedType = 'any';
-
   function selectType(t) {
     selectedType = t;
     console.log(t)
@@ -46,7 +46,7 @@
   Types:
   {#each types as type}
     <input type="radio" name="type" id={'typeselect-' + type.type}
-           checked={type.type === 'any'}
+           checked={type.type === selectedType}
            value={type.type}
            on:click={() => selectType(type.type)}>
     <label for={'typeselect-' + type.type}>{type.label}</label>

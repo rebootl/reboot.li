@@ -213,20 +213,23 @@
     <div class="entry-filters">
       <div class="shownav">
         <div>
-          <input type="checkbox" id="show-pinned" name="show-pinned" checked
+          <input type="checkbox" id="show-pinned" name="show-pinned"
+                 checked={showPinned}
                  on:click={() => showPinned = !showPinned}>
           <label for="show-pinned">Show pinned on top</label>
         </div>
         {#if loggedIn}
           <div>
-            <input type="checkbox" id="show-private" name="show-private" checked
+            <input type="checkbox" id="show-private" name="show-private"
+                   checked={showPrivate}
                    on:click={() => showPrivate = !showPrivate}>
             <label for="show-private">Show private entries</label>
           </div>
         {/if}
       </div>
       <div class="typenav">
-        <Types on:change={(e) => selectedType = e.detail} />
+        <Types on:change={(e) => selectedType = e.detail}
+               selectedType={selectedType} />
       </div>
     </div>
     <Entries entries={filteredEntries} />
