@@ -50,6 +50,9 @@
     --main-topic-label-text-color: #fff;
     --main-text-label-color: #adadbc;
 
+    --error-color: #ff0000;
+    --on-error-color: #fff;
+
     --header-height: 48px;
     --side-width: 220px;
 

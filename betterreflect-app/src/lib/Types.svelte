@@ -35,7 +35,6 @@
 
   function selectType(t) {
     selectedType = t;
-    console.log(t)
     dispatch('change', t);
   }
 
