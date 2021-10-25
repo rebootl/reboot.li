@@ -7,6 +7,7 @@
     const entryId = page.query.has('entryId') ? page.query.get('entryId') : '';
     const edit = page.query.has('edit');
 
+    console.log('load entries')
   	const res = await fetch(url);
 
   	if (res.ok) {
@@ -116,6 +117,7 @@
   }
 
   function filterEntries() {
+    console.log('filter entries')
     if (entryId === '') {
       singleEntry = {};
       entryNotFound = false;
@@ -214,15 +216,13 @@
       <div class="shownav">
         <div>
           <input type="checkbox" id="show-pinned" name="show-pinned"
-                 checked={showPinned}
-                 on:click={() => showPinned = !showPinned}>
+                 bind:checked={showPinned}>
           <label for="show-pinned">Show pinned on top</label>
         </div>
         {#if loggedIn}
           <div>
             <input type="checkbox" id="show-private" name="show-private"
-                   checked={showPrivate}
-                   on:click={() => showPrivate = !showPrivate}>
+                   bind:checked={showPrivate}>
             <label for="show-private">Show private entries</label>
           </div>
         {/if}
