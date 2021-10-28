@@ -22,7 +22,7 @@ const COOKIENAME = 'better-reflectapp-session';
 // database setup
 const DBUSER = 'better-reflectapp-admin';
 const DBPASSWORD = 'example123';
-const DBURL = 'mongodb://localhost:27018';
+const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@localhost:27018`;
 const DBNAME = 'better-reflectapp';
 
 // files / paths

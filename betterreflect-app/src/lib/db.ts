@@ -3,9 +3,9 @@ import * as config from '../../config';
 
 // db setup
 export const client = new MongoClient(config.DBURL, {
-  auth: { user: config.DBUSER, password: config.DBPASSWORD },
   useUnifiedTopology: true
 });
+//auth: { user: config.DBUSER, password: config.DBPASSWORD },
 
 export async function getDb() {
   try {
