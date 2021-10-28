@@ -20,11 +20,6 @@
       icon: 'article',
       label: 'Article',
 			type: 'article'
-    },
-    {
-      icon: 'image',
-      label: 'Image',
-			type: 'image'
     }
   ];
 

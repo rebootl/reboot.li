@@ -61,10 +61,12 @@
       {entry.title}<br>
       {entry.comment}
     {:else if entry.type === 'image'}
-      {#each entry.images as image}
-        <img src={image.filepath} />
-        <div class="imagecomment"><small>{image.comment}</small></div>
-      {/each}
+      {#if entry.images}
+        {#each entry.images as image}
+          <img src={image.filepath} />
+          <div class="imagecomment"><small>{image.comment}</small></div>
+        {/each}
+      {/if}
     {:else}
       <p>oops entry type unknown: {entry.type}</p>
     {/if}

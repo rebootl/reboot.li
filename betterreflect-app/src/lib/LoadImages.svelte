@@ -1,0 +1,61 @@
+<script>
+  import { compressImage, encodeData } from '$lib/images';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  let images = [];
+
+  async function loadImages(f) {
+    const n = await Promise.all(Array.from(f)
+      .filter((file) => !images.map(v => v.filename).includes(file.name))
+      .map(async (file) => {
+        const blob = await compressImage(file, 240, 240);
+        const data = await encodeData(blob);
+        const image = {
+          filename: file.name,
+          osize: file.size,
+          type: file.type,
+          lastModified: file.lastModified,
+          previewData: data,
+          file: file,
+          comment: "",
+        };
+        return image;
+      })
+    );
+    images = [ ...images, ...n ];
+    dispatch('change', images);
+  }
+
+  function unloadImage(filename) {
+    images = images.filter(e => e.filename !== filename);
+    dispatch('change', images);
+  }
+
+  function setComment(v, filename) {
+    const image = images.find(e => e.filename === filename);
+    image.comment = v;
+    images = images;
+    dispatch('change', images);
+  }
+
+</script>
+
+<input on:change={ (e) => loadImages(e.target.files) }
+   type="file"
+   accept="image/*"
+   multiple>
+<div class="images">
+  {#each images as i}
+    <div class="image">
+      <img src={i.previewData} />
+      <button on:click={unloadImage(i.filename)}>Unload</button>
+      <input value={i.comment} placeholder="Add comment..."
+             on:input={(e) => setComment(e.target.value, i.filename)} />
+    </div>
+  {/each}
+</div>
+
+<style>
+</style>

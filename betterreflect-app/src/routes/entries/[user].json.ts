@@ -33,17 +33,21 @@ export async function post(request) {
 
   // checks
   for (const f of requiredFields) {
-    if (!b.hasOwnProperty(f)) return { status: 403 };
+    if (!b.hasOwnProperty(f)) return { status: 400 };
   }
 
-  if (!allowedTypes.includes(b.type)) return { status: 403 };
+  if (!allowedTypes.includes(b.type)) return { status: 400 };
 
   const db = request.locals.db;
   const c = await db.collection('entries');
   const r = await c.insertOne(b);
+  if (!r) return { status: 400 };
 
   return {
-    body: r.ops[0]
+    body: {
+      success: true,
+      result: r
+    }
   };
 }
 
@@ -69,9 +73,13 @@ export async function put(request) {
   const db = request.locals.db;
   const c = await db.collection('entries');
   const r = await c.replaceOne({ id: b.id }, b);
+  if (!r) return { status: 400 };
 
   return {
-    body: r.ops[0]
+    body: {
+      success: true,
+      result: r
+    }
   };
 }
 
@@ -87,8 +95,12 @@ export async function del(request) {
   const db = request.locals.db;
   const c = await db.collection('entries');
   const r = await c.deleteOne({ id: b.id });
+  if (!r) return { status: 400 };
 
   return {
-    body: r.deletedCount
+    body: {
+      success: true,
+      result: r
+    }
   };
 }

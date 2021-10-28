@@ -2,6 +2,9 @@
   import EditTypes from './EditTypes.svelte';
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
+  import LoadImages from './LoadImages.svelte';
+  import { compressImage, encodeData, uploadMultiImagesGenerator }
+    from '$lib/images';
   import { session } from '$app/stores';
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
@@ -23,6 +26,8 @@
   let pinned = false;
   let linkComment = '';
   let linkTitle = '';
+  let images = [];
+  let newImages = [];
 
   let loadTopics = [];
   let loadTags = [];
@@ -65,9 +70,67 @@
     newTags = v;
   }
 
+  async function uploadNewImages() {
+    let uploadResult = {};
+    console.log(newImages)
+    for await (const r of uploadMultiImagesGenerator(newImages)) {
+      // update progress
+      uploadResult = r;
+      //uploadProgress = r.progress;
+    }
+    // handle the upload result
+    if (!uploadResult.result.success) return false;
+    newImages.forEach(i => {
+      const r = uploadResult.result.files.find(e => e.originalname === i.filename);
+      i.filepath = r.path;
+      delete i.file;
+      return i;
+    });
+    return true;
+  }
+
+  async function sendRequest(type, data) {
+    let r;
+    try {
+      const res = await fetch(`/entries/${$session.user}.json`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        r = await res.json();
+        return r;
+      } else {
+        const { message } = await res.json();
+        new Error(message);
+      }
+    } catch(error) {
+      console.error(error);
+      return {
+        success: false,
+        result: error
+      }
+    }
+  }
+
   async function create() {
-    if (newTopics.length < 1) return;
+    if (newTopics.length < 1) {
+      console.log('at least one topic must be selected')
+      return;
+    }
     console.log('create!')
+
+    // upload new images
+    if (newImages.length > 0) {
+      const res = await uploadNewImages();
+      if (!res) {
+        console.log('error at uploading images')
+        return;
+      }
+    }
 
     const entry = {
       id: type + '-' + Date.now().toString(36) +
@@ -87,9 +150,10 @@
       entry.comment = linkComment;
       entry.title = linkTitle;
     } else if (type === 'image') {
-      //d.images = [ ...images, ...newImages ];
+      entry.images = newImages;
     }
 
+    //const r = await sendRequest('POST', entry);
     let r;
     try {
       const res = await fetch(`/entries/${$session.user}.json`, {
@@ -109,17 +173,23 @@
     } catch(error) {
       console.error(error);
     }
-    if (!r) return;
+    if (!r.success) {
+      console.log('error creating entry');
+      return;
+    }
 
     console.log('success!')
-    dispatch('created', r);
+    dispatch('created', entry);
     reset();
   }
 
   async function update() {
-    if (newTopics.length < 1) return;
+    if (newTopics.length < 1) {
+      console.log('at least one topic must be selected')
+      return;
+    }
     console.log('update!')
-    console.log(entry)
+
     entry.mdate = new Date();
     entry.type = type;
     entry.private = _private;
@@ -152,7 +222,10 @@
     } catch(error) {
       console.error(error);
     }
-    if (!r) return;
+    if (!r.success) {
+      console.log('error updating entry');
+      return;
+    }
 
     console.log('success!')
     dispatch('updated', r);
@@ -174,6 +247,7 @@
         body: JSON.stringify(entry)
       });
       if (res.ok) {
+        console.log(res)
         r = await res.json();
       } else {
         const { message } = await res.json();
@@ -182,11 +256,26 @@
     } catch(error) {
       console.error(error);
     }
-    if (!r) return;
+    if (!r.success) {
+      console.log('error deleting entry');
+      return;
+    }
 
     console.log('success!')
     dispatch('deleted', r);
     goto(`/entries/${$session.user}`);
+  }
+
+  function loadImages(images) {
+    if (images.length > 0) {
+      newImages = images;
+      type = 'image';
+      showAddElements = true;
+    } else {
+      newImages = images;
+      type = 'task';
+      showAddElements = false;
+    }
   }
 
   function reset() {
@@ -205,13 +294,20 @@
 <div class="newentry-box">
 
   <div>
-    <textarea class="newentry-text"
-              placeholder="New Entry..."
-              bind:value={text}></textarea>
+    {#if newImages.length <= 0}
+      <textarea class="newentry-text"
+                placeholder="New Entry..."
+                bind:value={text}></textarea>
+    {/if}
+    <LoadImages on:change={(e) => loadImages(e.detail)} />
   </div>
   {#if showAddElements}
-    <EditTypes selectedType={edit ? entry.type : 'task'}
-               on:change={(e) => setType(e.detail)} />
+    {#if type === 'image'}
+      Type: Image
+    {:else}
+      <EditTypes selectedType={edit ? entry.type : 'task'}
+                 on:change={(e) => setType(e.detail)} />
+    {/if}
     {#if type === 'link'}
       <input id="linktitle" name="linktitle" placeholder="Link title..."
              bind:value={linkTitle}>
