@@ -37,7 +37,7 @@
       }
       const el = document.querySelector('.entrieslist');
       if (!el) return;
-      const newTriggerElement = el.children[el.children.length - 3];
+      const newTriggerElement = el.children[el.children.length - 2];
       if (newTriggerElement) {
         //console.log('add observer')
         newTriggerElement.classList.add('triggerelement')

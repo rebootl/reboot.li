@@ -101,6 +101,10 @@
   .entry-content {
     margin: 10px 0 20px 0;
   }
+  img {
+    max-width: 100%;
+    max-height: 90vh;
+  }
   .tagbox {
     display: flex;
     gap: 5px;
