@@ -4,7 +4,12 @@
 
   const dispatch = createEventDispatcher();
 
+  export let reset = [];
+
   let images = [];
+  let fileInputElement;
+
+  $: _reset(reset);
 
   async function loadImages(f) {
     const n = await Promise.all(Array.from(f)
@@ -40,12 +45,18 @@
     dispatch('change', images);
   }
 
+  function _reset() {
+    images = [];
+    if (fileInputElement) fileInputElement.value = "";
+  }
+
 </script>
 
 <input on:change={ (e) => loadImages(e.target.files) }
-   type="file"
-   accept="image/*"
-   multiple>
+       bind:this={fileInputElement}
+       type="file"
+       accept="image/*"
+       multiple>
 <div class="images">
   {#each images as i}
     <div class="image">

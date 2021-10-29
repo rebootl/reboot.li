@@ -28,6 +28,7 @@
   let linkTitle = '';
   let images = [];
   let newImages = [];
+  let resetLoadImages = [];
 
   let loadTopics = [];
   let loadTags = [];
@@ -287,6 +288,10 @@
     pinned = false;
     linkComment = '';
     linkTitle = '';
+    images = [];
+    newImages = [];
+    showAddElements = false;
+    resetLoadImages = [];
   }
 
 </script>
@@ -299,7 +304,8 @@
                 placeholder="New Entry..."
                 bind:value={text}></textarea>
     {/if}
-    <LoadImages on:change={(e) => loadImages(e.detail)} />
+    <LoadImages on:change={(e) => loadImages(e.detail)}
+                reset={resetLoadImages} />
   </div>
   {#if showAddElements}
     {#if type === 'image'}
