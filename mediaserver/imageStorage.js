@@ -16,7 +16,7 @@ export function storeImage(i, username) {
                 rej(err);
             res({
                 originalname: i.name,
-                path: imagepath.replace(STATICDIR, ''),
+                path: '/' + imagepath.replace(STATICDIR, ''),
                 size: i.size
             });
         });
