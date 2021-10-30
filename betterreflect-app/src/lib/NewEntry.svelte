@@ -160,7 +160,14 @@
       entry.text = text;
     } else if (type === 'image') {
       // -> upload new images
-      //d.images = [ ...images, ...newImages ];
+      if (newImages.length > 0) {
+        const res = await uploadNewImages();
+        if (!res) {
+          console.log('error at uploading images');
+          return;
+        }
+      }
+      entry.images = [ ...entry.images, ...newImages ];
     }
     if (entry.type === 'link') {
       entry.comment = linkComment;
@@ -181,6 +188,17 @@
     if (!confirm("Do u really want to delete this entry?"));
       return;
 
+    if (type === 'image') {
+      for (const i of entry.images) {
+        const r = await sendRequest('POST', 'http://localhost:3005/api/deleteImage',
+          { filepath: i.filepath });
+        if (!r.success) {
+          console.log('error deleting image');
+          return;
+        }
+      }
+    }
+
     const r = await sendRequest('DELETE', `/entries/${$session.user}.json`, entry);
     if (!r.success) {
       console.log('error deleting entry');
@@ -193,15 +211,36 @@
   }
 
   function loadNewImages(images) {
-    if (images.length > 0) {
+    if (images.length > 0 || edit) {
       newImages = images;
       type = 'image';
       showAddElements = true;
     } else {
-      newImages = images;
-      type = 'task';
-      showAddElements = false;
+      reset();
     }
+  }
+
+  async function deleteImage(image) {
+    if (!confirm("Do u really want to delete this image?"));
+      return;
+    console.log('deleting image');
+
+    const r = await sendRequest('POST', 'http://localhost:3005/api/deleteImage',
+      { filepath: image.filepath });
+    if (!r.success) {
+      console.log('error deleting image');
+      return;
+    }
+    entry.images = entry.images.filter(i => i.filepath !== image.filepath);
+
+    // update image array on server
+    const s = await sendRequest('PUT', `/entries/${$session.user}.json`, entry);
+    if (!s.success) {
+      console.log('error updating entry');
+      return;
+    }
+
+    console.log('sucess!');
   }
 
   function reset() {
@@ -226,7 +265,7 @@
 <div class="newentry-box">
 
   <div>
-    {#if newImages.length <= 0}
+    {#if type !== 'image'}
       <textarea class="newentry-text"
                 placeholder="New Entry..."
                 bind:value={text}></textarea>
@@ -239,8 +278,11 @@
       Type: Image
       {#if entry.images}
         {#each entry.images as image}
-          <img src={image.filepath} />
-          <div class="imagecomment"><small>{image.comment}</small></div>
+          <img class="editimage" src={image.filepath} />
+          <input class="imagecomment" bind:value={image.comment}
+                 placeholder="Comment...">
+          <button on:click={e => deleteImage(image)}
+                  class="deletebutton">Delete</button>
         {/each}
       {/if}
     {:else}
@@ -302,6 +344,10 @@
   .editbuttons {
     display: flex;
     justify-content: space-between;
+  }
+  .editimage {
+    max-width: 100px;
+    max-height: 100px;
   }
   .cancelbutton {
     margin-left: 10px;

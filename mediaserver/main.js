@@ -3,16 +3,17 @@ import compression from 'compression';
 import fileupload from 'express-fileupload';
 import cookie from 'cookie';
 import cors from 'cors';
+import path from 'path';
 
 import getDb from './db.js';
-import { storeImage } from './imageStorage.js';
+import { storeImage, deleteImage } from './imageStorage.js';
 
 import * as config from './config.js';
 
 const app = express();
 
 app.use(cors({
-  origin: function(origin, callback){callback(null, true)},
+  origin: function(origin, callback) { callback(null, true) },
   credentials: true
 }));
 app.use(express.json({limit: '10mb'}));
@@ -65,10 +66,32 @@ app.post('/api/uploadImages', async (req, res) => {
   } else {
       files.push(await storeImage(filedata, l.user));
   }
-  console.log(files)
+  //console.log(files)
   res.send({
       success: true,
       files: files
+  });
+});
+
+app.post('/api/deleteImage', async (req, res) => {
+  // check cookie
+  const l = await checkLogin(req, app.locals.db);
+  if (!l.loggedIn)
+    return res.sendStatus(403);
+
+  const fp = req.body.filepath;
+  const userdir = fp.split('/')[2];
+  if (userdir !== l.user)
+    return res.sendStatus(403);
+
+  const r = await deleteImage(fp);
+  if (!r)
+    return res.send({
+      success: false,
+    });
+
+  res.send({
+    success: true,
   });
 });
 
