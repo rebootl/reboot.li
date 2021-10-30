@@ -195,6 +195,8 @@
     entry.type = type;
     entry.private = _private;
     entry.pinned = pinned;
+    entry.topics = newTopics;
+    entry.tags = newTags;
     if ([ 'task', 'article', 'link' ].includes(entry.type)) {
       entry.text = text;
     } else if (entry.type === 'link') {
@@ -284,6 +286,8 @@
     type = 'task';
     newTopics = [];
     newTags = [];
+    loadTopics = [];
+    loadTags = [];
     _private = false;
     pinned = false;
     linkComment = '';
