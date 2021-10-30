@@ -5,6 +5,7 @@
   import LoadImages from './LoadImages.svelte';
   import { compressImage, encodeData, uploadMultiImagesGenerator }
     from '$lib/images';
+  import { sendRequest } from '$lib/request'
   import { session } from '$app/stores';
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
@@ -72,8 +73,9 @@
   }
 
   async function uploadNewImages() {
+    // (this is here for eventual progress indicator, not used yet)
+    // (and also handling upload result)
     let uploadResult = {};
-    console.log(newImages)
     for await (const r of uploadMultiImagesGenerator(newImages)) {
       // update progress
       uploadResult = r;
@@ -90,48 +92,12 @@
     return true;
   }
 
-  async function sendRequest(type, data) {
-    let r;
-    try {
-      const res = await fetch(`/entries/${$session.user}.json`, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        r = await res.json();
-        return r;
-      } else {
-        const { message } = await res.json();
-        new Error(message);
-      }
-    } catch(error) {
-      console.error(error);
-      return {
-        success: false,
-        result: error
-      }
-    }
-  }
-
   async function create() {
     if (newTopics.length < 1) {
       console.log('at least one topic must be selected')
       return;
     }
     console.log('create!')
-
-    // upload new images
-    if (newImages.length > 0) {
-      const res = await uploadNewImages();
-      if (!res) {
-        console.log('error at uploading images')
-        return;
-      }
-    }
 
     const entry = {
       id: type + '-' + Date.now().toString(36) +
@@ -147,33 +113,26 @@
 
     if ([ 'task', 'article', 'link' ].includes(entry.type)) {
       entry.text = text;
-    } else if (entry.type === 'link') {
-      entry.comment = linkComment;
-      entry.title = linkTitle;
     } else if (type === 'image') {
+      // upload new images
+      if (newImages.length > 0) {
+        const res = await uploadNewImages();
+        if (!res) {
+          console.log('error at uploading images');
+          return;
+        }
+      } else {
+        console.log('no images for upload selected');
+        return;
+      }
       entry.images = newImages;
     }
-
-    //const r = await sendRequest('POST', entry);
-    let r;
-    try {
-      const res = await fetch(`/entries/${$session.user}.json`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(entry)
-      });
-      if (res.ok) {
-        r = await res.json();
-      } else {
-        const { message } = await res.json();
-        new Error(message);
-      }
-    } catch(error) {
-      console.error(error);
+    if (entry.type === 'link') {
+      entry.comment = linkComment;
+      entry.title = linkTitle;
     }
+
+    const r = await sendRequest('POST', `/entries/${$session.user}.json`, entry);
     if (!r.success) {
       console.log('error creating entry');
       return;
@@ -199,32 +158,15 @@
     entry.tags = newTags;
     if ([ 'task', 'article', 'link' ].includes(entry.type)) {
       entry.text = text;
-    } else if (entry.type === 'link') {
-      entry.comment = linkComment;
-      entry.title = linkTitle;
     } else if (type === 'image') {
+      // -> upload new images
       //d.images = [ ...images, ...newImages ];
     }
-
-    let r;
-    try {
-      const res = await fetch(`/entries/${$session.user}.json`, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(entry)
-      });
-      if (res.ok) {
-        r = await res.json();
-      } else {
-        const { message } = await res.json();
-        new Error(message);
-      }
-    } catch(error) {
-      console.error(error);
+    if (entry.type === 'link') {
+      entry.comment = linkComment;
+      entry.title = linkTitle;
     }
+    const r = await sendRequest('PUT', `/entries/${$session.user}.json`, entry);
     if (!r.success) {
       console.log('error updating entry');
       return;
@@ -239,26 +181,7 @@
     if (!confirm("Do u really want to delete this entry?"));
       return;
 
-    let r;
-    try {
-      const res = await fetch(`/entries/${$session.user}.json`, {
-        method: 'DELETE',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(entry)
-      });
-      if (res.ok) {
-        console.log(res)
-        r = await res.json();
-      } else {
-        const { message } = await res.json();
-        new Error(message);
-      }
-    } catch(error) {
-      console.error(error);
-    }
+    const r = await sendRequest('DELETE', `/entries/${$session.user}.json`, entry);
     if (!r.success) {
       console.log('error deleting entry');
       return;
@@ -269,7 +192,7 @@
     goto(`/entries/${$session.user}`);
   }
 
-  function loadImages(images) {
+  function loadNewImages(images) {
     if (images.length > 0) {
       newImages = images;
       type = 'image';
@@ -308,12 +231,18 @@
                 placeholder="New Entry..."
                 bind:value={text}></textarea>
     {/if}
-    <LoadImages on:change={(e) => loadImages(e.detail)}
+    <LoadImages on:change={(e) => loadNewImages(e.detail)}
                 reset={resetLoadImages} />
   </div>
   {#if showAddElements}
     {#if type === 'image'}
       Type: Image
+      {#if entry.images}
+        {#each entry.images as image}
+          <img src={image.filepath} />
+          <div class="imagecomment"><small>{image.comment}</small></div>
+        {/each}
+      {/if}
     {:else}
       <EditTypes selectedType={edit ? entry.type : 'task'}
                  on:change={(e) => setType(e.detail)} />
