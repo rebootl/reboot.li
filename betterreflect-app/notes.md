@@ -4,9 +4,8 @@
 
 ### Features
 
-* create new entry (comp. and endpoint)
-* edit entry (comp. and endpoint)
-* images (incl. access control)
+* redesign
+* check cors (image server)
 * mobile view (menu etc.)
 * ..
 
@@ -19,6 +18,9 @@
 
 ### Done/Fixed
 
+* images (incl. access control) => no access contr.
+* edit entry (comp. and endpoint)
+* create new entry (comp. and endpoint)
 * single-entry display => DONE
 * sort (optional pinned on top) => DONE
 * show / hide private entries => DONE
