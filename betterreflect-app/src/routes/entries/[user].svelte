@@ -1,5 +1,4 @@
 <script context="module">
-
   export async function load({ page, fetch, session, context }) {
 
     const user = page.params.user;
@@ -26,7 +25,6 @@
   		error: new Error(`Could not load ${url}`)
   	};
   }
-
 </script>
 
 <script>

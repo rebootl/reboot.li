@@ -19,7 +19,7 @@
     align-items: center;
     padding: 5px 10px 5px 10px;
     height: 35px;
-    border-bottom: 1px solid var(--side-line-color);
+    border: 1px solid var(--side-line-color);
   }
   .edit {
     border: 1px solid var(--side-line-color);
