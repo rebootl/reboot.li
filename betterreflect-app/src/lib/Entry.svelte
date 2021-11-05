@@ -86,6 +86,7 @@
   .entry {
     border-bottom: 1px solid var(--main-line-color);
     padding: 10px 0 10px 0;
+    min-height: 120px; /* set for inf. scroll loading calc. */
   }
   .entry-header {
     display: flex;

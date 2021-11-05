@@ -1,67 +1,60 @@
 <script>
-  import { onMount } from "svelte";
-  import Entry from './Entry.svelte';
+	import Entry from '$lib/Entry.svelte';
+  import { onMount } from 'svelte';
 
-  export let entries = [];
+	export let entries = [];
+  export let showSideNav = true;
 
-  let limit = 5;
-  let limitedEntries = entries.slice(0, limit);
+  let limit = 0;
+  let limitedEntries = [];
+  let i = false;
 
-  $: update(entries);
+  $: reload(entries);
 
-  function update() {
+  function reload() {
+    if (!i) return;
+    //console.log('reload!')
+    const h = document.documentElement.scrollHeight;
+    const n = parseInt(h / 120); // 120 = min. entry height
+    limit = n;
     limitedEntries = entries.slice(0, limit);
   }
 
-  function addItems(e) {
-    //console.log('addItems')
-    if (e[e.length - 1].intersectionRatio <= 0) return;
-		limitedEntries = entries.slice(0, limitedEntries.length + limit);
+  function init() {
+    i = true;
+    reload();
+
+    window.addEventListener('scroll',() => {
+      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+      if (scrollTop + clientHeight > scrollHeight - 25) {
+        //console.log('load more!')
+        limit += 5;
+        limitedEntries = entries.slice(0, limit);
+    	}
+    });
   }
 
-  function initInfiniteScroll() {
-    const bottomObserver = new IntersectionObserver(
-      (e) => { addItems(e) },
-      { threshold: 0.5 }
-    );
-
-    const liMutationObserver = new MutationObserver(
-      (m, o) => updateObserver(m, o)
-    );
-
-    function updateObserver(m, o) {
-      const triggerElement = document.querySelector('.triggerelement');
-      if (triggerElement) {
-        triggerElement.classList.remove('triggerelement');
-        bottomObserver.unobserve(triggerElement);
-      }
-      const el = document.querySelector('.entrieslist');
-      if (!el) return;
-      const newTriggerElement = el.children[el.children.length - 2];
-      if (newTriggerElement) {
-        //console.log('add observer')
-        newTriggerElement.classList.add('triggerelement')
-        bottomObserver.observe(newTriggerElement);
-      }
-    }
-
-    const li = document.querySelector('.entrieslist');
-    liMutationObserver.observe(li, { childList: true });
-    updateObserver([], [])
-  }
-
-  onMount(async () => {
-    initInfiniteScroll();
+	onMount(async () => {
+		init();
 	});
 </script>
 
-<div class="entrieslist">
-  {#each limitedEntries as entry}
-    <div class="entry">
-      <Entry {entry} />
-    </div>
-  {/each}
-</div>
+<main class:margin-left={showSideNav} >
+	{#each limitedEntries as entry}
+		<Entry {entry} />
+	{/each}
+</main>
 
 <style>
+	main {
+    display: flex;
+    flex-flow: column;
+		/*min-height: calc(100vh - var(--header-height));*/
+    padding: 0 20px 30px 20px;
+    overflow: hidden;
+    max-width: var(--max-main-width);
+  }
+  .margin-left {
+    margin-left: var(--side-width);
+  }
 </style>
