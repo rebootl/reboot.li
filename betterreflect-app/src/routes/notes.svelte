@@ -27,7 +27,9 @@
 	export let entries = [];
   export let showSideNav = true;
 
-  let filteredEntries = entries;
+  let filteredEntries = [];
+
+  $: filterEntries([[], []], entries);
 
   function filterEntries(v) {
     filteredEntries = getFilteredEntries(entries, v);
