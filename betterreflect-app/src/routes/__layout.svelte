@@ -26,11 +26,12 @@
 
     <div class="right-box">
       <div class="header-links">
-        <a href="/" class:active={'/' === $page.path}>About</a>
+        <a href="/" class:active={'/' === $page.path}>Home</a>
         <a href="/tasks" class:active={'/tasks' === $page.path}>Tasks</a>
         <a href="/notes" class:active={'/notes' === $page.path}>Notes</a>
         <a href="/links" class:active={'/links' === $page.path}>Links</a>
         <a href="/images" class:active={'/images' === $page.path}>Images</a>
+				<a href="/about" class:active={'/about' === $page.path}>About</a>
       </div>
       <div class="icon-button" on:click={() => showLogin = !showLogin}>
         <span class="material-icons">account_circle</span>

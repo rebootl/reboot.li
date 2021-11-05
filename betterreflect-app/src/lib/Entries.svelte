@@ -57,4 +57,10 @@
   .margin-left {
     margin-left: var(--side-width);
   }
+	@media all and (min-width: 1000px) { /* 1000px = side width + max. main width */
+		.margin-left {
+			margin-left: auto;
+	    margin-right: auto;
+	  }
+	}
 </style>

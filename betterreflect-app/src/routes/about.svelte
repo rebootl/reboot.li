@@ -1,0 +1,16 @@
+<script>
+</script>
+
+<main>
+	<h1>About</h1>
+
+	This is a personal website.
+</main>
+
+<style>
+	main {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: var(--max-main-width);
+	}
+</style>

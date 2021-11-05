@@ -8,7 +8,9 @@ export async function get(request) {
 
   const c = await db.collection('entries');
 
-  const q = { user: user, type: type };
+  const q = { user: user };
+  if (allowedTypes.includes(type))
+    q.type = type;
   if (!request.locals.loggedIn || !request.locals?.user === user)
     q.private = false;
 

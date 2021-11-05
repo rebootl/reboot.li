@@ -22,7 +22,7 @@
 <script>
 	import SideNav from '$lib/SideNav.svelte';
 	import Entries from '$lib/Entries.svelte';
-  import { getFilteredEntries } from '$lib/filter';
+  import { getFilteredEntries } from '$lib/filterSort.ts';
 
 	export let entries = [];
   export let showSideNav = true;

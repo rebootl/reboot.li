@@ -1,7 +1,7 @@
 <script context="module">
   export async function load({ page, fetch, session, context }) {
 
-  	const url = '/entries/task.json';
+  	const url = '/entries/article.json';
 
   	const res = await fetch(url);
   	if (res.ok) {
