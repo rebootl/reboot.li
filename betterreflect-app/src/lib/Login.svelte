@@ -5,8 +5,6 @@
   let password = '';
 
   let loggedIn = $session.loggedIn;
-  //console.log(session)
-  //console.log(loggedIn)
 
   async function login() {
     try {
@@ -18,11 +16,11 @@
         })
       });
 			if (res.ok) {
-        // -> what to do
         console.log('login successful')
         username = '';
         password = '';
         loggedIn = true;
+        window.location.reload();
 				return;
 			}
 			const { message } = await res.json();
@@ -39,7 +37,9 @@
       });
 			if (res.ok) {
         console.log('logout successful')
+        // reload page
         loggedIn = false;
+        window.location.reload();
 				return;
 			}
 			const { message } = await res.json();
@@ -72,7 +72,6 @@
     flex-direction: column;
     padding: 0 20px 20px 25px;
     background-color: var(--dialog-background-color);
-    /*border: 1px solid var(--primary-color);*/
     border-radius: 5px;
   }
   input {

@@ -164,7 +164,7 @@
   .login-box {
     display: none;
     position: absolute;
-    top: 55px;
+    top: calc(var(--header-height) + 5px);
     right: 10px;
   }
   .login-box.show {
