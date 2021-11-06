@@ -2,10 +2,10 @@
   export async function load({ page, fetch, session, context }) {
 
     const entryId = page.params.entryId;
-  	const url = `/entries/${entryId}.json`;
+  	const url = `/entry/${entryId}.json`;
     const edit = page.query.has('edit');
 
-		console.log('load task entry:')
+		console.log('load entry:')
     console.log(entryId)
 
   	const res = await fetch(url);
@@ -26,25 +26,40 @@
 </script>
 
 <script>
+  import SideNav from '$lib/SideNav.svelte';
+  import Entry from '$lib/Entry.svelte';
+
+  export let entry = {};
+  export let edit = false;
+
+  let showSideNav = true;
 
 </script>
 
-<div class="wrapper">
-	<aside>
-		<!--<SideNav />-->
-		test
-	</aside>
-
-	<main>
-		<h1>tasks</h1>
-	</main>
-</div>
+<SideNav entries={[]} hidden={showSideNav} backbutton={true} ref={entry.type} />
+<main class:margin-left={showSideNav} >
+  <Entry {entry} />
+</main>
 
 <style>
-	.wrapper {
-		display: flex;
-	}
-	aside {
-		width: var(--side-width);
-	}
+  main {
+    display: flex;
+    flex-flow: column;
+    /*min-height: calc(100vh - var(--header-height));*/
+    padding: 0 20px 30px 20px;
+    overflow: hidden;
+    max-width: var(--max-main-width);
+  }
+  .margin-left {
+    margin-left: var(--side-width);
+  }
+  @media all and (min-width: 1000px) { /* 1000px = side width + max. main width */
+    .margin-left {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .info {
+    padding-top: 10px;
+  }
 </style>

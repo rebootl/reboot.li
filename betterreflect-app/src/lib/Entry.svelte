@@ -16,7 +16,7 @@
   function update() {
     date = moment(new Date(entry.date)).format(dateFormat);
 
-    url = '/entries/' + entry.user + '?entryId=' + entry.id;
+    url = '/entry/' + entry.id;
 
     if (entry.type === 'task' || entry.type === 'article')
       html = marked(entry.text);
@@ -44,7 +44,7 @@
     </small>
     <small>
       {#if $session.loggedIn}
-        <a href={url + '&edit'}>
+        <a href={url + '?edit'}>
           <span class="material-icons header-icon">edit</span>
         </a>
       {/if}

@@ -1,18 +1,54 @@
 <script>
-  import Topic from './Topic.svelte';
-  import Tag from './Tag.svelte';
+  import Topic from '$lib/Topic.svelte';
+  import Tag from '$lib/Tag.svelte';
+  import BackButton from '$lib/BackButton.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
   export let entries = [];
   export let hidden = false;
+  export let backbutton = false;
+  export let ref = '';
 
   let topics = [];
   let tags = [];
   let selectedTopics = [];
   let selectedTags = [];
   let tagsByTopics = {};
+
+  let refs = {
+    article: {
+      href: '/notes',
+      text: 'Notes',
+      icon: 'list'
+    },
+    note: {
+      href: '/notes',
+      text: 'Notes',
+      icon: 'list'
+    },
+    link: {
+      href: '/links',
+      text: 'Links',
+      icon: 'list'
+    },
+    task: {
+      href: '/tasks',
+      text: 'Tasks',
+      icon: 'list'
+    },
+    image: {
+      href: '/images',
+      text: 'Images',
+      icon: 'list'
+    },
+    home: {
+      href: '/',
+      text: 'Home',
+      icon: 'home'
+    },
+  }
 
   $: setTopicsTags(entries);
 
@@ -75,34 +111,41 @@
 </script>
 
 <aside class:hidden={hidden}>
-  <div class="items">
-    {#each topics as topic}
-      <Topic selected={selectedTopics.includes(topic)}
-             on:click={() => selectTopic(topic)}>
-        {topic}
-      </Topic>
-    {/each}
-  </div>
-  <div class="items">
-    {#each tags as tag}
-      <Tag selected={selectedTags.includes(tag)}
-             on:click={() => selectTag(tag)}>
-        {tag}
-      </Tag>
-    {/each}
+  {#if backbutton}
+    <BackButton href={refs[ref].href} icon={refs[ref].icon}>{refs[ref].text}</BackButton>
+  {/if}
+  <div class="padding">
+    <div class="items">
+      {#each topics as topic}
+        <Topic selected={selectedTopics.includes(topic)}
+               on:click={() => selectTopic(topic)}>
+          {topic}
+        </Topic>
+      {/each}
+    </div>
+    <div class="items">
+      {#each tags as tag}
+        <Tag selected={selectedTags.includes(tag)}
+               on:click={() => selectTag(tag)}>
+          {tag}
+        </Tag>
+      {/each}
+    </div>
   </div>
 </aside>
 
 <style>
   aside {
-    padding: 35px 15px 15px 15px;
     width: var(--side-width);
-    display: flex;
-    flex-flow: column;
-    gap: 35px;
     position: absolute;
     top: var(--header-height);
     left: 0;
+  }
+  .padding {
+    padding: 35px 15px 15px 15px;
+    display: flex;
+    flex-flow: column;
+    gap: 35px;
   }
   .items {
     display: flex;

@@ -8,6 +8,7 @@
   let limit = 0;
   let limitedEntries = [];
   let i = false;
+	let noEntries = false;
 
   $: reload(entries);
 
@@ -18,6 +19,7 @@
     const n = parseInt(h / 120); // 120 = min. entry height
     limit = n;
     limitedEntries = entries.slice(0, limit);
+		if (limitedEntries.length < 1) noEntries = true;
   }
 
   function init() {
@@ -40,9 +42,17 @@
 </script>
 
 <main class:margin-left={showSideNav} >
-	{#each limitedEntries as entry}
-		<Entry {entry} />
-	{/each}
+	{#if noEntries}
+		<small class="info">No entries found...</small>
+	{:else}
+		{#each limitedEntries as entry}
+			<Entry {entry} />
+		{:else}
+			<small class="info">
+				loading...
+			</small>
+		{/each}
+	{/if}
 </main>
 
 <style>
@@ -62,5 +72,8 @@
 			margin-left: auto;
 	    margin-right: auto;
 	  }
+	}
+	.info {
+		padding-top: 10px;
 	}
 </style>

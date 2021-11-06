@@ -29,6 +29,6 @@
     padding-left: 10px;
   }
   small {
-    text-decoration: underline;
+    /*text-decoration: underline;*/
   }
 </style>
