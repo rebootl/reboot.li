@@ -21,7 +21,7 @@
 
 <script>
 	import SideNav from '$lib/SideNav.svelte';
-	import Entries from '$lib/Entries.svelte';
+	import Main from '$lib/Main.svelte';
   import { getFilteredEntries } from '$lib/filterSort.ts';
 
 	export let entries = [];
@@ -38,7 +38,7 @@
 
 <SideNav {entries} hidden={showSideNav}
          on:change={e => filterEntries(e.detail)} />
-<Entries entries={filteredEntries} {showSideNav} />
+<Main entries={filteredEntries} {showSideNav} />
 
 <style>
 </style>

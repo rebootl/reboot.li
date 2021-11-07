@@ -5,13 +5,14 @@
   import LoadImages from './LoadImages.svelte';
   import { compressImage, encodeData, uploadMultiImagesGenerator }
     from '$lib/images';
-  import { sendRequest } from '$lib/request'
+  import { sendRequest } from '$lib/request';
   import { session } from '$app/stores';
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
 
   const dispatch = createEventDispatcher();
 
+  export let type = 'task';
   export let topics = [];
   export let tagsByTopics = {};
   export let edit = false;
@@ -20,7 +21,6 @@
   let showAddElements = true;
 
   let text = '';
-  let type = 'task';
   let newTopics = [];
   let newTags = [];
   let _private = false;

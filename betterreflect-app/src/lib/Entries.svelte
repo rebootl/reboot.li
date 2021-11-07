@@ -41,7 +41,7 @@
 	});
 </script>
 
-<main class:margin-left={showSideNav} >
+<div class="entries">
 	{#if noEntries}
 		<small class="info">No entries found...</small>
 	{:else}
@@ -53,27 +53,7 @@
 			</small>
 		{/each}
 	{/if}
-</main>
+</div>
 
 <style>
-	main {
-    display: flex;
-    flex-flow: column;
-		/*min-height: calc(100vh - var(--header-height));*/
-    padding: 0 20px 30px 20px;
-    overflow: hidden;
-    max-width: var(--max-main-width);
-  }
-  .margin-left {
-    margin-left: var(--side-width);
-  }
-	@media all and (min-width: 1000px) { /* 1000px = side width + max. main width */
-		.margin-left {
-			margin-left: auto;
-	    margin-right: auto;
-	  }
-	}
-	.info {
-		padding-top: 10px;
-	}
 </style>
