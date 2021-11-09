@@ -2,6 +2,7 @@
   import Topic from '$lib/Topic.svelte';
   import Tag from '$lib/Tag.svelte';
   import BackButton from '$lib/BackButton.svelte';
+  import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -67,6 +68,8 @@
       });
     });
     topics = topics.sort();
+    $currentTagsByTopics = tagsByTopics;
+    $currentTopics = topics;
     setTags();
   }
 
@@ -87,6 +90,7 @@
       });
     }
     tags = r.sort();
+    $currentTags = tags;
   }
 
   function selectTopic(topic) {

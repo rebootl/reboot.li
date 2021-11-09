@@ -4,6 +4,9 @@
 	import Entries from '$lib/Entries.svelte';
   import { getFilteredEntries } from '$lib/filterSort';
   import { session } from '$app/stores';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   export let type = '';
   export let showSideNav = true;
@@ -20,7 +23,7 @@
 
 <main class:margin-left={showSideNav}>
   {#if $session.loggedIn}
-    <NewEntry type={type} />
+    <NewEntry type={type} on:created={e => dispatch('created', e.detail)}/>
   {/if}
   <Entries entries={filteredEntries} {showSideNav} />
 </main>

@@ -7,7 +7,6 @@
 
   export let items = [];
   export let selected = [];
-
   export let selectedItems = [];
 
   let newItems = [];

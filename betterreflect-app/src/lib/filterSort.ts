@@ -1,5 +1,4 @@
-export function getFilteredEntries(entries, v) {
-  const [ selectedTopics, selectedTags ] = v;
+export function getFilteredEntries(entries, selectedTopics, selectedTags) {
   let f = entries;
   if (selectedTopics.length > 0) {
     f = f.filter(e => {

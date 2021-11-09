@@ -33,7 +33,6 @@
           if (!r.includes(tag)) r.push(tag);
         }
       ));
-      items = r.sort();
     } else {
       newTopics.forEach(topic => {
         if (!tagsByTopics.hasOwnProperty(topic)) return;
@@ -45,8 +44,8 @@
       selectedItems.forEach(e => {
         if (!r.includes(e)) r.push(e);
       });
-      items = r.sort();
     }
+    items = r.sort();
     dispatchChange();
   }
 

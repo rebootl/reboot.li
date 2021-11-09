@@ -28,17 +28,31 @@
   export let showSideNav = true;
 
   let filteredEntries = [];
+  let selectedTopics = [];
+  let selectedTags = [];
 
-  $: filterEntries([[], []], entries);
+  $: filterEntries(entries);
 
-  function filterEntries(v) {
-    filteredEntries = getFilteredEntries(entries, v);
+  function filterEntries() {
+    filteredEntries = getFilteredEntries(entries, selectedTopics, selectedTags);
+  }
+
+  function navChange(v) {
+    selectedTopics = v[0];
+    selectedTags = v[1];
+    filterEntries();
+  }
+
+  function created(e) {
+    entries.push(e);
+    entries = entries;
   }
 </script>
 
 <SideNav {entries} hidden={showSideNav}
-         on:change={e => filterEntries(e.detail)} />
-<Main entries={filteredEntries} {showSideNav} />
+         on:change={e => navChange(e.detail)} />
+<Main entries={filteredEntries} {showSideNav} type="task"
+      on:created={e => created(e.detail)} />
 
 <style>
 </style>

@@ -38,7 +38,7 @@
 
 <SideNav {entries} hidden={showSideNav}
          on:change={e => filterEntries(e.detail)} />
-<Main entries={filteredEntries} {showSideNav} />
+<Main entries={filteredEntries} {showSideNav} type="link" />
 
 <style>
 </style>
