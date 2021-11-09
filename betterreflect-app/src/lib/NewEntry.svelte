@@ -161,17 +161,6 @@
     {/if}
   </div>
     {#if showAddElements}
-      {#if type === 'image'}
-        {#if entry.images}
-          {#each entry.images as image}
-            <img class="editimage" src={image.filepath} />
-            <input class="imagecomment" bind:value={image.comment}
-                   placeholder="Comment...">
-            <button on:click={e => deleteImage(image)}
-                    class="deletebutton">Delete</button>
-          {/each}
-        {/if}
-      {/if}
       {#if type === 'link'}
         <input id="linktitle" name="linktitle" placeholder="Link title..."
                bind:value={linkTitle}>

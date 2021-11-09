@@ -51,7 +51,8 @@
 
 <SideNav {entries} hidden={showSideNav}
          on:change={e => navChange(e.detail)} />
-<Main entries={filteredEntries} {showSideNav} type="image" />
+<Main entries={filteredEntries} {showSideNav} type="image"
+      on:created={e => created(e.detail)} />
 
 <style>
 </style>
