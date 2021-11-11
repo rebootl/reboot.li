@@ -2,23 +2,23 @@
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
+  import { sendRequest } from '$lib/request';
+  import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
+  import { refs } from '$lib/refs';
+
   import { compressImage, encodeData, uploadMultiImagesGenerator }
     from '$lib/images';
-  import { sendRequest } from '$lib/request';
+
   import { session } from '$app/stores';
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
 
   const dispatch = createEventDispatcher();
 
-  export let type = 'task';
-  export let topics = [];
-  export let tagsByTopics = {};
-  export let edit = false;
   export let entry = {};
+  export let ref = '';
 
-  let showAddElements = true;
-
+  let type = '';
   let text = '';
   let newTopics = [];
   let newTags = [];
@@ -33,11 +33,9 @@
   let loadTopics = [];
   let loadTags = [];
 
-  $: textInput(text)
   $: loadEntry(entry);
 
   function loadEntry() {
-    if (!edit) return;
     if (!entry) return;
     type = entry.type;
     if (type === 'link') {
@@ -51,16 +49,6 @@
     newTags = entry.tags;
     _private = entry.private;
     pinned = entry.pinned;
-    showAddElements = true;
-  }
-
-  function textInput() {
-    if (text === '') showAddElements = false;
-    else showAddElements = true;
-  }
-
-  function setType(v) {
-    type = v;
   }
 
   function setNewTopics(v) {
@@ -89,57 +77,6 @@
       return i;
     });
     return true;
-  }
-
-  async function create() {
-    if (newTopics.length < 1) {
-      console.log('at least one topic must be selected')
-      return;
-    }
-    console.log('create!')
-
-    const entry = {
-      id: type + '-' + Date.now().toString(36) +
-                 Math.random().toString(36).substr(2, 5),
-      date: new Date(),
-      user: $session.user,
-      type: type,
-      topics: newTopics,
-      tags: newTags,
-      private: _private,
-      pinned: pinned,
-    }
-
-    if ([ 'task', 'article', 'link' ].includes(entry.type)) {
-      entry.text = text;
-    } else if (type === 'image') {
-      // upload new images
-      if (newImages.length > 0) {
-        const res = await uploadNewImages();
-        if (!res) {
-          console.log('error at uploading images');
-          return;
-        }
-      } else {
-        console.log('no images for upload selected');
-        return;
-      }
-      entry.images = newImages;
-    }
-    if (entry.type === 'link') {
-      entry.comment = linkComment;
-      entry.title = linkTitle;
-    }
-
-    const r = await sendRequest('POST', `/entries/${$session.user}.json`, entry);
-    if (!r.success) {
-      console.log('error creating entry');
-      return;
-    }
-
-    console.log('success!')
-    dispatch('created', entry);
-    reset();
   }
 
   async function update() {
@@ -172,7 +109,7 @@
       entry.comment = linkComment;
       entry.title = linkTitle;
     }
-    const r = await sendRequest('PUT', `/entries/${$session.user}.json`, entry);
+    const r = await sendRequest('PUT', `/entry/${entry.id}.json`, entry);
     if (!r.success) {
       console.log('error updating entry');
       return;
@@ -180,7 +117,7 @@
 
     console.log('success!')
     dispatch('updated', r);
-    goto(`/entries/${$session.user}`);
+    goto(refs[ref].href);
   }
 
   async function _delete() {
@@ -198,7 +135,7 @@
       }
     }
 
-    const r = await sendRequest('DELETE', `/entries/${$session.user}.json`, entry);
+    const r = await sendRequest('DELETE', `/entry/${entry.id}.json`, entry);
     if (!r.success) {
       console.log('error deleting entry');
       return;
@@ -206,17 +143,11 @@
 
     console.log('success!')
     dispatch('deleted', r);
-    goto(`/entries/${$session.user}`);
+    goto(refs[ref].href);
   }
 
-  function loadNewImages(images) {
-    if (images.length > 0 || edit) {
-      newImages = images;
-      type = 'image';
-      showAddElements = true;
-    } else {
-      reset();
-    }
+  function loadNewImages(v) {
+    newImages = v;
   }
 
   async function deleteImage(image) {
@@ -233,7 +164,7 @@
     entry.images = entry.images.filter(i => i.filepath !== image.filepath);
 
     // update image array on server
-    const s = await sendRequest('PUT', `/entries/${$session.user}.json`, entry);
+    const s = await sendRequest('PUT', `/entry/${entry.id}.json`, entry);
     if (!s.success) {
       console.log('error updating entry');
       return;
@@ -242,9 +173,9 @@
     console.log('sucess!');
   }
 
-  function reset() {
+  /*function reset() {
     text = '';
-    type = 'task';
+    type = '';
     newTopics = [];
     newTags = [];
     loadTopics = [];
@@ -255,9 +186,8 @@
     linkTitle = '';
     images = [];
     newImages = [];
-    showAddElements = false;
     resetLoadImages = [];
-  }
+  }*/
 
 </script>
 
@@ -272,54 +202,48 @@
                 bind:value={text}></textarea>
     {/if}
   </div>
-    {#if showAddElements}
-      {#if type === 'image'}
-        {#if entry.images}
-          {#each entry.images as image}
-            <img class="editimage" src={image.filepath} />
-            <input class="imagecomment" bind:value={image.comment}
-                   placeholder="Comment...">
-            <button on:click={e => deleteImage(image)}
-                    class="deletebutton">Delete</button>
-          {/each}
-        {/if}
+    {#if type === 'image'}
+      {#if entry.images}
+        {#each entry.images as image}
+          <img class="editimage" src={image.filepath} />
+          <input class="imagecomment" bind:value={image.comment}
+                 placeholder="Comment...">
+          <button on:click={e => deleteImage(image)}
+                  class="deletebutton">Delete</button>
+        {/each}
       {/if}
-      {#if type === 'link'}
-        <input id="linktitle" name="linktitle" placeholder="Link title..."
-               bind:value={linkTitle}>
-        <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
-               bind:value={linkComment}>
-      {/if}
-    <EditTopics items={topics} selectedItems={loadTopics}
-                on:change={(e) => setNewTopics(e.detail)} />
-    <EditTags {tagsByTopics} {newTopics} {loadTopics}
-              selectedItems={loadTags}
-              on:change={(e) => setNewTags(e.detail)} />
-    <div>
-      <input type="checkbox" id="private-checkbox" name="private"
-             bind:checked={_private}>
-      <label for="private-checkbox">Private</label>
-      <input type="checkbox" id="pinned-checkbox" name="pinned"
-             bind:checked={pinned}>
-      <label for="pinned-checkbox">Pinned</label>
+    {/if}
+    {#if type === 'link'}
+      <input id="linktitle" name="linktitle" placeholder="Link title..."
+             bind:value={linkTitle}>
+      <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
+             bind:value={linkComment}>
+    {/if}
+  <EditTopics items={$currentTopics} selectedItems={loadTopics}
+              on:change={(e) => setNewTopics(e.detail)} />
+  <EditTags tagsByTopics={$currentTagsByTopics} {newTopics} {loadTopics}
+            selectedItems={loadTags}
+            on:change={(e) => setNewTags(e.detail)} />
+  <div>
+    <input type="checkbox" id="private-checkbox" name="private"
+           bind:checked={_private}>
+    <label for="private-checkbox">Private</label>
+    <input type="checkbox" id="pinned-checkbox" name="pinned"
+           bind:checked={pinned}>
+    <label for="pinned-checkbox">Pinned</label>
+  </div>
+  <div>
+    <div class="editbuttons">
+      <div>
+        <button on:click={() => update()}>Update</button>
+        <a href={refs[ref].href} class="cancelbutton">
+          <small>Cancel</small></a>
+      </div>
+      <button on:click={() => _delete()} class="deletebutton">
+        Delete
+      </button>
     </div>
-    <div>
-      {#if edit}
-        <div class="editbuttons">
-          <div>
-            <button on:click={() => update()}>Update</button>
-            <a href={'/entries/' + $session.user} class="cancelbutton">
-              <small>Cancel</small></a>
-          </div>
-          <button on:click={() => _delete()} class="deletebutton">
-            Delete
-          </button>
-        </div>
-      {:else}
-        <button on:click={() => create()}>Create</button>
-      {/if}
-    </div>
-  {/if}
+  </div>
 </div>
 
 <style>

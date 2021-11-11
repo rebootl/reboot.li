@@ -1,7 +1,7 @@
 export async function get(request) {
 
   const db = request.locals.db;
-  console.log(request)
+
   const entryId = request.params.entryId;
   const user = 'rebootl';
 

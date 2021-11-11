@@ -36,10 +36,6 @@
     else showAddElements = true;
   }
 
-  function setType(v) {
-    type = v;
-  }
-
   function setNewTopics(v) {
     newTopics = v;
   }

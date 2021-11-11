@@ -3,6 +3,7 @@
   import Tag from '$lib/Tag.svelte';
   import BackButton from '$lib/BackButton.svelte';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
+  import { refs } from '$lib/refs';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -17,39 +18,6 @@
   let selectedTopics = [];
   let selectedTags = [];
   let tagsByTopics = {};
-
-  let refs = {
-    article: {
-      href: '/notes',
-      text: 'Notes',
-      icon: 'list'
-    },
-    note: {
-      href: '/notes',
-      text: 'Notes',
-      icon: 'list'
-    },
-    link: {
-      href: '/links',
-      text: 'Links',
-      icon: 'list'
-    },
-    task: {
-      href: '/tasks',
-      text: 'Tasks',
-      icon: 'list'
-    },
-    image: {
-      href: '/images',
-      text: 'Images',
-      icon: 'list'
-    },
-    home: {
-      href: '/',
-      text: 'Home',
-      icon: 'home'
-    },
-  }
 
   $: setTopicsTags(entries);
 
@@ -68,8 +36,10 @@
       });
     });
     topics = topics.sort();
-    $currentTagsByTopics = tagsByTopics;
-    $currentTopics = topics;
+    if (!backbutton) {
+      $currentTagsByTopics = tagsByTopics;
+      $currentTopics = topics;
+    }
     setTags();
   }
 
@@ -90,7 +60,9 @@
       });
     }
     tags = r.sort();
-    $currentTags = tags;
+    if (!backbutton) {
+      $currentTags = tags;
+    }
   }
 
   function selectTopic(topic) {
