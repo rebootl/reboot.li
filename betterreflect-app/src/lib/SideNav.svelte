@@ -89,13 +89,17 @@
     dispatch('change', [ selectedTopics, selectedTags ]);
   }
 
+  function click() {
+    if ($showMenu) $showMenu = false;
+  }
 </script>
 
 <div class="overlay" class:show={$showMenu}
      on:click={() => $showMenu = !$showMenu}></div>
 <aside class:show={$showMenu}>
   {#if backbutton}
-    <BackButton href={refs[ref].href} icon={refs[ref].icon}>{refs[ref].text}</BackButton>
+    <BackButton href={refs[ref].href} icon={refs[ref].icon}
+                on:click={() => click()}>{refs[ref].text}</BackButton>
   {/if}
   <div class="header-links">
     <HeaderLinks side={true} />

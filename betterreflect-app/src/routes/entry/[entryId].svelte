@@ -64,6 +64,11 @@
       margin-right: auto;
     }
   }
+  @media all and (max-width: 600px) { /* 1000px = side width + max. main width */
+    .margin-left {
+      margin-left: initial;
+    }
+  }
   .info {
     padding-top: 10px;
   }

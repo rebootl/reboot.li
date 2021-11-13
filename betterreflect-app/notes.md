@@ -5,6 +5,7 @@
 ### Features
 
 * redesign
+  * restructure main maybe
 * check cors (image server)
 * mobile view (menu etc.)
 * ..
