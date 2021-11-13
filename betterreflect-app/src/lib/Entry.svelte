@@ -21,7 +21,6 @@
     if (entry.type === 'task' || entry.type === 'article')
       html = marked(entry.text);
   }
-
 </script>
 
 <div class="entry">
@@ -108,6 +107,7 @@
   }
   .tagbox {
     display: flex;
+    flex-wrap: wrap;
     gap: 5px;
   }
   .label {
