@@ -1,15 +1,18 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+  import { currentTopics, currentTags, currentTagsByTopics, showMenu }
+    from '$lib/store';
+  import { refs } from '$lib/refs';
+
   import Topic from '$lib/Topic.svelte';
   import Tag from '$lib/Tag.svelte';
   import BackButton from '$lib/BackButton.svelte';
-  import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
-  import { refs } from '$lib/refs';
-  import { createEventDispatcher } from 'svelte';
+  import HeaderLinks from '$lib/HeaderLinks.svelte';
 
   const dispatch = createEventDispatcher();
 
   export let entries = [];
-  export let hidden = false;
+  /*export let hidden = false;*/
   export let backbutton = false;
   export let ref = '';
 
@@ -86,10 +89,15 @@
 
 </script>
 
-<aside class:hidden={hidden}>
+<div class="overlay" class:show={$showMenu}
+     on:click={() => $showMenu = !$showMenu}></div>
+<aside class:show={$showMenu}>
   {#if backbutton}
     <BackButton href={refs[ref].href} icon={refs[ref].icon}>{refs[ref].text}</BackButton>
   {/if}
+  <div class="header-links">
+    <HeaderLinks side={true}/>
+  </div>
   <div class="padding">
     <div class="items">
       {#each topics as topic}
@@ -116,6 +124,7 @@
     position: absolute;
     top: var(--header-height);
     left: 0;
+    background-color: var(--background-color);
   }
   .padding {
     padding: 35px 15px 15px 15px;
@@ -130,7 +139,44 @@
     align-items: flex-start;
     gap: 10px;
   }
-  .hidden {
-    left: -var(--side-width);
+  .overlay {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
   }
+  .header-links {
+    display: none;
+    padding: 15px;
+    border-bottom: 1px solid var(--side-line-color);
+  }
+  @media all and (max-width: 600px) { /* 1000px = side width + max. main width */
+    aside {
+      position: fixed;
+      left: calc(-1 * 80vw);
+      overflow: scroll;
+      height: calc(100vh - var(--header-height));
+      width: 80vw;
+    }
+    .show {
+      left: 0;
+    }
+    .overlay.show {
+      display: initial;
+    }
+    .header-links {
+      display: flex;
+      justify-content: center;
+    }
+    .padding {
+      padding-top: 15px;
+      gap: 15px;
+    }
+  }
+  /*.hidden {
+    left: -var(--side-width);
+  }*/
 </style>

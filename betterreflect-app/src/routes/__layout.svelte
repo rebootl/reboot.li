@@ -3,36 +3,29 @@
 </svelte:head>
 
 <script>
+	import { showMenu } from '$lib/store';
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
 
   import Login from '$lib/Login.svelte';
+	import HeaderLinks from '$lib/HeaderLinks.svelte';
 
-  let showLogin = false;
+	let showLogin = false;
 
 </script>
 
 <div class="wrapper">
-  <header>
-    <!--<div class="icon-button">
-      <a href="/" title="Home">
-        <span class="material-icons">home</span>
-      </a>
-    </div>-->
-    <!--<div class="icon-button"></div>-->
+  <header class:fixed={$showMenu}>
+    <div class="icon-button menu-button" on:click={() => $showMenu = !$showMenu}>
+			<span class="material-icons">menu</span>
+    </div>
     <div class="logo-box">
       <img class="logo" alt="Logo" src="/static/betterreflect-app-logo.png" />
     </div>
 
     <div class="right-box">
-      <div class="header-links">
-        <a href="/" class:active={'/' === $page.path}>Home</a>
-        <a href="/tasks" class:active={'/tasks' === $page.path}>Tasks</a>
-        <a href="/notes" class:active={'/notes' === $page.path}>Notes</a>
-        <a href="/links" class:active={'/links' === $page.path}>Links</a>
-        <a href="/images" class:active={'/images' === $page.path}>Images</a>
-				<a href="/about" class:active={'/about' === $page.path}>About</a>
-      </div>
+			<div class="header-links">
+      	<HeaderLinks />
+			</div>
       <div class="icon-button" on:click={() => showLogin = !showLogin}>
         <span class="material-icons">account_circle</span>
       </div>
@@ -140,17 +133,6 @@
   .right-box {
     display: flex;
   }
-  .header-links {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .header-links a {
-    text-decoration: none;
-  }
-  .header-links a.active {
-    text-decoration: underline;
-  }
   .icon-button {
     display: flex;
     justify-content: center;
@@ -170,4 +152,24 @@
   .login-box.show {
     display: flex;
   }
+	.menu-button {
+		display: none;
+	}
+	.header-links {
+		display: flex;
+	}
+	@media all and (max-width: 600px) { /* 1000px = side width + max. main width */
+		header.fixed {
+		 	position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+	 	}
+		.menu-button {
+			display: flex;
+		}
+		.header-links {
+			display: none;
+		}
+	}
 </style>

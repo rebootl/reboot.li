@@ -49,8 +49,7 @@
   }
 </script>
 
-<SideNav {entries} hidden={showSideNav}
-         on:change={e => navChange(e.detail)} />
+<SideNav {entries} on:change={e => navChange(e.detail)} />
 <Main entries={filteredEntries} {showSideNav} type="link"
       on:created={e => created(e.detail)} />
 
