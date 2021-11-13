@@ -75,6 +75,7 @@
       selectedTopics = [ topic ];
     }
     setTags();
+    if ($showMenu) $showMenu = false;
     dispatch('change', [ selectedTopics, selectedTags ]);
   }
 
@@ -84,6 +85,7 @@
     } else {
       selectedTags = [ tag ];
     }
+    if ($showMenu) $showMenu = false;
     dispatch('change', [ selectedTopics, selectedTags ]);
   }
 
@@ -96,7 +98,7 @@
     <BackButton href={refs[ref].href} icon={refs[ref].icon}>{refs[ref].text}</BackButton>
   {/if}
   <div class="header-links">
-    <HeaderLinks side={true}/>
+    <HeaderLinks side={true} />
   </div>
   <div class="padding">
     <div class="items">
