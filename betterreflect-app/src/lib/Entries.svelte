@@ -3,7 +3,6 @@
   import { onMount } from 'svelte';
 
 	export let entries = [];
-  export let showSideNav = true;
 
   let limit = 0;
   let limitedEntries = [];

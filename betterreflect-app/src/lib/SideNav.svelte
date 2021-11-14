@@ -12,7 +12,7 @@
   const dispatch = createEventDispatcher();
 
   export let entries = [];
-  /*export let hidden = false;*/
+  export let showOnWide = true;
   export let backbutton = false;
   export let ref = '';
 
@@ -96,7 +96,7 @@
 
 <div class="overlay" class:show={$showMenu}
      on:click={() => $showMenu = !$showMenu}></div>
-<aside class:show={$showMenu}>
+<aside class:show={$showMenu} class:hidden={!showOnWide}>
   {#if backbutton}
     <BackButton href={refs[ref].href} icon={refs[ref].icon}
                 on:click={() => click()}>{refs[ref].text}</BackButton>
@@ -132,6 +132,14 @@
     left: 0;
     background-color: var(--background-color);
   }
+  aside.hidden {
+		display: none;
+	}
+	@media all and (max-width: 600px) { /* 1000px = side width + max. main width */
+		aside.hidden {
+			display: initial;
+		}
+	}
   .padding {
     padding: 35px 15px 15px 15px;
     display: flex;

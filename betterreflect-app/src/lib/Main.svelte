@@ -12,13 +12,13 @@
   const dispatch = createEventDispatcher();
 
   export let type = '';
-  export let showSideNav = true;
+  export let showSideNavOnWide = true;
 	export let entries = [];
   export let entry = {};
 
 </script>
 
-<main class:margin-left={showSideNav}>
+<main class:margin-left={showSideNavOnWide}>
   {#if type === 'home'}
     <Home />
   {:else if type === 'about'}
@@ -31,7 +31,7 @@
     {#if $session.loggedIn}
       <NewEntry type={type} on:created={e => dispatch('created', e.detail)}/>
     {/if}
-    <Entries entries={entries} {showSideNav} />
+    <Entries entries={entries} />
   {/if}
 </main>
 

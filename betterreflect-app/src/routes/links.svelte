@@ -25,7 +25,6 @@
   import { getFilteredEntries } from '$lib/filterSort.ts';
 
 	export let entries = [];
-  export let showSideNav = true;
 
   let filteredEntries = [];
   let selectedTopics = [];
@@ -50,7 +49,7 @@
 </script>
 
 <SideNav {entries} on:change={e => navChange(e.detail)} />
-<Main entries={filteredEntries} {showSideNav} type="link"
+<Main entries={filteredEntries} type="link"
       on:created={e => created(e.detail)} />
 
 <style>
