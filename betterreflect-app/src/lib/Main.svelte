@@ -22,12 +22,9 @@
 
 <style>
   main {
-    display: flex;
-    flex-flow: column;
-    /*min-height: calc(100vh - var(--header-height));*/
-    padding: 0 20px 30px 20px;
-    overflow: hidden;
+    box-sizing: border-box;
     max-width: var(--max-main-width);
+    padding: 0 20px 30px 20px;
   }
   .margin-left {
     margin-left: var(--side-width);
