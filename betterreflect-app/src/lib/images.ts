@@ -30,7 +30,8 @@ export const encodeData = (file) => {
 // upload w/ progress
 export async function *uploadMultiImagesGenerator(images) {
   const files = await Promise.all(images.map(async (i) => {
-    const blob = await compressImage(i.file, 1920, 1920);
+    const maxSize = parseInt(i.maxSize) || 1024;
+    const blob = await compressImage(i.file, maxSize, maxSize);
     return new File([blob], i.filename);
   }));
   for await (const r of uploadMultiFilesGenerator(`http://localhost:3005/api/uploadImages`, files)) {

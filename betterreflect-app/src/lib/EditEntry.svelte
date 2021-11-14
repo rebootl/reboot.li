@@ -74,6 +74,7 @@
       const r = uploadResult.result.files.find(e => e.originalname === i.filename);
       i.filepath = r.path;
       delete i.file;
+      delete i.maxSize;
       return i;
     });
     return true;

@@ -62,6 +62,9 @@
     <div class="image">
       <img src={i.previewData} />
       <button on:click={unloadImage(i.filename)}>Unload</button>
+      <input bind:value={i.maxSize}
+             title="Default: 1024px, larger images will be scaled to this size"
+             placeholder="Max. image size..." />
       <input value={i.comment} placeholder="Add comment..."
              on:input={(e) => setComment(e.target.value, i.filename)} />
     </div>
