@@ -118,7 +118,6 @@
 
   function reset() {
     text = '';
-    type = 'task';
     newTopics = [];
     newTags = [];
     _private = false;
@@ -134,7 +133,6 @@
   function loadNewImages(images) {
     if (images.length > 0) {
       newImages = images;
-      type = 'image';
       showAddElements = true;
     } else {
       reset();
