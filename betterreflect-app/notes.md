@@ -4,19 +4,19 @@
 
 ### Features
 
-* restructure main maybe => WIP
-* restructure sidenav
 * add image max size
 * ..
 
 ### ToFix
 
-* fix warnings
+* fix warnings -> some are svelte issue
 * fix max. size for images/code/links etc.
 * ..
 
 ### Done/Fixed
 
+* restructure main maybe => DONE
+* restructure sidenav => DONE
 * redesign => DONE
 * check cors (image server) => DONE, seems okay
 * mobile view (menu etc.) => DONE
