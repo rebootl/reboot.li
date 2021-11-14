@@ -1,7 +1,9 @@
 
 <script>
   import NewEntry from '$lib/NewEntry.svelte';
-	import Entries from '$lib/Entries.svelte';
+  import Entries from '$lib/Entries.svelte';
+  import Home from '$lib/Home.svelte';
+	import About from '$lib/About.svelte';
   import { session } from '$app/stores';
   import { createEventDispatcher } from 'svelte';
 
@@ -14,10 +16,16 @@
 </script>
 
 <main class:margin-left={showSideNav}>
-  {#if $session.loggedIn}
-    <NewEntry type={type} on:created={e => dispatch('created', e.detail)}/>
+  {#if type === 'home'}
+    <Home />
+  {:else if type === 'about'}
+    <About />
+  {:else}
+    {#if $session.loggedIn}
+      <NewEntry type={type} on:created={e => dispatch('created', e.detail)}/>
+    {/if}
+    <Entries entries={entries} {showSideNav} />
   {/if}
-  <Entries entries={entries} {showSideNav} />
 </main>
 
 <style>
@@ -25,6 +33,8 @@
     box-sizing: border-box;
     max-width: var(--max-main-width);
     padding: 0 20px 30px 20px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .margin-left {
     margin-left: var(--side-width);
