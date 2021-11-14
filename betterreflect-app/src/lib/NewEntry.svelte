@@ -131,7 +131,7 @@
   }
 
   function loadNewImages(images) {
-    if (images.length > 0 || edit) {
+    if (images.length > 0) {
       newImages = images;
       type = 'image';
       showAddElements = true;
