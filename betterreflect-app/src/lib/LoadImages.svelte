@@ -1,6 +1,6 @@
 <script>
-  import { compressImage, encodeData } from '$lib/images';
   import { createEventDispatcher } from 'svelte';
+  import { compressImage, encodeData } from '$lib/images';
 
   const dispatch = createEventDispatcher();
 
@@ -49,7 +49,6 @@
     images = [];
     if (fileInputElement) fileInputElement.value = "";
   }
-
 </script>
 
 <input on:change={ (e) => loadImages(e.target.files) }
@@ -57,19 +56,32 @@
        type="file"
        accept="image/*"
        multiple>
-<div class="images">
-  {#each images as i}
-    <div class="image">
-      <img src={i.previewData} />
-      <button on:click={unloadImage(i.filename)}>Unload</button>
-      <input bind:value={i.maxSize}
-             title="Default: 1024px, larger images will be scaled to this size"
-             placeholder="Max. image size..." />
-      <input value={i.comment} placeholder="Add comment..."
-             on:input={(e) => setComment(e.target.value, i.filename)} />
-    </div>
-  {/each}
-</div>
+{#if images.length > 0}
+  <div class="images">
+    {#each images as i}
+      <div class="image">
+        <img src={i.previewData} />
+        <button on:click={unloadImage(i.filename)}>Unload</button>
+        <input bind:value={i.maxSize}
+               title="Default: 1024px, larger images will be scaled to this size"
+               placeholder="Max. image size..." />
+        <textarea value={i.comment} placeholder="Add comment..."
+               on:input={(e) => setComment(e.target.value, i.filename)} />
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
+  .images {
+    padding-top: 10px;
+    display: flex;
+    gap: 15px;
+  }
+  .image {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 </style>
