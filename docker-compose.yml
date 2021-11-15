@@ -4,22 +4,23 @@ services:
     build: ./web
     depends_on:
       - "db"
+      - "mediaserver"
     ports:
-      - "127.0.0.1:50110:80"
+      - "127.0.0.1:3000:3000"
     volumes:
-      - "./web/kivitendo-erp:/var/www/kivitendo-erp"
+      - "./media:/usr/src/app/build/assets/media"
     restart: unless-stopped
   db:
     build: ./db
     environment:
-      - "POSTGRES_USER=kivitendo"
-      - "POSTGRES_PASSWORD=mypass123"
+      - "MONGO_INITDB_ROOT_USERNAME=better-reflectapp-admin"
+      - "MONGO_INITDB_ROOT_PASSWORD=example123"
+      - "MONGO_INITDB_DATABASE=better-reflectapp"
     restart: unless-stopped
-  pgadmin:
-    image: dpage/pgadmin4
+  mediaserver:
+    build: ./mediaserver
     ports:
-      - "127.0.0.1:50111:80"
-    environment:
-      - "PGADMIN_DEFAULT_EMAIL=user@example.com"
-      - "PGADMIN_DEFAULT_PASSWORD=1234"
+      - "127.0.0.1:3005:3005"
+    volumes:
+      - "./media:/usr/src/app/media"
     restart: unless-stopped

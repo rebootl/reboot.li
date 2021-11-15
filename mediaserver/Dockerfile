@@ -7,19 +7,15 @@ COPY package*.json ./
 RUN npm i
 
 # copy files
-COPY svelte.config.js ./
-COPY tsconfig.json ./
-
-COPY static ./static
-COPY src ./src
+COPY db.js ./db.js
+COPY imageStorage.js ./imageStorage.js
+COPY main.js ./main.js
 
 COPY config_prod.js ./config.js
 
-# build
-RUN npm run build
-RUN mkdir -p ./build/assets/media
+RUN mkdir -p ./media
 
-EXPOSE 3000
+EXPOSE 3005
 
 # start
-CMD ["node", "build"]
+CMD ["npm", "run", "start"]

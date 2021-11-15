@@ -1,6 +1,6 @@
 // settings
 
-const PRODUCTION = false;
+const PRODUCTION = true;
 
 // server port
 const PORT = 3005;
@@ -15,7 +15,7 @@ const COOKIENAME = 'better-reflectapp-session';
 // database setup
 const DBUSER = 'better-reflectapp-admin';
 const DBPASSWORD = 'example123';
-const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@localhost:27018`;
+const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@db:27017`;
 const DBNAME = 'better-reflectapp';
 
 const STATICDIR = PRODUCTION ? 'media/' :
