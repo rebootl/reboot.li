@@ -19,7 +19,7 @@
 			<span class="material-icons">menu</span>
     </div>
     <div class="logo-box">
-      <img class="logo" alt="Logo" src="/static/betterreflect-app-logo.png" />
+      <img class="logo" alt="Logo" src="/betterreflect-app-logo.png" />
     </div>
 
     <div class="right-box">
@@ -139,9 +139,6 @@
     align-items: center;
     width: var(--header-height);
     height: var(--header-height);
-  }
-  .icon-button a {
-    color: var(---text-color);
   }
   .login-box {
     display: none;

@@ -3,8 +3,5 @@
 	import Main from '$lib/Main.svelte';
 </script>
 
-<SideNav entries={[]} on:change={e => navChange(e.detail)} showOnWide={false} />
+<SideNav entries={[]} showOnWide={false} />
 <Main entries={[]} showSideNavOnWide={false} type="home" />
-
-<style>
-</style>

@@ -57,7 +57,4 @@
       margin-left: initial;
     }
   }
-  .info {
-    padding-top: 10px;
-  }
 </style>

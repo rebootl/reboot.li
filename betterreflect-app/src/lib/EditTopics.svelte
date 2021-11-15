@@ -6,7 +6,6 @@
   const dispatch = createEventDispatcher();
 
   export let items = [];
-  export let selected = [];
   export let selectedItems = [];
 
   let newItems = [];
@@ -48,13 +47,5 @@
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-  }
-  .newitem {
-    background-color: var(--side-selected-color);
-    border: 1px solid var(--side-line-color);
-    padding: 0 5px 0 5px;
-  }
-  .selected {
-    background-color: var(--side-selected-color);
   }
 </style>

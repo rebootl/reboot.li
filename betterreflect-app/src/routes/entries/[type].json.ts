@@ -3,7 +3,7 @@ const allowedTypes = [ 'task', 'link', 'article', 'image' ];
 export async function get(request) {
 
   const db = request.locals.db;
-  console.log(request)
+
   const type = request.params.type;
   const user = 'rebootl';
 

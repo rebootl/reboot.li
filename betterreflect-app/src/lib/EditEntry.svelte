@@ -206,7 +206,7 @@
     {#if type === 'image'}
       {#if entry.images}
         {#each entry.images as image}
-          <img class="editimage" src={image.filepath} />
+          <img class="editimage" src={image.filepath} alt="edit preview" />
           <input class="imagecomment" bind:value={image.comment}
                  placeholder="Comment...">
           <button on:click={e => deleteImage(image)}

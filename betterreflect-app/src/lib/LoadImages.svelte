@@ -60,7 +60,7 @@
   <div class="images">
     {#each images as i}
       <div class="image">
-        <img src={i.previewData} />
+        <img src={i.previewData} alt="loaded preview" />
         <button on:click={unloadImage(i.filename)}>Unload</button>
         <input bind:value={i.maxSize}
                title="Default: 1024px, larger images will be scaled to this size"

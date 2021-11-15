@@ -51,6 +51,3 @@
 <SideNav {entries} on:change={e => navChange(e.detail)} />
 <Main entries={filteredEntries} type="note"
       on:created={e => created(e.detail)} />
-
-<style>
-</style>
