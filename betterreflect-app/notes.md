@@ -4,17 +4,18 @@
 
 ### Features
 
-* add image max size
 * ..
 
 ### ToFix
 
+* check image/link comment html/xss
 * fix warnings -> some are svelte issue
 * fix max. size for images/code/links etc.
 * ..
 
 ### Done/Fixed
 
+* add image max size => DONE
 * restructure main maybe => DONE
 * restructure sidenav => DONE
 * redesign => DONE
