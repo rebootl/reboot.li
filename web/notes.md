@@ -8,13 +8,14 @@
 
 ### ToFix
 
+* first entry doesn't update list
 * check image/link comment html/xss
-* fix warnings -> some are svelte issue
 * fix max. size for images/code/links etc.
 * ..
 
 ### Done/Fixed
 
+* fix warnings => DONE, some are svelte issue
 * add image max size => DONE
 * restructure main maybe => DONE
 * restructure sidenav => DONE

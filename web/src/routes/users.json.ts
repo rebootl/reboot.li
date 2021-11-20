@@ -9,7 +9,7 @@ export async function get(request) {
   const c = await db.collection('users');
   const r = await c.find(
     { active: true },
-    { projection: { _id: 0, username: 1, admin: 1, profile: 1 }}
+    { projection: { _id: 0, username: 1, profile: 1 }}
   ).toArray();
 
   return {
