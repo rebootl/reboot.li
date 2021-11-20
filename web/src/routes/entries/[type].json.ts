@@ -1,4 +1,4 @@
-const allowedTypes = [ 'task', 'link', 'article', 'image' ];
+import { allowedTypes } from '$lib/entryTypes.ts';
 
 export async function get(request) {
 

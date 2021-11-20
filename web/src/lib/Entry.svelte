@@ -18,7 +18,7 @@
 
     url = '/entry/' + entry.id;
 
-    if (entry.type === 'task' || entry.type === 'article')
+    if (entry.type === 'task' || entry.type === 'note')
       html = marked(entry.text);
   }
 </script>
@@ -53,7 +53,7 @@
   <div class="entry-content">
     {#if entry.type === 'task'}
       {@html html}
-    {:else if entry.type === 'article'}
+    {:else if entry.type === 'note'}
       {@html html}
     {:else if entry.type === 'link'}
       <small><a href="{entry.text}">{entry.text}</a></small><br>

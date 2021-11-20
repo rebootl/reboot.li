@@ -1,3 +1,5 @@
+import { allowedTypes } from '$lib/entryTypes.ts';
+
 export async function get(request) {
 
   const db = request.locals.db;
@@ -19,7 +21,6 @@ export async function get(request) {
   };
 }
 
-const allowedTypes = [ 'task', 'link', 'article', 'image' ];
 const requiredFields = [ 'id', 'date', 'user', 'type', 'topics', 'tags',
   'private', 'pinned' ];
 

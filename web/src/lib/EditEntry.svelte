@@ -102,7 +102,7 @@
     entry.pinned = pinned;
     entry.topics = newTopics;
     entry.tags = newTags;
-    if ([ 'task', 'article', 'link' ].includes(entry.type)) {
+    if ([ 'task', 'note', 'link' ].includes(entry.type)) {
       entry.text = text;
     } else if (type === 'image') {
       // -> upload new images

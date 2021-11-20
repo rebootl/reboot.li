@@ -1,9 +1,4 @@
 export const refs = {
-  article: {
-    href: '/notes',
-    text: 'Notes',
-    icon: 'list'
-  },
   note: {
     href: '/notes',
     text: 'Notes',
