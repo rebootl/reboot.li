@@ -13,7 +13,8 @@ COPY main.js ./main.js
 
 COPY config_prod.js ./config.js
 
-RUN mkdir -p ./media
+# (media dir will be created autom.)
+#RUN mkdir -p /usr/src/app/media
 
 EXPOSE 3005
 

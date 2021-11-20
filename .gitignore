@@ -16,6 +16,8 @@
 media.tar.gz
 
 /mediaserver/node_modules/
+/mediaserver/media/
+/mediaserver/config_prod.js
 
 /sveltekit-example/
 

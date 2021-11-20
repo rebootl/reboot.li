@@ -7,8 +7,6 @@ services:
       - "mediaserver"
     ports:
       - "127.0.0.1:3000:3000"
-    volumes:
-      - "./media:/usr/src/app/build/assets/media"
     restart: unless-stopped
   db:
     build: ./db

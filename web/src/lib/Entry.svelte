@@ -62,7 +62,7 @@
     {:else if entry.type === 'image'}
       {#if entry.images}
         {#each entry.images as image}
-          <img src={image.filepath} alt="entry" />
+          <img src={image.url} alt="entry" />
           <div class="imagecomment"><small>{image.comment}</small></div>
         {/each}
       {/if}

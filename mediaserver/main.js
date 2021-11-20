@@ -23,9 +23,11 @@ app.use(fileupload({
   createParentPath: true
 }));
 
+// serve files
+app.use(path.join('/', config.MEDIADIR), express.static(config.MEDIADIR));
+
 async function checkLogin(request, db) {
   const cookies = cookie.parse(request.headers.cookie || '');
-  console.log(cookies)
   let r = null;
   if (cookies.hasOwnProperty(config.COOKIENAME) && db) {
     const c = await db.collection('sessions');
@@ -48,7 +50,6 @@ async function checkLogin(request, db) {
 }
 
 app.post('/api/uploadImages', async (req, res) => {
-  //console.log(req)
 
   // check cookie
   const l = await checkLogin(req, app.locals.db);
@@ -56,7 +57,6 @@ app.post('/api/uploadImages', async (req, res) => {
     return res.sendStatus(403);
 
   if (!req.files || Object.keys(req.files).length === 0) {
-      //console.log(req.files);
       return res.status(400).send('No files were uploaded.');
   }
   let files = [];
@@ -66,7 +66,6 @@ app.post('/api/uploadImages', async (req, res) => {
   } else {
       files.push(await storeImage(filedata, l.user));
   }
-  //console.log(files)
   res.send({
       success: true,
       files: files
@@ -80,7 +79,7 @@ app.post('/api/deleteImage', async (req, res) => {
     return res.sendStatus(403);
 
   const fp = req.body.filepath;
-  const userdir = fp.split('/')[2];
+  const userdir = fp.split('/')[1];
   if (userdir !== l.user)
     return res.sendStatus(403);
 

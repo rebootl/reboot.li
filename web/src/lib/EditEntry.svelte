@@ -5,6 +5,7 @@
   import { sendRequest } from '$lib/request';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { refs } from '$lib/refs';
+  import { MEDIASERVER } from '../../config.js';
 
   import { compressImage, encodeData, uploadMultiImagesGenerator }
     from '$lib/images';
@@ -73,6 +74,7 @@
     newImages.forEach(i => {
       const r = uploadResult.result.files.find(e => e.originalname === i.filename);
       i.filepath = r.path;
+      i.url = r.url;
       delete i.file;
       delete i.maxSize;
       return i;
@@ -127,7 +129,8 @@
 
     if (type === 'image') {
       for (const i of entry.images) {
-        const r = await sendRequest('POST', 'http://localhost:3005/api/deleteImage',
+        const r = await sendRequest('POST',
+          new URL('/api/deleteImage', MEDIASERVER),
           { filepath: i.filepath });
         if (!r.success) {
           console.log('error deleting image');
@@ -156,7 +159,8 @@
       return;
     console.log('deleting image');
 
-    const r = await sendRequest('POST', 'http://localhost:3005/api/deleteImage',
+    const r = await sendRequest('POST',
+      new URL('/api/deleteImage', MEDIASERVER),
       { filepath: image.filepath });
     if (!r.success) {
       console.log('error deleting image');
@@ -206,7 +210,7 @@
     {#if type === 'image'}
       {#if entry.images}
         {#each entry.images as image}
-          <img class="editimage" src={image.filepath} alt="edit preview" />
+          <img class="editimage" src={image.url} alt="edit preview" />
           <input class="imagecomment" bind:value={image.comment}
                  placeholder="Comment...">
           <button on:click={e => deleteImage(image)}

@@ -1,16 +1,9 @@
 // settings
 
-const PRODUCTION = false;
-
-// server port
-const PORT = 4044;
-
-// random secret
-// -> how to create best?
-const SECRET = 'abcdefgh';
-
+// auth
 const COOKIENAME = 'better-reflectapp-session';
 
+// for reference only
 /*const USER = {
   name: 'rebootl',
   pwhash: '$2b$10$wbm.5m27QVoQKvVh1Lar4uabKplVvoZFGjKuKYFCQfqilkZ5ij9oi'
@@ -22,13 +15,10 @@ const COOKIENAME = 'better-reflectapp-session';
 // database setup
 const DBUSER = 'better-reflectapp-admin';
 const DBPASSWORD = 'example123';
-const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@localhost:27018`;
+const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@localhost:27017`;
 const DBNAME = 'better-reflectapp';
 
-// files / paths
-const STATICDIR = 'client/public';
-// (mediaDir is below staticDir)
-const MEDIADIR = 'media';
+// mediaserver
+const MEDIASERVER = 'http://localhost:3005/'
 
-export { PRODUCTION, PORT, SECRET, COOKIENAME, DBUSER, DBPASSWORD, DBURL,
-  DBNAME, STATICDIR, MEDIADIR  };
+export { COOKIENAME, DBUSER, DBPASSWORD, DBURL, DBNAME, MEDIASERVER };

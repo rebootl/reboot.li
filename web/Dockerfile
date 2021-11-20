@@ -17,7 +17,6 @@ COPY config_prod.js ./config.js
 
 # build
 RUN npm run build
-RUN mkdir -p ./build/assets/media
 
 EXPOSE 3000
 

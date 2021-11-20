@@ -58,6 +58,7 @@
     newImages.forEach(i => {
       const r = uploadResult.result.files.find(e => e.originalname === i.filename);
       i.filepath = r.path;
+      i.url = r.url;
       delete i.file;
       delete i.maxSize;
       return i;
