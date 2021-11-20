@@ -1,4 +1,6 @@
 <script>
+  import moment from 'moment';
+
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
@@ -25,6 +27,7 @@
   let pinned = false;
   let linkComment = '';
   let linkTitle = '';
+  let imagesDate = '';
   let images = [];
   let newImages = [];
   let resetLoadImages = [];
@@ -99,6 +102,8 @@
         console.log('no images for upload selected');
         return;
       }
+      const m = moment(imagesDate);
+      entry.imagesDate = m.isValid() ? m.toDate() : '';
       entry.images = newImages;
     }
     if (entry.type === 'link') {
@@ -162,6 +167,9 @@
                bind:value={linkTitle}>
         <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
                bind:value={linkComment}>
+      {:else if type === 'image'}
+        <input id="imagesdate" name="imagesdate" type="date"
+               bind:value={imagesDate}>
       {/if}
     <EditTopics items={$currentTopics}
                 on:change={(e) => setNewTopics(e.detail)} />

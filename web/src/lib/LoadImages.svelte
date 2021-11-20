@@ -77,6 +77,7 @@
     padding-top: 10px;
     display: flex;
     gap: 15px;
+    border-bottom: 1px solid var(--main-line-color);
   }
   .image {
     display: flex;

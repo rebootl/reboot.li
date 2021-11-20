@@ -1,4 +1,6 @@
 <script>
+  import moment from 'moment';
+
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
@@ -27,6 +29,7 @@
   let pinned = false;
   let linkComment = '';
   let linkTitle = '';
+  let imagesDate = '';
   let images = [];
   let newImages = [];
   let resetLoadImages = [];
@@ -42,6 +45,10 @@
     if (type === 'link') {
       linkComment = entry.commment;
       linkTitle = entry.title;
+    }
+    if (type === 'image') {
+      const m = moment(entry.imagesDate);
+      imagesDate = m.isValid() ? m.format('YYYY-MM-DD') : '';
     }
     text = entry.text;
     loadTopics = entry.topics;
@@ -106,6 +113,8 @@
           return;
         }
       }
+      const m = moment(imagesDate);
+      entry.imagesDate = m.isValid() ? m.toDate() : '';
       entry.images = [ ...entry.images, ...newImages ];
     }
     if (entry.type === 'link') {
@@ -207,23 +216,28 @@
                 bind:value={text}></textarea>
     {/if}
   </div>
-    {#if type === 'image'}
+  {#if type === 'image'}
+    <div class="editimages">
       {#if entry.images}
         {#each entry.images as image}
           <img class="editimage" src={image.url} alt="edit preview" />
-          <input class="imagecomment" bind:value={image.comment}
-                 placeholder="Comment...">
+          <textarea class="imagecomment" bind:value={image.comment}
+                    placeholder="Comment..."></textarea>
           <button on:click={e => deleteImage(image)}
                   class="deletebutton">Delete</button>
         {/each}
       {/if}
-    {/if}
-    {#if type === 'link'}
-      <input id="linktitle" name="linktitle" placeholder="Link title..."
-             bind:value={linkTitle}>
-      <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
-             bind:value={linkComment}>
-    {/if}
+      <label for="imagesdate">Images date (manual):</label>
+      <input id="imagesdate" name="imagesdate" type="date"
+             bind:value={imagesDate}>
+    </div>
+  {/if}
+  {#if type === 'link'}
+    <input id="linktitle" name="linktitle" placeholder="Link title..."
+           bind:value={linkTitle}>
+    <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
+           bind:value={linkComment}>
+  {/if}
   <EditTopics items={$currentTopics} selectedItems={loadTopics}
               on:change={(e) => setNewTopics(e.detail)} />
   <EditTags tagsByTopics={$currentTagsByTopics} {newTopics} {loadTopics}
@@ -237,23 +251,22 @@
            bind:checked={pinned}>
     <label for="pinned-checkbox">Pinned</label>
   </div>
-  <div>
-    <div class="editbuttons">
-      <div>
-        <button on:click={() => update()}>Update</button>
-        <a href={refs[ref].href} class="cancelbutton">
-          <small>Cancel</small></a>
-      </div>
-      <button on:click={() => _delete()} class="deletebutton">
-        Delete
-      </button>
+  <div class="editbuttons">
+    <div>
+      <button on:click={() => update()}>Update</button>
+      <a href={refs[ref].href} class="cancelbutton">
+        <small>Cancel</small></a>
     </div>
+    <button on:click={() => _delete()} class="deletebutton">
+      Delete
+    </button>
   </div>
 </div>
 
 <style>
   .newentry-box {
     display: flex;
+    align-items: flex-start;
     flex-flow: column;
     gap: 20px;
     padding: 20px 0 20px 0;
@@ -264,13 +277,22 @@
     height: 20px;
     padding: 10px;
   }
-  .editbuttons {
+  .editimages {
     display: flex;
-    justify-content: space-between;
+    align-items: flex-start;
+    flex-flow: column;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--main-line-color);
   }
   .editimage {
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 240px;
+    max-height: 240px;
+  }
+  .editbuttons {
+    display: flex;
+    align-self: stretch;
+    justify-content: space-between;
   }
   .cancelbutton {
     margin-left: 10px;
