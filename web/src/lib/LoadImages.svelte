@@ -74,7 +74,7 @@
 
 <style>
   .images {
-    padding-top: 10px;
+    padding: 10px 0 20px 0;
     display: flex;
     gap: 15px;
     border-bottom: 1px solid var(--main-line-color);

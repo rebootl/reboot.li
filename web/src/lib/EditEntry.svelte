@@ -266,7 +266,6 @@
 <style>
   .newentry-box {
     display: flex;
-    align-items: flex-start;
     flex-flow: column;
     gap: 20px;
     padding: 20px 0 20px 0;
