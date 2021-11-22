@@ -14,6 +14,7 @@
 
 /media/
 media.tar.gz
+docker-compose.yml
 
 /mediaserver/node_modules/
 /mediaserver/media/
