@@ -1,7 +1,7 @@
-APP="reflectapp"
+APP="better-reflectapp"
 USER="${APP}-admin"
 PASSWORD="example123"
-COLLECTIONS=( "users" )
+COLLECTIONS=( "users" "entries" )
 
 PRODUCTION=false
 
