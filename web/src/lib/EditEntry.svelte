@@ -205,17 +205,19 @@
 
 </script>
 
-<div class="newentry-box">
-  <div>
+<div class="edit-box">
     {#if type === 'image'}
       <LoadImages on:change={(e) => loadNewImages(e.detail)}
                   reset={resetLoadImages} />
+    {:else if type === 'link'}
+      <input class="link-text"
+             placeholder="Edit Entry..."
+             bind:value={text}>
     {:else}
-      <textarea class="newentry-text"
-                placeholder="New Entry..."
+      <textarea class="edit-text"
+                placeholder="Edit Entry..."
                 bind:value={text}></textarea>
     {/if}
-  </div>
   {#if type === 'image'}
     <div class="editimages">
       {#if entry.images}
@@ -264,16 +266,16 @@
 </div>
 
 <style>
-  .newentry-box {
+  .edit-box {
     display: flex;
     flex-flow: column;
     gap: 20px;
     padding: 20px 0 20px 0;
     border-bottom: 1px solid var(--main-line-color);
   }
-  .newentry-text {
-    width: 170px;
-    height: 20px;
+  .edit-text {
+    width: 500px;
+    height: 300px;
     padding: 10px;
   }
   .editimages {
