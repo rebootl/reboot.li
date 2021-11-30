@@ -20,5 +20,6 @@ const DBNAME = 'better-reflectapp';
 
 // mediaserver
 const MEDIASERVER = 'http://localhost:3005/'
+const SECRET = 'secretsecret';
 
-export { COOKIENAME, DBUSER, DBPASSWORD, DBURL, DBNAME, MEDIASERVER };
+export { COOKIENAME, DBUSER, DBPASSWORD, DBURL, DBNAME, MEDIASERVER, SECRET };

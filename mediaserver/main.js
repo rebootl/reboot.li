@@ -1,11 +1,10 @@
 import express from 'express';
 import compression from 'compression';
 import fileupload from 'express-fileupload';
-import cookie from 'cookie';
+import expressJwt from 'express-jwt';
 import cors from 'cors';
 import path from 'path';
 
-import getDb from './db.js';
 import { storeImage, deleteImage } from './imageStorage.js';
 
 import * as config from './config.js';
@@ -18,6 +17,13 @@ app.use(cors({
 }));
 app.use(express.json({limit: '10mb'}));
 
+app.use(expressJwt({
+  secret: config.SECRET,
+  algorithms: ['HS256'],
+  requestProperty: 'token',
+  credentialsRequired: false
+}));
+
 app.use(compression());
 app.use(fileupload({
   createParentPath: true
@@ -26,35 +32,13 @@ app.use(fileupload({
 // serve files
 app.use(path.join('/', config.MEDIADIR), express.static(config.MEDIADIR));
 
-async function checkLogin(request, db) {
-  const cookies = cookie.parse(request.headers.cookie || '');
-  let r = null;
-  if (cookies.hasOwnProperty(config.COOKIENAME) && db) {
-    const c = await db.collection('sessions');
-    r = await c.findOne({
-      uuid: cookies[config.COOKIENAME]
-    });
-  }
-  if (r) {
-    return {
-      loggedIn: true,
-      user: r.user,
-      admin: r.admin,
-      sessionId: cookies[config.COOKIENAME]
-    }
-  } else {
-    return {
-      loggedIn: false
-    }
-  }
-}
-
 app.post('/api/uploadImages', async (req, res) => {
 
-  // check cookie
-  const l = await checkLogin(req, app.locals.db);
-  if (!l.loggedIn)
-    return res.sendStatus(403);
+  if (!req.token) {
+    console.log('access denied');
+    return res.sendStatus(401);
+  }
+  const user = req.token.user;
 
   if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send('No files were uploaded.');
@@ -62,9 +46,9 @@ app.post('/api/uploadImages', async (req, res) => {
   let files = [];
   const filedata = req.files.filedata;
   if (Array.isArray(filedata)) {
-      files = await Promise.all(filedata.map(async (f) => await storeImage(f, l.user)));
+      files = await Promise.all(filedata.map(async (f) => await storeImage(f, user)));
   } else {
-      files.push(await storeImage(filedata, l.user));
+      files.push(await storeImage(filedata, user));
   }
   res.send({
       success: true,
@@ -73,14 +57,16 @@ app.post('/api/uploadImages', async (req, res) => {
 });
 
 app.post('/api/deleteImage', async (req, res) => {
-  // check cookie
-  const l = await checkLogin(req, app.locals.db);
-  if (!l.loggedIn)
-    return res.sendStatus(403);
+
+  if (!req.token) {
+    console.log('access denied');
+    return res.sendStatus(401);
+  }
+  const user = req.token.user;
 
   const fp = req.body.filepath;
   const userdir = fp.split('/')[1];
-  if (userdir !== l.user)
+  if (userdir !== user)
     return res.sendStatus(403);
 
   const r = await deleteImage(fp);
@@ -95,9 +81,6 @@ app.post('/api/deleteImage', async (req, res) => {
 });
 
 async function main() {
-  const db = await getDb();
-  app.locals.db = db;
-
   app.listen(config.PORT);
   console.log("Listening on port: " + config.PORT);
 }

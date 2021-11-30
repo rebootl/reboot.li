@@ -29,18 +29,19 @@ export const encodeData = (file) => {
 };
 
 // upload w/ progress
-export async function *uploadMultiImagesGenerator(images) {
+export async function *uploadMultiImagesGenerator(images, token) {
   const files = await Promise.all(images.map(async (i) => {
     const maxSize = parseInt(i.maxSize) || 1024;
     const blob = await compressImage(i.file, maxSize, maxSize);
     return new File([blob], i.filename);
   }));
-  for await (const r of uploadMultiFilesGenerator(new URL('/api/uploadImages', MEDIASERVER), files)) {
+  for await (const r of uploadMultiFilesGenerator(
+    new URL('/api/uploadImages', MEDIASERVER), files, token)) {
     yield r;
   }
 }
 
-export async function* uploadMultiFilesGenerator(apiUrl, files) {
+export async function* uploadMultiFilesGenerator(apiUrl, files, token) {
   const formData = new FormData();
   for (const f of files) {
     formData.append('filedata', f);
@@ -76,8 +77,8 @@ export async function* uploadMultiFilesGenerator(apiUrl, files) {
   });
   xhr.responseType = 'json';
   xhr.open('post', apiUrl);
-  xhr.withCredentials = true;
-  //xhr.setRequestHeader('Authorization', getAuthHeader()['Authorization']);
+  //xhr.withCredentials = true;
+  xhr.setRequestHeader('Authorization', 'Bearer ' + token);
   xhr.send(formData);
   while(!done) {
     await p;

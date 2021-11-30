@@ -4,7 +4,7 @@
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
-  import { sendRequest } from '$lib/request';
+  import { sendRequest, sendTokenRequest, getToken } from '$lib/request';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { refs } from '$lib/refs';
   import { MEDIASERVER } from '../../config.js';
@@ -68,16 +68,23 @@
   }
 
   async function uploadNewImages() {
+    // get mediaserver token
+    const token = await getToken();
+    if (!token) {
+      console.log('error getting mediaserver token');
+      return;
+    }
+
     // (this is here for eventual progress indicator, not used yet)
     // (and also handling upload result)
     let uploadResult = {};
-    for await (const r of uploadMultiImagesGenerator(newImages)) {
+    for await (const r of uploadMultiImagesGenerator(newImages, token)) {
       // update progress
       uploadResult = r;
       //uploadProgress = r.progress;
     }
     // handle the upload result
-    if (!uploadResult.result.success) return false;
+    if (!uploadResult.result?.success) return false;
     newImages.forEach(i => {
       const r = uploadResult.result.files.find(e => e.originalname === i.filename);
       i.filepath = r.path;
@@ -137,10 +144,19 @@
       return;
 
     if (type === 'image') {
+      // get mediaserver token
+      const token = await getToken();
+      if (!token) {
+        console.log('error getting mediaserver token');
+        return;
+      }
+
       for (const i of entry.images) {
-        const r = await sendRequest('POST',
+        const r = await sendTokenRequest('POST',
           new URL('/api/deleteImage', MEDIASERVER),
-          { filepath: i.filepath });
+          { filepath: i.filepath },
+          token
+        );
         if (!r.success) {
           console.log('error deleting image');
           return;
@@ -168,9 +184,18 @@
       return;
     console.log('deleting image');
 
-    const r = await sendRequest('POST',
+    // get mediaserver token
+    const token = await getToken();
+    if (!token) {
+      console.log('error getting mediaserver token');
+      return;
+    }
+
+    const r = await sendTokenRequest('POST',
       new URL('/api/deleteImage', MEDIASERVER),
-      { filepath: image.filepath });
+      { filepath: image.filepath },
+      token
+    );
     if (!r.success) {
       console.log('error deleting image');
       return;

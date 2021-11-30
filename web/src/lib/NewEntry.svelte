@@ -4,7 +4,7 @@
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
-  import { sendRequest } from '$lib/request';
+  import { sendRequest, getToken } from '$lib/request';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
 
   import { compressImage, encodeData, uploadMultiImagesGenerator }
@@ -48,16 +48,23 @@
   }
 
   async function uploadNewImages() {
+    // get mediaserver token
+    const token = await getToken();
+    if (!token) {
+      console.log('error getting mediaserver token');
+      return;
+    }
+
     // (this is here for eventual progress indicator, not used yet)
     // (and also handling upload result)
     let uploadResult = {};
-    for await (const r of uploadMultiImagesGenerator(newImages)) {
+    for await (const r of uploadMultiImagesGenerator(newImages, token)) {
       // update progress
       uploadResult = r;
       //uploadProgress = r.progress;
     }
     // handle the upload result
-    if (!uploadResult.result.success) return false;
+    if (!uploadResult.result?.success) return false;
     newImages.forEach(i => {
       const r = uploadResult.result.files.find(e => e.originalname === i.filename);
       i.filepath = r.path;

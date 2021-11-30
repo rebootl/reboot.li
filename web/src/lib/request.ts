@@ -23,3 +23,43 @@ export async function sendRequest(type, url, data) {
     }
   }
 }
+
+export async function sendTokenRequest(type, url, data, token) {
+  try {
+    const res = await fetch(url, {
+      method: type,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
+      body: JSON.stringify(data)
+    });
+    if (res.ok) {
+      return await res.json();
+    } else {
+      const { message } = await res.json();
+      new Error(message);
+    }
+  } catch(error) {
+    console.error(error);
+    return {
+      success: false,
+      result: error
+    }
+  }
+}
+
+export async function getToken() {
+  try {
+    const res = await fetch('/getToken.json');
+    if (!res.ok) {
+      return false;
+    }
+    const j = await res.json();
+    return j.token;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
