@@ -44,13 +44,13 @@ export async function post(request) {
     return {
       body: username,
       headers: {
-        'set-cookie': [
+        'Set-Cookie': [
           cookie.serialize(
             COOKIENAME,
             uuid,
             {
               httpOnly: true,
-              sameSite: 'Lax',
+              sameSite: 'none',
               secure: true,
               path: '/',
               //maxAge: 60 * 60 * 24 * 7 // 1 week
