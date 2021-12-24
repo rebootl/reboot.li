@@ -50,8 +50,9 @@ export async function post(request) {
             uuid,
             {
               httpOnly: true,
-              sameSite: true,
-              //secure: true,
+              sameSite: 'Lax',
+              secure: true,
+              //path: '/',
               //maxAge: 60 * 60 * 24 * 7 // 1 week
             }
           )
