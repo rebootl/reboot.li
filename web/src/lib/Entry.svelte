@@ -1,6 +1,6 @@
 <script>
   import moment from 'moment';
-  import marked from 'marked';
+  import { marked } from 'marked';
   import { session } from '$app/stores';
 
   const dateFormat = 'MMM D YYYY - HH:mm';
@@ -19,7 +19,7 @@
     url = '/entry/' + entry.id;
 
     if (entry.type === 'task' || entry.type === 'note')
-      html = marked(entry.text);
+      html = marked.parse(entry.text);
   }
 </script>
 
