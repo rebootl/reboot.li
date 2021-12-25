@@ -51,9 +51,9 @@ export async function post(request) {
             {
               httpOnly: true,
               sameSite: 'lax',
-              secure: true,
               path: '/',
-              //maxAge: 60 * 60 * 24 * 7 // 1 week
+              maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
+              secure: true,
             }
           )
         ]
