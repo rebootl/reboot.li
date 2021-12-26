@@ -53,7 +53,7 @@
 
 <div class="login-box">
   {#if loggedIn}
-    <h2>Logout</h2>
+    <h2>{$session.user}</h2>
 
     <button on:click={logout}>Logout</button>
   {:else}
