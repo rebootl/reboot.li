@@ -38,7 +38,10 @@ export async function post(request) {
     const res = await c.insertOne({
       uuid: uuid,
       user: username,
-      admin: r.admin
+      admin: r.admin,
+      createdAt: new Date(),
+      userAgent: request.headers['user-agent'],
+      host: request.host
     });
 
     return {
