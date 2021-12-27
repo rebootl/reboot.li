@@ -13,12 +13,11 @@
 
   function reload() {
     if (!i) return;
-    //console.log('reload!')
     const h = document.documentElement.scrollHeight;
     const n = parseInt(h / 120); // 120 = min. entry height
     limit = n;
     limitedEntries = entries.slice(0, limit);
-		if (limitedEntries.length < 1) noEntries = true;
+		limitedEntries.length < 1 ? noEntries = true : noEntries = false;
   }
 
   function init() {
