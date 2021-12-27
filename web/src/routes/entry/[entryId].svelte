@@ -27,7 +27,8 @@
 
 <script>
   import SideNav from '$lib/SideNav.svelte';
-  import Main from '$lib/Main.svelte';
+  import Entry from '$lib/Entry.svelte';
+  import EditEntry from '$lib/EditEntry.svelte';
 
   export let entry = {};
   export let edit = false;
@@ -36,11 +37,10 @@
 </script>
 
 <SideNav entries={[]} hidden={showSideNav} backbutton={true} ref={entry.type} />
-{#if edit}
-  <Main {entry} type="edit" />
-{:else}
-  <Main {entry} type="entry" />
-{/if}
-
-<style>
-</style>
+<main class="margin-left">
+  {#if edit}
+    <EditEntry {entry} ref={entry.type} />
+  {:else}
+    <Entry {entry} />
+  {/if}
+</main>

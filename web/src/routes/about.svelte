@@ -1,10 +1,10 @@
 <script>
 	import SideNav from '$lib/SideNav.svelte';
-	import Main from '$lib/Main.svelte';
 </script>
 
-<SideNav entries={[]} on:change={e => navChange(e.detail)} showOnWide={false} />
-<Main entries={[]} showSideNavOnWide={false} type="about" />
+<SideNav entries={[]} showOnWide={false} />
+<main>
+	<h1>About</h1>
 
-<style>
-</style>
+	This is a personal website.
+</main>
