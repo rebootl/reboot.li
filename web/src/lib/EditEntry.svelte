@@ -140,7 +140,7 @@
   }
 
   async function _delete() {
-    if (!confirm("Do u really want to delete this entry?"));
+    if (!confirm("Do u really want to delete this entry?"))
       return;
 
     if (type === 'image') {
