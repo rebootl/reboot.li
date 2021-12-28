@@ -41,7 +41,7 @@ export async function post(request) {
       admin: r.admin,
       createdAt: new Date(),
       userAgent: request.headers['user-agent'],
-      host: request.host
+      host: request.headers['x-forwarded-for'],
     });
 
     return {
