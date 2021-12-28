@@ -97,7 +97,7 @@ export async function del(request) {
   const db = request.locals.db;
   const c = await db.collection('entries');
   const r = await c.deleteOne({ id: b.id });
-  if (!r) return { status: 400 };
+  if (!r?.deletedCount) return { status: 400 };
 
   return {
     body: {
