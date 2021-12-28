@@ -1,5 +1,6 @@
 <script>
   import { session } from '$app/stores';
+  import { page } from '$app/stores';
 
   let username = '';
   let password = '';
@@ -55,6 +56,10 @@
   {#if loggedIn}
     <h2>{$session.user}</h2>
 
+    <div class="menuitem">
+      <a href="/sessions" class:active={'/sessions' === $page.path}>Sessions</a>
+    </div>
+
     <button on:click={logout}>Logout</button>
   {:else}
     <h2>Login</h2>
@@ -77,6 +82,16 @@
   input {
     width: 160px;
     margin-bottom: 15px;
+  }
+  .menuitem {
+    margin-bottom: 20px;
+  }
+  .menuitem a {
+    color: var(--menu-link-color);
+    text-decoration: none;
+  }
+  .menuitem a.active {
+    text-decoration: underline;
   }
   button {
     margin-top: 5px;
