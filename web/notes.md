@@ -8,13 +8,14 @@
 
 ### ToFix
 
-* first entry doesn't update list
 * check image/link comment html/xss
 * fix max. size for images/code/links etc.
 * ..
 
 ### Done/Fixed
 
+* upd. session list after del. => DONE
+* first entry doesn't update list => FIXED
 * fix warnings => DONE, some are svelte issue
 * add image max size => DONE
 * restructure main maybe => DONE

@@ -39,6 +39,7 @@
       console.log('error deleting entry');
       return;
     }
+    sessions = sessions.filter(s => s.uuid !== uuid);
     console.log('success!')
   }
 
