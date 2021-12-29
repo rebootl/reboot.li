@@ -11,30 +11,32 @@
 
 ## this
 
-This is my personal website. A place for me to __share and organize__ links,
+This is my personal website. A place for me to share and organize links,
 tasks, images and more.
 
 Also it's an ongoing web development project to learn and try out new things.
 
-Content is my own, unless otherwise stated.
-
 ## me
 
-My name is Cem. Online I use the alias _rebootl_.
+![me](/me-small.jpeg)
 
-As of 2021, I'm 40 years old.
+My name is Cem. My pronouns are _he/him_. Online I use the alias _rebootl_.
 
-Amongst other things I like computers, chess and astronomy.
+As of 2021, I'm 40 years old. Amongst other things I like computers, chess and
+astronomy.
 
-My code is on github: https://github.com/rebootl
+My code is on __github__: https://github.com/rebootl
 
-Occasionally I stream on twitch: https://www.twitch.tv/rebootl
+Occasionally I stream on __twitch__: https://www.twitch.tv/rebootl
 
-My lichess account: https://lichess.org/@/rebootl
+My __lichess__ account: https://lichess.org/@/rebootl
 
-I use discord: rebootl#6863 You can find me for example on the lichess server.
+I use __discord__: _rebootl#6863_<br>
+You can find me for example on the lichess server.
 
-My email is: cem.aydin at gmx.ch
+Additionally I'm on libera __IRC__ as rebootl. Channel: #revamp
+
+I also have telegram.
 
 ### Software I use
 
@@ -45,6 +47,11 @@ __Browser:__ firefox<br>
 __Streaming:__ obs<br>
 __Editors:__ atom, nano<br>
 
+## copying
+
+Unless otherwise stated content is my own and copyright applies.
+
+Copyright 2021 Cem Aydin
 `;
 
   const html = marked.parse(text);
