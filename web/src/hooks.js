@@ -41,7 +41,6 @@ export function getSession(request) {
       loggedIn: true,
       user: request.locals.user,
       admin: request.locals.admin,
-      sessionId: request.locals.sessionId,
     }
   } else {
     return {

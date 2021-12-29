@@ -27,19 +27,19 @@
 
   export let sessions = [];
 
-  async function revoke(uuid) {
+  async function revoke(_id) {
     if (!confirm("Do u really want to delete this session?"))
       return;
 
     const r = await sendRequest('DELETE', '/sessions.json', {
       user: $session.user,
-      uuid: uuid
+      _id: _id
     });
     if (!r.success) {
       console.log('error deleting entry');
       return;
     }
-    sessions = sessions.filter(s => s.uuid !== uuid);
+    sessions = sessions.filter(s => s._id !== _id);
     console.log('success!')
   }
 
@@ -52,7 +52,7 @@
     <div class="session-box">
       <div class="smallinfo">
         <small>Created {moment(new Date(s.createdAt)).fromNow()}</small>
-        {#if s.uuid === $session.sessionId}
+        {#if s.current}
           <small>[ Current ]</small>
         {/if}
       </div>
@@ -61,8 +61,8 @@
           <span class="material-icons">computer</span>
           {s.host}
         </div>
-        {#if s.uuid !== $session.sessionId}
-          <button on:click={() => revoke(s.uuid)} class="deletebutton">
+        {#if !s.current}
+          <button on:click={() => revoke(s._id)} class="deletebutton">
             Revoke
           </button>
         {/if}
