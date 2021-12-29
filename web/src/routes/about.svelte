@@ -1,10 +1,11 @@
 <script context="module">
+	export const prerender = true;
+</script>
+
+<script>
 	import SideNav from '$lib/SideNav.svelte';
 
 	import { marked } from 'marked';
-
-
-	export const prerender = true;
 
 	const text = `# About
 
@@ -54,9 +55,3 @@ __Editors:__ atom, nano<br>
 <main>
 	{@html html}
 </main>
-
-<style>
-	.copy {
-		color: blue;
-	}
-</style>
