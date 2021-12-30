@@ -16,7 +16,7 @@ export async function get(request) {
     q.private = false;
 
   const r = await c.find(q).sort({ date: -1 }).toArray();
-  if (!r) return { status: 400 };
+  if (!r) return { status: 404 };
 
   return {
     body: r

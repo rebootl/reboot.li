@@ -14,7 +14,7 @@ export async function get(request) {
   const q = { user: request.locals.user };
 
   const r = await c.find(q).sort({ createdAt: -1 }).toArray();
-  if (!r) return { status: 400 };
+  if (!r) return { status: 404 };
 
   const cookies = cookie.parse(request.headers.cookie || '');
   const uuid = cookies[COOKIENAME];

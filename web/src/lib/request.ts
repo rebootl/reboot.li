@@ -10,7 +10,10 @@ export async function sendRequest(type, url, data) {
       body: JSON.stringify(data)
     });
     if (res.ok) {
-      return await res.json();
+      return {
+        success: true,
+        result: await res.json()
+      }
     } else {
       const { message } = await res.json();
       new Error(message);

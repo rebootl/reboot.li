@@ -47,7 +47,6 @@ export async function post(request) {
 
   return {
     body: {
-      success: true,
       result: r
     }
   };
@@ -64,10 +63,10 @@ export async function put(request) {
 
   // checks
   for (const f of requiredFields) {
-    if (!b.hasOwnProperty(f)) return { status: 403 };
+    if (!b.hasOwnProperty(f)) return { status: 400 };
   }
 
-  if (!allowedTypes.includes(b.type)) return { status: 403 };
+  if (!allowedTypes.includes(b.type)) return { status: 400 };
 
   // immutable field has to be deleted
   delete b._id;
@@ -79,7 +78,6 @@ export async function put(request) {
 
   return {
     body: {
-      success: true,
       result: r
     }
   };
@@ -101,7 +99,6 @@ export async function del(request) {
 
   return {
     body: {
-      success: true,
       result: r
     }
   };
