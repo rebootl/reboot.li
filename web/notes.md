@@ -8,6 +8,7 @@
 
 ### ToFix
 
+* link comment in edit
 * check image/link comment html/xss
 * fix max. size for images/code/links etc.
 * ..

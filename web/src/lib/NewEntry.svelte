@@ -5,6 +5,7 @@
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
   import { sendRequest, getToken } from '$lib/request';
+  import { debounce } from '$lib/helper';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
 
   import { compressImage, encodeData, uploadMultiImagesGenerator }
@@ -27,6 +28,9 @@
   let pinned = false;
   let linkComment = '';
   let linkTitle = '';
+  let linkTitleDisabled = true;
+  let linkErr = false;
+  let linkErrCode = '';
   let imagesDate = '';
   let images = [];
   let newImages = [];
@@ -37,6 +41,12 @@
   function textInput() {
     if (text === '') showAddElements = false;
     else showAddElements = true;
+
+    if (type === 'link' && text !== '') {
+      linkTitleDisabled = true;
+      linkTitle = 'getting title...';
+      debounce(() => getTitle(text), 500);
+    }
   }
 
   function setNewTopics(v) {
@@ -45,6 +55,27 @@
 
   function setNewTags(v) {
     newTags = v;
+  }
+
+  async function getTitle(text) {
+    //console.log('getTitle')
+    const r = await sendRequest('POST', '/getTitle.json', {
+      url: text
+    });
+    if (!r.success) {
+      console.log('error getting title');
+      return;
+    }
+    if (r.result.error) {
+      linkErrCode = r.result.code;
+      linkErr = true;
+      linkTitle = '';
+      linkTitleDisabled = false;
+      return;
+    }
+    linkErr = false;
+    linkTitle = r.result.title;
+    linkTitleDisabled = false;
   }
 
   async function uploadNewImages() {
@@ -170,8 +201,13 @@
   </div>
     {#if showAddElements}
       {#if type === 'link'}
-        <input id="linktitle" name="linktitle" placeholder="Link title..."
-               bind:value={linkTitle}>
+        <div class="linktitle">
+          <input id="linktitle" name="linktitle" placeholder="Link title..."
+                 bind:value={linkTitle} disabled={linkTitleDisabled}>
+          {#if linkErr}
+            <small class="linkerr">Error getting title: {linkErrCode}</small>
+          {/if}
+        </div>
         <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
                bind:value={linkComment}>
       {:else if type === 'image'}
@@ -208,5 +244,12 @@
     width: 170px;
     height: 20px;
     padding: 10px;
+  }
+  .linktitle {
+    display: flex;
+    flex-flow: column;
+  }
+  .linkerr {
+    color: var(--error-color);
   }
 </style>
