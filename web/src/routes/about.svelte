@@ -34,9 +34,9 @@ My __lichess__ account: https://lichess.org/@/rebootl
 I use __discord__: _rebootl#6863_<br>
 You can find me for example on the lichess server.
 
-Additionally I'm on libera __IRC__ as rebootl. Channel: #revamp
+Additionally I'm on libera __IRC__ as _rebootl_. Channel: _#revamp_
 
-I also have telegram.
+I also have telegram: _@rebootl_
 
 ### Software I use
 
