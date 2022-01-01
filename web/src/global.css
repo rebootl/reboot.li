@@ -85,6 +85,9 @@ main {
 .margin-left {
   margin-left: var(--side-width);
 }
+img {
+  border-radius: 10px;
+}
 @media all and (min-width: 1000px) { /* 1000px = side width + max. main width */
   .margin-left {
     margin-left: auto;

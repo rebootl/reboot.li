@@ -2,7 +2,7 @@ import jsdom from 'jsdom';
 const { JSDOM } = jsdom;
 
 export async function post(request) {
-  console.log('gettitle post')
+  //console.log('gettitle post')
   if (!request.locals.loggedIn || !request.locals.user)
     return { status: 403 };
 
