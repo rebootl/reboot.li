@@ -11,6 +11,7 @@
 /db/users.json
 /db/entries.json
 /db/entries-in.json
+/db/entries-r*.json
 
 /media/
 media.tar.gz
