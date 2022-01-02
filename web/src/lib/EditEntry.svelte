@@ -1,5 +1,6 @@
 <script>
   import moment from 'moment';
+  import { marked } from 'marked';
 
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
@@ -34,6 +35,7 @@
   let images = [];
   let newImages = [];
   let resetLoadImages = [];
+  let previewText = '';
 
   let loadTopics = [];
   let loadTags = [];
@@ -62,6 +64,9 @@
     if (type === 'link' && text !== '') {
       linkTitleDisplay = 'getting title...';
       debounce(() => getTitle(text), 500);
+    }
+    if (type === 'note' || type === 'task') {
+      previewText = marked.parse(text);
     }
   }
 
@@ -306,6 +311,9 @@
       Delete
     </button>
   </div>
+</div>
+<div class="preview-box">
+  {@html previewText}
 </div>
 
 <style>
