@@ -84,7 +84,7 @@
 <style>
   .entry {
     border-bottom: 1px solid var(--main-line-color);
-    padding: 10px 0 10px 0;
+    padding: 10px 0 20px 0;
     min-height: 120px; /* set for inf. scroll loading calc. */
   }
   .entry-header {
@@ -100,10 +100,6 @@
   }
   .entry-content {
     margin: 10px 0 20px 0;
-  }
-  img {
-    max-width: 100%;
-    max-height: 90vh;
   }
   .tagbox {
     display: flex;
