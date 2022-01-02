@@ -7,7 +7,7 @@ const inFile2 = 'entries-rebootli.json';
 const outFile = 'entries.json';
 
 const PORT = 3005;
-const BASEURL = `http://localhost:${PORT}/`
+const BASEURL = `https://media.reboot.li/`
 
 const IMAGEDIR = '../mediaserver/media/rebootl/'
 
@@ -48,6 +48,7 @@ for (const entry of data) {
     entry.text = entry.url;
     delete entry.url;
   }*/
+  console.log(entry)
 }
 
 data = [ ...data, ...data2 ];
