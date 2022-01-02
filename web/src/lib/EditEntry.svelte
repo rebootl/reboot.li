@@ -5,6 +5,7 @@
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
   import { sendRequest, sendTokenRequest, getToken } from '$lib/request';
+  import { debounce } from '$lib/helper';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { refs } from '$lib/refs';
   import { MEDIASERVER } from '../../config.js';
@@ -29,6 +30,7 @@
   let pinned = false;
   let linkComment = '';
   let linkTitle = '';
+  let linkTitleDisplay = '';
   let images = [];
   let newImages = [];
   let resetLoadImages = [];
@@ -54,12 +56,37 @@
     pinned = entry.pinned;
   }
 
+  $: textInput(text)
+
+  function textInput() {
+    if (type === 'link' && text !== '') {
+      linkTitleDisplay = 'getting title...';
+      debounce(() => getTitle(text), 500);
+    }
+  }
+
   function setNewTopics(v) {
     newTopics = v;
   }
 
   function setNewTags(v) {
     newTags = v;
+  }
+
+  async function getTitle(text) {
+    //console.log('getTitle')
+    const r = await sendRequest('POST', '/getTitle.json', {
+      url: text
+    });
+    if (!r.success) {
+      console.log('error getting title');
+      return;
+    }
+    if (r.result.error) {
+      linkTitleDisplay = r.result.code;
+      return;
+    }
+    linkTitleDisplay = r.result.title;
   }
 
   async function uploadNewImages() {
@@ -231,6 +258,7 @@
       <input class="link-text"
              placeholder="Edit Entry..."
              bind:value={text}>
+      <small>{linkTitleDisplay}</small>
     {:else}
       <textarea class="edit-text"
                 placeholder="Edit Entry..."

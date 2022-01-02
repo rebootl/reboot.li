@@ -19,10 +19,11 @@ export async function post(request) {
         }
       }
     } else {
-      new Error(r);
+      const err = new Error(r.status);
+      err.code = `${r.status} ${r.statusText}`;
+      throw(err);
     }
   } catch(err) {
-    //console.log(err)
     return {
       body: {
         title: 'error getting title',
