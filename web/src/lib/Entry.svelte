@@ -1,6 +1,17 @@
 <script>
   import moment from 'moment';
   import { marked } from 'marked';
+  import hljs from 'highlight.js';
+  import 'highlight.js/styles/atom-one-dark.css';
+
+  marked.setOptions({
+    highlight: function(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+      return hljs.highlight(code, { language: language }).value;
+    },
+    langPrefix: 'hljs language-', // highlight.js css expects a top-level 'hljs' class.
+  });
+
   import { session } from '$app/stores';
 
   const dateFormat = 'MMM D YYYY - HH:mm';
