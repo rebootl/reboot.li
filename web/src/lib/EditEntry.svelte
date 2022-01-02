@@ -29,7 +29,6 @@
   let pinned = false;
   let linkComment = '';
   let linkTitle = '';
-  let imagesDate = '';
   let images = [];
   let newImages = [];
   let resetLoadImages = [];
@@ -45,10 +44,6 @@
     if (type === 'link') {
       linkComment = entry.commment;
       linkTitle = entry.title;
-    }
-    if (type === 'image') {
-      const m = moment(entry.imagesDate);
-      imagesDate = m.isValid() ? m.format('YYYY-MM-DD') : '';
     }
     text = entry.text;
     loadTopics = entry.topics;
@@ -120,8 +115,6 @@
           return;
         }
       }
-      const m = moment(imagesDate);
-      entry.imagesDate = m.isValid() ? m.toDate() : '';
       entry.images = [ ...entry.images, ...newImages ];
     }
     if (entry.type === 'link') {
@@ -254,9 +247,6 @@
                   class="deletebutton">Delete</button>
         {/each}
       {/if}
-      <label for="imagesdate">Images date (manual):</label>
-      <input id="imagesdate" name="imagesdate" type="date"
-             bind:value={imagesDate}>
     </div>
   {/if}
   {#if type === 'link'}

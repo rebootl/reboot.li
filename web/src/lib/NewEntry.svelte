@@ -31,7 +31,6 @@
   let linkTitleDisabled = true;
   let linkErr = false;
   let linkErrCode = '';
-  let imagesDate = '';
   let images = [];
   let newImages = [];
   let resetLoadImages = [];
@@ -140,8 +139,6 @@
         console.log('no images for upload selected');
         return;
       }
-      const m = moment(imagesDate);
-      entry.imagesDate = m.isValid() ? m.toDate() : '';
       entry.images = newImages;
     }
     if (entry.type === 'link') {
@@ -210,9 +207,6 @@
         </div>
         <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
                bind:value={linkComment}>
-      {:else if type === 'image'}
-        <input id="imagesdate" name="imagesdate" type="date"
-               bind:value={imagesDate}>
       {/if}
     <EditTopics items={$currentTopics}
                 on:change={(e) => setNewTopics(e.detail)} />
