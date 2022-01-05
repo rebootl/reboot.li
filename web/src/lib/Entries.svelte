@@ -15,8 +15,10 @@
     if (!i) return;
     const h = document.documentElement.scrollHeight;
 		let m = 120;
-		if (entries[0].type === 'news') {
-			m = 60;
+		if (entries.length > 0) {
+			if (entries[0].type === 'news') {
+				m = 60;
+			}
 		}
     const n = parseInt(h / m); // 120 = min. entry height
     limit = n;
