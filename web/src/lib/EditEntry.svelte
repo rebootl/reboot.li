@@ -15,7 +15,7 @@
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
-  import { sendRequest, sendTokenRequest, getToken } from '$lib/request';
+  import { sendRequest, sendTokenRequest } from '$lib/request';
   import { debounce } from '$lib/helper';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { refs } from '$lib/refs';
@@ -175,29 +175,8 @@
   }
 
   async function _delete() {
-    if (!confirm("Do u really want to delete this entry?"))
+    if (!confirm("This entry will be deleted, you can restore it later!"))
       return;
-
-    if (type === 'image') {
-      // get mediaserver token
-      const token = await getToken();
-      if (!token) {
-        console.log('error getting mediaserver token');
-        return;
-      }
-
-      for (const i of entry.images) {
-        const r = await sendTokenRequest('POST',
-          new URL('/api/deleteImage', MEDIASERVER),
-          { filepath: i.filepath },
-          token
-        );
-        if (!r.success) {
-          console.log('error deleting image');
-          return;
-        }
-      }
-    }
 
     const r = await sendRequest('DELETE', `/entry/${entry.id}.json`, entry);
     if (!r.success) {

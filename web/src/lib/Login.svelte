@@ -57,6 +57,8 @@
     <h2>{$session.user}</h2>
 
     <div class="menuitem">
+      <a href="/restore-delete"
+         class:active={'/restore-delete' === $page.path}>Restore / Delete entries</a>
       <a href="/sessions" class:active={'/sessions' === $page.path}>Sessions</a>
     </div>
 
@@ -88,6 +90,9 @@
   }
   .menuitem {
     margin-bottom: 20px;
+    display: flex;
+    flex-flow: column;
+    gap: 20px;
   }
   .menuitem a {
     color: var(--menu-link-color);

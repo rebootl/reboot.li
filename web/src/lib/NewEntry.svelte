@@ -123,6 +123,7 @@
       tags: newTags,
       private: _private,
       pinned: pinned,
+      deleted: false
     }
 
     if ([ 'task', 'note', 'link', 'news' ].includes(entry.type)) {

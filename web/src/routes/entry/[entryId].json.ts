@@ -9,7 +9,7 @@ export async function get(request) {
 
   const c = await db.collection('entries');
 
-  const q = { user: user, id: entryId };
+  const q = { user: user, id: entryId, deleted: false };
   if (!request.locals.loggedIn || !request.locals?.user === user)
     q.private = false;
 
@@ -94,8 +94,12 @@ export async function del(request) {
 
   const db = request.locals.db;
   const c = await db.collection('entries');
-  const r = await c.deleteOne({ id: b.id });
-  if (!r?.deletedCount) return { status: 400 };
+  //const r = await c.deleteOne({ id: b.id });
+  const r = await c.updateOne({ id: b.id }, { $set: {
+    deleted: true,
+    deleteDate: new Date()
+  }});
+  if (!r?.modifiedCount) return { status: 400 };
 
   return {
     body: {
