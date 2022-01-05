@@ -26,7 +26,7 @@
 
     window.addEventListener('scroll',() => {
       const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-      if (scrollTop + clientHeight > scrollHeight - 25) {
+      if (scrollTop + clientHeight > scrollHeight * 0.7) {
         //console.log('load more!')
         limit += 5;
         limitedEntries = entries.slice(0, limit);
