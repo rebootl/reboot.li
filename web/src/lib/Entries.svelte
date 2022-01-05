@@ -14,7 +14,11 @@
   function reload() {
     if (!i) return;
     const h = document.documentElement.scrollHeight;
-    const n = parseInt(h / 120); // 120 = min. entry height
+		let m = 120;
+		if (entries[0].type === 'news') {
+			m = 60;
+		}
+    const n = parseInt(h / m); // 120 = min. entry height
     limit = n;
     limitedEntries = entries.slice(0, limit);
 		limitedEntries.length < 1 ? noEntries = true : noEntries = false;
@@ -27,9 +31,11 @@
     window.addEventListener('scroll',() => {
       const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
       if (scrollTop + clientHeight > scrollHeight * 0.7) {
-        //console.log('load more!')
-        limit += 5;
-        limitedEntries = entries.slice(0, limit);
+				if (limitedEntries.length < entries.length) {
+        	//console.log('load more!')
+        	limit += 5;
+        	limitedEntries = entries.slice(0, limit);
+				}
     	}
     });
   }
