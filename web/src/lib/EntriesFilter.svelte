@@ -1,6 +1,5 @@
 
 <script>
-  import NewEntry from '$lib/NewEntry.svelte';
   import Entries from '$lib/Entries.svelte';
 
   import { getFilteredEntries } from '$lib/filterSort';
