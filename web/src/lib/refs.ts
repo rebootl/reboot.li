@@ -24,4 +24,9 @@ export const refs = {
     text: 'Home',
     icon: 'home'
   },
+  news: {
+    href: '/news',
+    text: 'News',
+    icon: 'list'
+  },
 }

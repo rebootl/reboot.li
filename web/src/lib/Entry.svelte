@@ -29,12 +29,13 @@
 
     url = '/entry/' + entry.id;
 
-    if (entry.type === 'task' || entry.type === 'note')
+    if ([ 'task', 'note', 'news'].includes(entry.type)) {
       html = marked.parse(entry.text);
+    }
   }
 </script>
 
-<div class="entry">
+<div class="entry" class:news={entry.type === 'news'}>
   <div class="entry-header">
     <small>
       {date}
@@ -62,9 +63,7 @@
   </div>
 
   <div class="entry-content">
-    {#if entry.type === 'task'}
-      {@html html}
-    {:else if entry.type === 'note'}
+    {#if [ 'task', 'note', 'news'].includes(entry.type)}
       {@html html}
     {:else if entry.type === 'link'}
       <small><a href="{entry.text}">{entry.text}</a></small><br>
@@ -97,6 +96,10 @@
     border-bottom: 1px solid var(--main-line-color);
     padding: 10px 0 20px 0;
     min-height: 120px; /* set for inf. scroll loading calc. */
+  }
+  .news {
+    padding-bottom: 5px;
+    min-height: 60px; /* set for inf. scroll loading calc. */
   }
   .entry-header {
     display: flex;

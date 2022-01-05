@@ -1,1 +1,1 @@
-export const allowedTypes = [ 'task', 'link', 'note', 'image' ];
+export const allowedTypes = [ 'task', 'link', 'note', 'image', 'news' ];

@@ -134,7 +134,7 @@
   }
 
   async function update() {
-    if (newTopics.length < 1) {
+    if (newTopics.length < 1 && type !== 'news') {
       console.log('at least one topic must be selected')
       return;
     }
@@ -146,7 +146,7 @@
     entry.pinned = pinned;
     entry.topics = newTopics;
     entry.tags = newTags;
-    if ([ 'task', 'note', 'link' ].includes(entry.type)) {
+    if ([ 'task', 'note', 'link', 'news' ].includes(entry.type)) {
       entry.text = text;
     } else if (type === 'image') {
       // -> upload new images
@@ -298,15 +298,19 @@
     <input id="linkcomment" name="linkcomment" placeholder="Link comment..."
            bind:value={linkComment}>
   {/if}
-  <EditTopics items={$currentTopics} selectedItems={loadTopics}
-              on:change={(e) => setNewTopics(e.detail)} />
-  <EditTags tagsByTopics={$currentTagsByTopics} {newTopics} {loadTopics}
-            selectedItems={loadTags}
-            on:change={(e) => setNewTags(e.detail)} />
+  {#if type !== 'news'}
+    <EditTopics items={$currentTopics} selectedItems={loadTopics}
+                on:change={(e) => setNewTopics(e.detail)} />
+    <EditTags tagsByTopics={$currentTagsByTopics} {newTopics} {loadTopics}
+              selectedItems={loadTags}
+              on:change={(e) => setNewTags(e.detail)} />
+  {/if}
   <div>
-    <input type="checkbox" id="private-checkbox" name="private"
-           bind:checked={_private}>
-    <label for="private-checkbox">Private</label>
+    {#if type !== 'news'}
+      <input type="checkbox" id="private-checkbox" name="private"
+             bind:checked={_private}>
+      <label for="private-checkbox">Private</label>
+    {/if}
     <input type="checkbox" id="pinned-checkbox" name="pinned"
            bind:checked={pinned}>
     <label for="pinned-checkbox">Pinned</label>
