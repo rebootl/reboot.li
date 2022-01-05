@@ -83,6 +83,9 @@
     width: 160px;
     margin-bottom: 15px;
   }
+  h2 {
+    margin-top: revert;
+  }
   .menuitem {
     margin-bottom: 20px;
   }
