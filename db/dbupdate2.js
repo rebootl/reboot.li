@@ -14,7 +14,15 @@ const writeData = (f) => {
 };
 
 for (const entry of data) {
-  entry.deleted = false;
+  if (!entry.deleted) {
+    entry.deleted = false;
+  }
+  if (!entry.version) {
+    entry.version = 1;
+  }
+  if (!entry.last) {
+    entry.last = true;
+  }
 }
 
 writeData(outFile);

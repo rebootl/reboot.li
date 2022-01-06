@@ -9,7 +9,7 @@ export async function get(request) {
 
   const c = await db.collection('entries');
 
-  const q = { user: user, id: entryId, deleted: false };
+  const q = { user: user, id: entryId, deleted: false, last: true };
   if (!request.locals.loggedIn || !request.locals?.user === user)
     q.private = false;
 
@@ -22,7 +22,7 @@ export async function get(request) {
 }
 
 const requiredFields = [ 'id', 'date', 'user', 'type', 'topics', 'tags',
-  'private', 'pinned' ];
+  'private', 'pinned', 'last', 'version' ];
 
 export async function post(request) {
   //console.log(request)
@@ -73,12 +73,19 @@ export async function put(request) {
 
   const db = request.locals.db;
   const c = await db.collection('entries');
-  const r = await c.replaceOne({ id: b.id }, b);
+  const r = await c.updateOne({ id: b.id, version: b.version }, { $set: {
+    last: false,
+  }});
   if (!r) return { status: 400 };
+
+  b.version++;
+
+  const rn = await c.insertOne(b);
+  if (!rn) return { status: 400 };
 
   return {
     body: {
-      result: r
+      result: rn
     }
   };
 }

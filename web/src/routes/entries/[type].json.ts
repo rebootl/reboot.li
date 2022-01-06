@@ -9,7 +9,7 @@ export async function get(request) {
 
   const c = await db.collection('entries');
 
-  const q = { user: user, deleted: false };
+  const q = { user: user, deleted: false, last: true };
   if (allowedTypes.includes(type))
     q.type = type;
   if (!request.locals.loggedIn || !request.locals?.user === user)
