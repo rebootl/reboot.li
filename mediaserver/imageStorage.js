@@ -26,7 +26,7 @@ export function storeImage(i, username) {
 export async function deleteImage(filepath) {
   try {
     await unlink(filepath);
-    console.log('successfully deleted');
+    console.log('successfully deleted: ', filepath);
   } catch (error) {
     console.error('there was an error:', error.message);
     return false;

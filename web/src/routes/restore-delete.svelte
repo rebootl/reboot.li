@@ -22,7 +22,8 @@
 <script>
   import moment from 'moment';
   import SideNav from '$lib/SideNav.svelte';
-  import { sendRequest, getToken } from '$lib/request';
+  import { sendRequest, getToken, sendTokenRequest } from '$lib/request';
+  import { MEDIASERVER } from '../../config.js';
 
   const dateFormat = 'MMM D YYYY - HH:mm';
 
@@ -96,7 +97,11 @@
             <span class="material-icons">link</span>
             {e.id}
           </div>
-          <pre>{e.text}</pre>
+          {#if [ 'task', 'note', 'link', 'news' ].includes(e.type)}
+            <pre>{e.text}</pre>
+          {:else if e.type === 'image'}
+            <img src={e.images[0].previewData} alt="preview" />
+          {/if}
         </div>
         <div class="buttons-right">
           <button on:click={() => restore(e)}>
