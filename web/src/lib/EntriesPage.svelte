@@ -10,10 +10,12 @@
 
   let selectedTopics = [];
   let selectedTags = [];
+	let filterText = '';
 
   function navChange(v) {
     selectedTopics = v[0];
     selectedTags = v[1];
+		filterText = v[2];
   }
 
   function created(e) {
@@ -28,5 +30,5 @@
   {#if $session.loggedIn}
     <NewEntry {type} on:created={e => created(e.detail)} />
   {/if}
-  <EntriesFilter {entries} {selectedTopics} {selectedTags} />
+  <EntriesFilter {entries} {selectedTopics} {selectedTags} {filterText} />
 </main>

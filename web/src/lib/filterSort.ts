@@ -1,4 +1,6 @@
-export function getFilteredEntries(entries, selectedTopics, selectedTags) {
+export function getFilteredEntries(entries, selectedTopics, selectedTags,
+  filterText) {
+
   let f = entries;
   if (selectedTopics.length > 0) {
     f = f.filter(e => {
@@ -11,6 +13,24 @@ export function getFilteredEntries(entries, selectedTopics, selectedTags) {
     f = f.filter(e => {
       for (const t of e.tags) {
         if (selectedTags.includes(t)) return e;
+      }
+    });
+  }
+  if (filterText !== '') {
+    const lc = filterText.toLowerCase();
+    f = f.filter(e => {
+      for (const t of e.topics) {
+        if (t.toLowerCase().includes(lc)) return e;
+      }
+      for (const t of e.tags) {
+        if (t.toLowerCase().includes(lc)) return e;
+      }
+      if (e.type !== 'image') {
+        if (e.text.toLowerCase().includes(lc)) return e;
+      } else {
+        for (const i of e.images) {
+          if (i.comment.toLowerCase().includes(lc)) return e;
+        }
       }
     });
   }

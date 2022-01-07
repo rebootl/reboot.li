@@ -7,13 +7,15 @@
 	export let entries = [];
   export let selectedTopics = [];
   export let selectedTags = [];
+  export let filterText = '';
 
   let filteredEntries = [];
 
-  $: filterEntries(entries, selectedTopics, selectedTags);
+  $: filterEntries(entries, selectedTopics, selectedTags, filterText);
 
   function filterEntries() {
-    filteredEntries = getFilteredEntries(entries, selectedTopics, selectedTags);
+    filteredEntries = getFilteredEntries(entries, selectedTopics, selectedTags,
+      filterText);
   }
 </script>
 

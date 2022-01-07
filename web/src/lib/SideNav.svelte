@@ -21,8 +21,14 @@
   let selectedTopics = [];
   let selectedTags = [];
   let tagsByTopics = {};
+  let filterText = '';
 
   $: setTopicsTags(entries);
+  $: dispatchChange(filterText);
+
+  function dispatchChange() {
+    dispatch('change', [ selectedTopics, selectedTags, filterText ]);
+  }
 
   function setTopicsTags() {
     entries.forEach(entry => {
@@ -76,7 +82,7 @@
     }
     setTags();
     if ($showMenu) $showMenu = false;
-    dispatch('change', [ selectedTopics, selectedTags ]);
+    dispatch('change', [ selectedTopics, selectedTags, filterText ]);
   }
 
   function selectTag(tag) {
@@ -86,7 +92,7 @@
       selectedTags = [ tag ];
     }
     if ($showMenu) $showMenu = false;
-    dispatch('change', [ selectedTopics, selectedTags ]);
+    dispatch('change', [ selectedTopics, selectedTags, filterText ]);
   }
 
   function click() {
@@ -105,6 +111,10 @@
     <HeaderLinks side={true} />
   </div>
   <div class="padding">
+    <div class="quickfilter">
+      <input bind:value={filterText} placeholder="Quickfilter entries..."
+             class="quickfilter-input">
+    </div>
     <div class="items">
       {#each topics as topic}
         <Topic selected={selectedTopics.includes(topic)}
@@ -152,6 +162,9 @@
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 10px;
+  }
+  .quickfilter-input {
+    width: 160px;
   }
   .overlay {
     display: none;
