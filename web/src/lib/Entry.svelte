@@ -68,7 +68,7 @@
     {:else if entry.type === 'link'}
       <small><a href="{entry.text}">{entry.text}</a></small><br>
       {entry.title}<br>
-      {entry.comment}
+      <small>{entry.comment}</small>
     {:else if entry.type === 'image'}
       {#if entry.images}
         {#each entry.images as image}
