@@ -175,8 +175,9 @@
   }
 
   async function _delete() {
-    if (!confirm("This entry will be deleted, you can restore it later!"))
+    if (!confirm("This entry will be deleted, you can restore it later!")) {
       return;
+    }
 
     const r = await sendRequest('DELETE', `/entry/${entry.id}.json`, entry);
     if (!r.success) {
@@ -194,8 +195,7 @@
   }
 
   async function deleteImage(image) {
-    if (!confirm("Do u really want to delete this image?"));
-      return;
+    if (!confirm("Do u really want to delete this image?")) return;
     console.log('deleting image');
 
     // get mediaserver token
