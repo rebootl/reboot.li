@@ -111,10 +111,12 @@
     <HeaderLinks side={true} />
   </div>
   <div class="padding">
-    <div class="quickfilter">
-      <input bind:value={filterText} placeholder="Quickfilter entries..."
-             class="quickfilter-input">
-    </div>
+    {#if !backbutton}
+      <div class="quickfilter">
+        <input bind:value={filterText} placeholder="Quickfilter entries..."
+               class="quickfilter-input">
+      </div>
+    {/if}
     <div class="items">
       {#each topics as topic}
         <Topic selected={selectedTopics.includes(topic)}
