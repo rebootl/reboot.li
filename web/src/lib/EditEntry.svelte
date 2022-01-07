@@ -56,7 +56,7 @@
     if (!entry) return;
     type = entry.type;
     if (type === 'link') {
-      linkComment = entry.commment;
+      linkComment = entry.comment;
       linkTitle = entry.title;
     }
     text = entry.text;
