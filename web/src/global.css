@@ -91,7 +91,9 @@ main {
 }
 img {
   border-radius: 10px;
-  max-width: calc(var(--max-main-width) - 40px); /* minus main padding */
+  /* min of either viewport width or main-max-width, minus main padding */
+  /* fixes max-width on mobile view */
+  max-width: min(calc(100vw - 40px), calc(var(--max-main-width) - 40px));
   max-height: 90vh;
 }
 pre {

@@ -8,12 +8,12 @@
 
 ### ToFix
 
-* check image/link comment html/xss
-* fix max. size for images/code/links etc.
 * ..
 
 ### Done/Fixed
 
+* fix max. size for images/code/links etc. => DONE
+* check image/link comment html/xss => is prevented by svelte templating
 * link comment in edit => FIXED
 * upd. session list after del. => DONE
 * first entry doesn't update list => FIXED
