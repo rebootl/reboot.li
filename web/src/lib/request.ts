@@ -15,8 +15,7 @@ export async function sendRequest(type, url, data) {
         result: await res.json()
       }
     } else {
-      const { message } = await res.json();
-      new Error(message);
+      throw(new Error(`${res.status} ${res.statusText}`));
     }
   } catch(error) {
     console.error(error);
@@ -41,8 +40,7 @@ export async function sendTokenRequest(type, url, data, token) {
     if (res.ok) {
       return await res.json();
     } else {
-      const { message } = await res.json();
-      new Error(message);
+      throw(new Error(`${res.status} ${res.statusText}`));
     }
   } catch(error) {
     console.error(error);

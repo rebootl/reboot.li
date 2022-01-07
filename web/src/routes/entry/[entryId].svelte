@@ -59,7 +59,7 @@
         throw(new Error(`${r.status} ${r.statusText}`));
       }
     } catch(err) {
-      console.warn(err);
+      console.error(err);
     }
   }
 </script>

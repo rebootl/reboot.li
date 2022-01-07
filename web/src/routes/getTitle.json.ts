@@ -3,8 +3,7 @@ const { JSDOM } = jsdom;
 
 export async function post(request) {
   //console.log('gettitle post')
-  if (!request.locals.loggedIn || !request.locals.user)
-    return { status: 403 };
+  if (!request.locals.loggedIn) return { status: 403 };
 
   const b = request.body;
 

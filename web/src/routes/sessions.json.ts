@@ -44,7 +44,7 @@ export async function del(request) {
 
   const db = request.locals.db;
   const c = await db.collection('sessions');
-  const r = await c.deleteOne({ _id: new ObjectId(b._id) });
+  const r = await c.deleteOne({ _id: new ObjectId(b._id), user: b.user });
   if (!r?.deletedCount) return { status: 400 };
 
   return {

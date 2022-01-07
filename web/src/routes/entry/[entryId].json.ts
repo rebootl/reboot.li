@@ -10,8 +10,9 @@ export async function get(request) {
   const c = await db.collection('entries');
 
   const q = { user: user, id: entryId, deleted: false, last: true };
-  if (!request.locals.loggedIn || !request.locals?.user === user)
+  if (!request.locals.loggedIn || request.locals?.user !== user) {
     q.private = false;
+  }
 
   const r = await c.findOne(q);
   if (!r) return { status: 404 };
@@ -30,8 +31,9 @@ export async function post(request) {
   const b = request.body;
 
   // user logged in and username in entry
-  if (!request.locals.loggedIn || request.locals?.user !== b.user)
+  if (!request.locals.loggedIn || request.locals?.user !== b.user) {
     return { status: 403 }
+  }
 
   // checks
   for (const f of requiredFields) {
@@ -58,8 +60,9 @@ export async function put(request) {
   const b = request.body;
 
   // user logged in and username in entry
-  if (!request.locals.loggedIn || request.locals?.user !== b.user)
+  if (!request.locals.loggedIn || request.locals?.user !== b.user) {
     return { status: 403 }
+  }
 
   // checks
   for (const f of requiredFields) {
@@ -73,9 +76,12 @@ export async function put(request) {
 
   const db = request.locals.db;
   const c = await db.collection('entries');
-  const r = await c.updateOne({ id: b.id, version: b.version }, { $set: {
-    last: false,
-  }});
+  const r = await c.updateOne(
+    { user: b.user, id: b.id, version: b.version },
+    { $set: {
+      last: false,
+    }
+  });
   if (!r) return { status: 400 };
 
   b.version++;
@@ -96,13 +102,14 @@ export async function del(request) {
   const b = request.body;
 
   // user logged in and username in entry
-  if (!request.locals.loggedIn || request.locals?.user !== b.user)
+  if (!request.locals.loggedIn || request.locals?.user !== b.user) {
     return { status: 403 }
+  }
 
   const db = request.locals.db;
   const c = await db.collection('entries');
   //const r = await c.deleteOne({ id: b.id });
-  const r = await c.updateOne({ id: b.id }, { $set: {
+  const r = await c.updateOne({ user: b.user, id: b.id }, { $set: {
     deleted: true,
     deleteDate: new Date()
   }});

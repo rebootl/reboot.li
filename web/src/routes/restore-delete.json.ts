@@ -1,13 +1,14 @@
 export async function get(request) {
 
-  if (!request.locals.loggedIn)
+  if (!request.locals.loggedIn || !request.locals?.user) {
     return { status: 403 };
+  }
 
   const db = request.locals.db;
 
   const c = await db.collection('entries');
 
-  const q = { deleted: true };
+  const q = { user: request.locals.user, deleted: true };
 
   const r = await c.find(q).sort({ date: -1 }).toArray();
   if (!r) return { status: 404 };
@@ -23,13 +24,14 @@ export async function put(request) {
   const b = request.body;
 
   // user logged in and username in entry
-  if (!request.locals.loggedIn || request.locals?.user !== b.user)
+  if (!request.locals.loggedIn || request.locals?.user !== b.user) {
     return { status: 403 }
+  }
 
   const db = request.locals.db;
   const c = await db.collection('entries');
   //const r = await c.deleteOne({ id: b.id });
-  const r = await c.updateOne({ id: b.id }, { $set: {
+  const r = await c.updateOne({ id: b.id, user: b.user }, { $set: {
     deleted: false
   }});
   if (!r?.modifiedCount) return { status: 400 };
@@ -52,7 +54,7 @@ export async function del(request) {
 
   const db = request.locals.db;
   const c = await db.collection('entries');
-  const r = await c.deleteOne({ id: b.id });
+  const r = await c.deleteOne({ user: b.user, id: b.id });
   if (!r?.deletedCount) return { status: 400 };
 
   return {

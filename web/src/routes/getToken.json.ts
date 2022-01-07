@@ -13,8 +13,7 @@ function createToken(user) : string {
 
 export async function get(request) {
 
-  if (!request.locals.loggedIn || !request.locals.user)
-    return { status: 403 };
+  if (!request.locals.loggedIn || !request.locals?.user) return { status: 403 };
 
   const t = createToken(request.locals.user);
 
