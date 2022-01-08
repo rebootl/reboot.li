@@ -8,7 +8,7 @@ export async function get(request) {
 
   const c = await db.collection('entries');
 
-  const q = { user: request.locals.user, deleted: true };
+  const q = { user: request.locals.user, last: true, deleted: true };
 
   const r = await c.find(q).sort({ date: -1 }).toArray();
   if (!r) return { status: 404 };
@@ -31,7 +31,7 @@ export async function put(request) {
   const db = request.locals.db;
   const c = await db.collection('entries');
   //const r = await c.deleteOne({ id: b.id });
-  const r = await c.updateOne({ id: b.id, user: b.user }, { $set: {
+  const r = await c.updateMany({ id: b.id, user: b.user }, { $set: {
     deleted: false
   }});
   if (!r?.modifiedCount) return { status: 400 };
@@ -54,7 +54,7 @@ export async function del(request) {
 
   const db = request.locals.db;
   const c = await db.collection('entries');
-  const r = await c.deleteOne({ user: b.user, id: b.id });
+  const r = await c.deleteMany({ user: b.user, id: b.id });
   if (!r?.deletedCount) return { status: 400 };
 
   return {

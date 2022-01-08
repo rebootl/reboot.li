@@ -109,7 +109,7 @@ export async function del(request) {
   const db = request.locals.db;
   const c = await db.collection('entries');
   //const r = await c.deleteOne({ id: b.id });
-  const r = await c.updateOne({ user: b.user, id: b.id }, { $set: {
+  const r = await c.updateMany({ user: b.user, id: b.id }, { $set: {
     deleted: true,
     deleteDate: new Date()
   }});
