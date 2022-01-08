@@ -10,7 +10,7 @@ export async function get(request) {
 
   const q = { user: request.locals.user, last: true, deleted: true };
 
-  const r = await c.find(q).sort({ date: -1 }).toArray();
+  const r = await c.find(q).sort({ deleteDate: -1 }).toArray();
   if (!r) return { status: 404 };
 
   return {
