@@ -145,6 +145,8 @@
   }
   pre {
     margin-bottom: 0;
+    max-height: 200px;
+    max-width: calc(var(--max-main-width) - 200px);
   }
   .smallinfo {
     display: flex;
