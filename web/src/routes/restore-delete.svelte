@@ -5,9 +5,11 @@
 
   	const res = await fetch(url);
   	if (res.ok) {
+      const entries = await res.json();
   		return {
   			props: {
-  				entries: await res.json(),
+  				entries: entries,
+          noEntries: entries.length > 0 ? false : true
   			}
   		};
   	}
@@ -28,6 +30,12 @@
   const dateFormat = 'MMM D YYYY - HH:mm';
 
   export let entries = [];
+  export let noEntries = false;
+
+  function updateEntries(id) {
+    entries = entries.filter(e => e.id !== id);
+    noEntries = entries.length > 0 ? false : true;
+  }
 
   async function restore(entry) {
     if (!confirm("Restore entry?"))
@@ -40,7 +48,7 @@
       console.log('error restoring entry');
       return;
     }
-    entries = entries.filter(e => e.id !== entry.id);
+    updateEntries(entry.id);
     console.log('success!')
   }
 
@@ -77,7 +85,7 @@
       console.log('error deleting entry');
       return;
     }
-    entries = entries.filter(e => e.id !== entry.id);
+    updateEntries(entry.id);
     console.log('success!')
   }
 
@@ -86,41 +94,45 @@
 <SideNav showOnWide={false} />
 <main>
   <h1>Restore / Delete entries</h1>
-  {#each entries as e}
-    <div class="box">
-      <div class="smallinfo">
-        <small>Created: {moment(new Date(e.date)).format(dateFormat)}</small>
-      </div>
-      <div class="maininfo">
-        <div class="maininfo-left">
-          <div class="maininfo-title">
-            <span class="material-icons">link</span>
-            {e.id}
-          </div>
-          {#if [ 'task', 'note', 'link', 'news' ].includes(e.type)}
-            <pre>{e.text}</pre>
-          {:else if e.type === 'image'}
-            <img src={e.images[0].previewData} alt="preview" />
-          {/if}
-        </div>
-        <div class="buttons-right">
-          <button on:click={() => restore(e)}>
-            Restore
-          </button>
-          <button on:click={() => deletePermanently(e)} class="deletebutton">
-            Delete permanently
-          </button>
-        </div>
-      </div>
-      <div class="smallinfo">
-        <small>Deleted: {moment(new Date(e.deleteDate)).format(dateFormat)}</small>
-      </div>
-    </div>
+  {#if noEntries}
+    <small class="info">No entries found...</small>
   {:else}
-    <small class="info">
-      loading...
-    </small>
-  {/each}
+    {#each entries as e}
+      <div class="box">
+        <div class="smallinfo">
+          <small>Created: {moment(new Date(e.date)).format(dateFormat)}</small>
+        </div>
+        <div class="maininfo">
+          <div class="maininfo-left">
+            <div class="maininfo-title">
+              <span class="material-icons">link</span>
+              {e.id}
+            </div>
+            {#if [ 'task', 'note', 'link', 'news' ].includes(e.type)}
+              <pre>{e.text}</pre>
+            {:else if e.type === 'image'}
+              <img src={e.images[0].previewData} alt="preview" />
+            {/if}
+          </div>
+          <div class="buttons-right">
+            <button on:click={() => restore(e)}>
+              Restore
+            </button>
+            <button on:click={() => deletePermanently(e)} class="deletebutton">
+              Delete permanently
+            </button>
+          </div>
+        </div>
+        <div class="smallinfo">
+          <small>Deleted: {moment(new Date(e.deleteDate)).format(dateFormat)}</small>
+        </div>
+      </div>
+    {:else}
+      <small class="info">
+        loading...
+      </small>
+    {/each}
+  {/if}
 </main>
 
 <style>
