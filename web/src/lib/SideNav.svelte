@@ -14,7 +14,8 @@
   export let entries = [];
   export let showOnWide = true;
   export let backbutton = false;
-  export let ref = '';
+  export let ref = 'note';
+  console.log(ref)
 
   let topics = [];
   let tags = [];
@@ -100,6 +101,7 @@
   }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="overlay" class:show={$showMenu}
      on:click={() => $showMenu = !$showMenu}></div>
 <aside class:show={$showMenu} class:hidden={!showOnWide}>

@@ -1,4 +1,5 @@
-import { allowedTypes } from '$lib/entryTypes.ts';
+import { json, error } from '@sveltejs/kit';
+import { allowedTypes } from '$lib/entryTypes.js';
 
 export async function GET(request) {
 
@@ -15,11 +16,10 @@ export async function GET(request) {
   }
 
   const r = await c.findOne(q);
-  if (!r) return { status: 404 };
+  //if (!r) return { status: 404 };
+  if (!r) throw error(404, 'Not found');
 
-  return {
-    body: r
-  };
+  return json(r);
 }
 
 const requiredFields = [ 'id', 'date', 'user', 'type', 'topics', 'tags',

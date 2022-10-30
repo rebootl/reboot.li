@@ -1,7 +1,7 @@
 
 export async function load({ fetch }) {
 
-	const url = '/entries/news';
+	const url = '/entries/task';
 
 	const res = await fetch(url);
 	if (res.ok) {

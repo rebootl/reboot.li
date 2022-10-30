@@ -1,40 +1,15 @@
-<script context="module">
-  export async function load({ page, fetch, session, context }) {
-
-    const entryId = page.params.entryId;
-  	const url = `/entry/${entryId}.json`;
-    const edit = page.query.has('edit');
-
-		console.log('load entry:')
-    console.log(entryId)
-
-  	const res = await fetch(url);
-  	if (res.ok) {
-  		return {
-  			props: {
-  				entry: await res.json(),
-          edit: edit,
-  			}
-  		};
-  	}
-
-  	return {
-  		status: res.status,
-  		error: new Error(`Could not load ${url}`)
-  	};
-  }
-</script>
-
 <script>
   import SideNav from '$lib/SideNav.svelte';
   import Entry from '$lib/Entry.svelte';
   import EditEntry from '$lib/EditEntry.svelte';
-  import { session } from '$app/stores';
+  //import { session } from '$app/stores';
+  import { page } from "$app/stores";
 
-  export let entry = {};
-  export let edit = false;
+  export let data;
+	let entry = data.entry;
+  let edit = data.edit;
+  console.log(entry)
 
-  let showSideNav = true;
   let versions = []
   let initDone = false;
 
@@ -64,9 +39,9 @@
   }
 </script>
 
-<SideNav entries={[]} hidden={showSideNav} backbutton={true} ref={entry.type} />
+<SideNav entries={[]} backbutton={true} ref={entry.type} />
 <main class="margin-left">
-  {#if $session.loggedIn && !edit}
+  {#if $page.data.loggedIn && !edit}
     <div class="versions">
       {#each versions as v}
         {#if v === entry.version}
@@ -74,6 +49,7 @@
             {v}
           </div>
         {:else}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div class="version" on:click={() => getVersion(v)}>
             {v}
           </div>

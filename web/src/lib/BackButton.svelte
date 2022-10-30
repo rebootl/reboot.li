@@ -9,10 +9,11 @@
 
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="back-button" on:click={() => dispatch('click')}>
   <a {href} class="back-link">
     <span class="material-icons before-icon">navigate_before</span>
-    <IconButton>{icon}</IconButton><small><slot></slot></small>
+    <!--<IconButton>{icon}</IconButton>--><small><slot></slot></small>
   </a>
 </div>
 
@@ -31,7 +32,7 @@
     width: 15px;
     padding-left: 10px;
   }
-  small {
-    /*text-decoration: underline;*/
-  }
+  /*small {
+    text-decoration: underline;
+  }*/
 </style>
