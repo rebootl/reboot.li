@@ -7,7 +7,7 @@
 
 	export let data;
 	let entries = data.entries;
-	console.log(data)
+	//console.log(data)
 
 	$: init(entries);
 

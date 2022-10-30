@@ -3,7 +3,7 @@ export async function load({ locals }) {
     user: await db.getUser(request.headers.get('cookie'))
   };*/
 
-	console.log(locals)
+	//console.log(locals)
 
   if (locals.loggedIn) {
     return {

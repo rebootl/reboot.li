@@ -14,7 +14,7 @@
   $: filterEntries(entries, selectedTopics, selectedTags, filterText);
 
   function filterEntries() {
-    console.log(entries)
+    //console.log(entries)
     filteredEntries = getFilteredEntries(entries, selectedTopics, selectedTags,
       filterText);
   }
