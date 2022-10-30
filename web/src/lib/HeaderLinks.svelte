@@ -10,12 +10,12 @@
 </script>
 
 <div class="header-links" class:column={side}>
-  <a href="/" class:active={'/' === $page.path} on:click={() => click()}>Home</a>
-  <a href="/tasks" class:active={'/tasks' === $page.path} on:click={() => click()}>Tasks</a>
-  <a href="/notes" class:active={'/notes' === $page.path} on:click={() => click()}>Notes</a>
-  <a href="/links" class:active={'/links' === $page.path} on:click={() => click()}>Links</a>
-  <a href="/images" class:active={'/images' === $page.path} on:click={() => click()}>Images</a>
-  <a href="/about" class:active={'/about' === $page.path} on:click={() => click()}>About</a>
+  <a href="/" class:active={'/' === $page.url.pathname} on:click={() => click()}>Home</a>
+  <a href="/tasks" class:active={'/tasks' === $page.url.pathname} on:click={() => click()}>Tasks</a>
+  <a href="/notes" class:active={'/notes' === $page.url.pathname} on:click={() => click()}>Notes</a>
+  <a href="/links" class:active={'/links' === $page.url.pathname} on:click={() => click()}>Links</a>
+  <a href="/images" class:active={'/images' === $page.url.pathname} on:click={() => click()}>Images</a>
+  <a href="/about" class:active={'/about' === $page.url.pathname} on:click={() => click()}>About</a>
 </div>
 
 <style>

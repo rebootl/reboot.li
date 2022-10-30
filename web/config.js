@@ -1,7 +1,7 @@
 // settings
 
 // auth
-const COOKIENAME = 'better-reflectapp-session';
+const COOKIENAME = 'reboot-li-session';
 
 // for reference only
 /*const USER = {
@@ -13,10 +13,10 @@ const COOKIENAME = 'better-reflectapp-session';
 // bcrypt.hashSync('beboop', 10);
 
 // database setup
-const DBUSER = 'better-reflectapp-admin';
+const DBUSER = 'reboot-li-admin';
 const DBPASSWORD = 'example123';
 const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@localhost:27017`;
-const DBNAME = 'better-reflectapp';
+const DBNAME = 'reboot-li';
 
 // mediaserver
 const MEDIASERVER = 'http://localhost:3005/'

@@ -9,10 +9,10 @@ const SECRET = 'secretsecret';
 const COOKIENAME = 'better-reflectapp-session';
 
 // database setup
-const DBUSER = 'better-reflectapp-admin';
+const DBUSER = 'reboot-li-admin';
 const DBPASSWORD = 'example123';
 const DBURL = `mongodb://${DBUSER}:${DBPASSWORD}@localhost:27017`;
-const DBNAME = 'better-reflectapp';
+const DBNAME = 'reboot-li';
 
 // files directory
 const MEDIADIR = 'media/'

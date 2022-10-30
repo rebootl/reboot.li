@@ -1,31 +1,13 @@
-<script context="module">
-  export async function load({ page, fetch, session, context }) {
-
-  	const url = '/entries/news.json';
-
-  	const res = await fetch(url);
-  	if (res.ok) {
-  		return {
-  			props: {
-  				entries: await res.json(),
-  			}
-  		};
-  	}
-
-  	return {
-  		status: res.status,
-  		error: new Error(`Could not load ${url}`)
-  	};
-  }
-</script>
-
 <script>
 	import SideNav from '$lib/SideNav.svelte';
 	import NewEntry from '$lib/NewEntry.svelte';
 	import EntriesFilter from '$lib/EntriesFilter.svelte';
-	import { session } from '$app/stores';
+	/*import { session } from '$app/stores';*/
+	/*import { page } from '$app/stores';*/
 
-	export let entries = [];
+	export let data;
+	let entries = data.entries;
+	console.log(data)
 
 	$: init(entries);
 
@@ -39,7 +21,7 @@
 	}
 </script>
 
-<SideNav entries={[]} showOnWide={false} />
+<!--<SideNav entries={[]} showOnWide={false} />-->
 <main>
 	<h1>Welcome!</h1>
 
@@ -55,7 +37,7 @@
 	or visit the <a href="/about">About</a> page.
 
 	<h2>News</h2>
-	{#if $session.loggedIn}
+	{#if data.loggedIn}
 		<NewEntry type={'news'} on:created={e => created(e.detail)} />
 	{/if}
 	<div class="newsbox">

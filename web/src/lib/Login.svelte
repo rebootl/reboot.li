@@ -1,11 +1,11 @@
 <script>
-  import { session } from '$app/stores';
+  //import { session } from '$app/stores';
   import { page } from '$app/stores';
 
   let username = '';
   let password = '';
 
-  let loggedIn = $session.loggedIn;
+  let loggedIn = $page.data.loggedIn;
 
   async function login() {
     try {
@@ -54,12 +54,12 @@
 
 <div class="login-box">
   {#if loggedIn}
-    <h2>{$session.user}</h2>
+    <h2>{$page.data.user}</h2>
 
     <div class="menuitem">
       <a href="/restore-delete"
-         class:active={'/restore-delete' === $page.path}>Restore / Delete entries</a>
-      <a href="/sessions" class:active={'/sessions' === $page.path}>Sessions</a>
+         class:active={'/restore-delete' === $page.url.pathname}>Restore / Delete entries</a>
+      <a href="/sessions" class:active={'/sessions' === $page.url.pathname}>Sessions</a>
     </div>
 
     <button on:click={logout}>Logout</button>

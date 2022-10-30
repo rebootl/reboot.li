@@ -3,7 +3,8 @@
   import NewEntry from '$lib/NewEntry.svelte';
   import EntriesFilter from '$lib/EntriesFilter.svelte';
   import { refs } from '$lib/refs';
-  import { session } from '$app/stores';
+  //import { session } from '$app/stores';
+  import { page } from "$app/stores";
 
 	export let entries = [];
   export let type = 'task';
@@ -27,7 +28,7 @@
 <SideNav {entries} on:change={e => navChange(e.detail)} />
 <main class="margin-left">
 	<h1>{refs[type].text}</h1>
-  {#if $session.loggedIn}
+  {#if $page.data.loggedIn}
     <NewEntry {type} on:created={e => created(e.detail)} />
   {/if}
   <EntriesFilter {entries} {selectedTopics} {selectedTags} {filterText} />

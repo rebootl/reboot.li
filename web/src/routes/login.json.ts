@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import cookie from 'cookie';
 import { v4 as uuidv4 } from 'uuid';
-import { COOKIENAME } from '../../config.js';
+import { COOKIENAME } from '$env/static/private';
 
 export async function post(request) {
 

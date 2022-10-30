@@ -19,7 +19,7 @@
   import { debounce } from '$lib/helper';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { refs } from '$lib/refs';
-  import { MEDIASERVER } from '../../config.js';
+  import { PUBLIC_MEDIASERVER } from '$env/static/public';
 
   import { compressImage, encodeData, uploadMultiImagesGenerator }
     from '$lib/images';
@@ -206,7 +206,7 @@
     }
 
     const r = await sendTokenRequest('POST',
-      new URL('/api/deleteImage', MEDIASERVER),
+      new URL('/api/deleteImage', PUBLIC_MEDIASERVER),
       { filepath: image.filepath },
       token
     );

@@ -1,6 +1,6 @@
 import { allowedTypes } from '$lib/entryTypes.ts';
 
-export async function get(request) {
+export async function GET(request) {
 
   const db = request.locals.db;
 
@@ -25,7 +25,7 @@ export async function get(request) {
 const requiredFields = [ 'id', 'date', 'user', 'type', 'topics', 'tags',
   'private', 'pinned', 'last', 'version' ];
 
-export async function post(request) {
+export async function POST(request) {
   //console.log(request)
 
   const b = request.body;
@@ -54,7 +54,7 @@ export async function post(request) {
   };
 }
 
-export async function put(request) {
+export async function PUT(request) {
   //console.log(request)
 
   const b = request.body;
@@ -96,7 +96,7 @@ export async function put(request) {
   };
 }
 
-export async function del(request) {
+export async function DEL(request) {
   //console.log(request)
 
   const b = request.body;

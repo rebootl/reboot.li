@@ -1,6 +1,6 @@
 import Compressor from 'compressorjs';
 import { session } from '$app/stores';
-import { MEDIASERVER } from '../../config.js';
+import { PUBLIC_MEDIASERVER } from '$env/static/public';
 
 export const compressImage = (file, maxWidth=1920, maxHeight=1920) => {
   return new Promise((res, rej) => {
@@ -36,7 +36,7 @@ export async function *uploadMultiImagesGenerator(images, token) {
     return new File([blob], i.filename);
   }));
   for await (const r of uploadMultiFilesGenerator(
-    new URL('/api/uploadImages', MEDIASERVER), files, token)) {
+    new URL('/api/uploadImages', PUBLIC_MEDIASERVER), files, token)) {
     yield r;
   }
 }

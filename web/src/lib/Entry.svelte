@@ -12,7 +12,8 @@
     langPrefix: 'hljs language-', // highlight.js css expects a top-level 'hljs' class.
   });
 
-  import { session } from '$app/stores';
+  //import { session } from '$app/stores';
+  import { page } from "$app/stores";
 
   const dateFormat = 'MMM D YYYY - HH:mm';
 
@@ -54,7 +55,7 @@
       {/if}
     </small>
     <small>
-      {#if $session.loggedIn}
+      {#if $page.data.loggedIn}
         <a href={url + '?edit'}>
           <span class="material-icons header-icon">edit</span>
         </a>

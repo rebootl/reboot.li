@@ -1,34 +1,36 @@
 {
-  "name": "~TODO~",
+  "name": "reboot.li",
   "version": "0.0.1",
+  "private": true,
   "scripts": {
-    "dev": "svelte-kit dev",
-    "build": "svelte-kit build",
-    "preview": "svelte-kit preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^1.0.0-next.55",
+    "@sveltejs/adapter-node": "^1.0.0-next.99",
     "@sveltejs/kit": "next",
-    "svelte": "^3.44.3",
-    "svelte-check": "^2.2.11",
-    "svelte-preprocess": "^4.10.1",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.4"
+    "svelte": "^3.52.0",
+    "svelte-check": "^2.9.2",
+    "svelte-preprocess": "^4.10.7",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4",
+    "vite": "^3.2.1"
   },
   "type": "module",
   "dependencies": {
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.0",
     "compressorjs": "^1.1.1",
-    "cookie": "^0.4.1",
-    "highlight.js": "^11.3.1",
-    "jsdom": "^19.0.0",
+    "cookie": "^0.5.0",
+    "highlight.js": "^11.6.0",
+    "jsdom": "^20.0.1",
     "jsonwebtoken": "^8.5.1",
-    "marked": "^4.0.8",
+    "marked": "^4.1.1",
     "material-design-icons": "^3.0.1",
-    "moment": "^2.29.1",
-    "mongodb": "^4.2.2",
-    "uuid": "^8.3.2"
+    "moment": "^2.29.4",
+    "mongodb": "^4.11.0",
+    "uuid": "^9.0.0"
   }
 }

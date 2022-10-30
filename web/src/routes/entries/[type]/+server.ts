@@ -1,6 +1,7 @@
-import { allowedTypes } from '$lib/entryTypes.ts';
+import { json, error } from '@sveltejs/kit';
+import { allowedTypes } from '$lib/entryTypes.js';
 
-export async function get(request) {
+export async function GET(request) {
 
   const db = request.locals.db;
 
@@ -18,9 +19,8 @@ export async function get(request) {
   }
 
   const r = await c.find(q).sort({ date: -1 }).toArray();
-  if (!r) return { status: 404 };
+  //if (!r) return { status: 404 };
+  if (!r) throw error(404, 'Not found');
 
-  return {
-    body: r
-  };
+  return json(r);
 }

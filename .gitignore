@@ -22,5 +22,6 @@ docker-compose.yml
 /mediaserver/config_prod.js
 
 /sveltekit-example/
+/my-app/
 
 .DS_Store

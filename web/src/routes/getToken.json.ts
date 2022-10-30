@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { SECRET } from '../../config.js';
+import { SECRET } from '$env/static/private';
 
 function createToken(user) : string {
   // sign with default (HMAC SHA256)

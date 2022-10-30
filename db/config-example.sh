@@ -1,4 +1,4 @@
-APP="better-reflectapp"
+APP="reboot-li"
 USER="${APP}-admin"
 PASSWORD="example123"
 COLLECTIONS=( "users" "entries" )

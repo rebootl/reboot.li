@@ -1,5 +1,5 @@
 import cookie from 'cookie';
-import { COOKIENAME } from '../../config.js';
+import { COOKIENAME } from '$env/static/private';
 
 export async function post(request) {
 
