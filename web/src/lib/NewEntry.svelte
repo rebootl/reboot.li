@@ -11,7 +11,9 @@
   import { compressImage, encodeData, uploadMultiImagesGenerator }
     from '$lib/images';
 
-  import { session } from '$app/stores';
+  //import { session } from '$app/stores';
+  import { page } from '$app/stores';
+
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
 
@@ -117,7 +119,7 @@
       id: type + '-' + Date.now().toString(36) +
                  Math.random().toString(36).substr(2, 5),
       date: new Date(),
-      user: $session.user,
+      user: $page.data.user,
       type: type,
       topics: newTopics,
       tags: newTags,

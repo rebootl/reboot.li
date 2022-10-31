@@ -1,30 +1,24 @@
+import { json, error } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
-import cookie from 'cookie';
+//import cookie from 'cookie';
 import { v4 as uuidv4 } from 'uuid';
 import { COOKIENAME } from '$env/static/private';
 
-export async function post(request) {
+export async function POST({ request, locals, cookies }) {
 
-  const body = JSON.parse(request.body);
+  const body = await request.json();
 
   const username = body.user;
   const password = body.password;
 
-  const error = {
-    status: 401,
-    body: {
-      message: 'login failed'
-    }
-  };
+  if (!username || !password) throw error(401, 'login failed');
 
-  if (!username || !password) return error;
-
-  const db = request.locals.db;
+  const db = locals.db;
   const c = await db.collection('users');
   const r = await c.findOne(
     { username: username, active: true }
   );
-  if (!r) return error;
+  if (!r) throw error(401, 'login failed');
 
   const check = await bcrypt.compare(password, r.pwhash);
 
@@ -44,27 +38,22 @@ export async function post(request) {
       host: request.headers['x-forwarded-for'],
     });
 
-    return {
-      body: username,
-      headers: {
-        'Set-Cookie': [
-          cookie.serialize(
-            COOKIENAME,
-            uuid,
-            {
-              httpOnly: true,
-              sameSite: 'lax',
-              path: '/',
-              maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
-              secure: true,
-            }
-          )
-        ]
+    cookies.set(
+      COOKIENAME,
+      uuid,
+      {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
+        secure: true,
       }
-    };
+    );
+
+    return json(username);
   } else {
     console.log("login failed");
-    return error;
+    throw error(401, 'login failed');;
   }
 
 }

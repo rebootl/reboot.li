@@ -1,4 +1,4 @@
-import cookie from 'cookie';
+//import cookie from 'cookie';
 //import { COOKIENAME } from '../config.js';
 import { COOKIENAME } from '$env/static/private';
 import { getDb } from '$lib/server/db';
@@ -12,22 +12,24 @@ initDb();
 
 export async function handle({ event, resolve }) {
 
+  //console.log('hook handle')
 	event.locals.db = db;
 
-  const cookies = cookie.parse(event.request.headers.cookie || '');
-  //console.log(cookies)
+  //const cookies = cookie.parse(event.request.headers.cookie || '');
+  const sessionId = event.cookies.get(COOKIENAME) || null;
+  //console.log(sessionId)
   let r = null;
-  if (cookies.hasOwnProperty(COOKIENAME) && db) {
+  if (sessionId && db) {
     const c = await db.collection('sessions');
     r = await c.findOne({
-      uuid: cookies[COOKIENAME]
+      uuid: sessionId
     });
   }
   if (r) {
     event.locals.loggedIn = true;
     event.locals.user = r.user;
     event.locals.admin = r.admin;
-    event.locals.sessionId = cookies[COOKIENAME];
+    event.locals.sessionId = sessionId;
   } else {
     event.locals.loggedIn = false;
   }

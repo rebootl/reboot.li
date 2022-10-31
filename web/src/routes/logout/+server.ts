@@ -1,3 +1,4 @@
+import { json, error } from '@sveltejs/kit';
 import cookie from 'cookie';
 import { COOKIENAME } from '$env/static/private';
 

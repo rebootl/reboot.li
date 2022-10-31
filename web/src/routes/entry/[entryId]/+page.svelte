@@ -8,7 +8,6 @@
   export let data;
 	let entry = data.entry;
   let edit = data.edit;
-  console.log(entry)
 
   let versions = []
   let initDone = false;

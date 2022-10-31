@@ -9,7 +9,7 @@
 
   async function login() {
     try {
-      const res = await fetch('/login.json', {
+      const res = await fetch('/login', {
         method: 'POST',
         body: JSON.stringify({
           user: username,
@@ -20,7 +20,6 @@
         console.log('login successful')
         username = '';
         password = '';
-        loggedIn = true;
         window.location.reload();
 				return;
 			}
@@ -33,7 +32,7 @@
 
   async function logout() {
     try {
-      const res = await fetch('/logout.json', {
+      const res = await fetch('/logout', {
         method: 'POST',
       });
 			if (res.ok) {
@@ -65,7 +64,11 @@
     <button on:click={logout}>Logout</button>
   {:else}
     <h2>Login</h2>
-
+    <!--<form method="POST">
+      <input name="username" placeholder="Username">
+      <input name="password" type="password" placeholder="Password">
+      <button>Log in</button>
+    </form>-->
     <input bind:value={username} placeholder="Username">
     <input type="password" bind:value={password} placeholder="Password">
 
