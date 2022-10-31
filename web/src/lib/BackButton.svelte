@@ -13,7 +13,7 @@
 <div class="back-button" on:click={() => dispatch('click')}>
   <a {href} class="back-link">
     <span class="material-icons before-icon">navigate_before</span>
-    <!--<IconButton>{icon}</IconButton>--><small><slot></slot></small>
+    <IconButton>{icon}</IconButton><small><slot></slot></small>
   </a>
 </div>
 

@@ -5,7 +5,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="icon-button" on:click={dispatch('click')}>
+<div class="icon-button" on:click={() => dispatch('click')}>
   <span class="material-icons"><slot></slot></span>
 </div>
 
