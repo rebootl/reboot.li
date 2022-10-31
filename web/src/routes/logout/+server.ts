@@ -1,8 +1,7 @@
 import { json, error } from '@sveltejs/kit';
-import cookie from 'cookie';
 import { COOKIENAME } from '$env/static/private';
 
-export async function post(request) {
+export async function POST({ request, locals, cookies }) {
 
   const error = {
     status: 401,
@@ -11,33 +10,18 @@ export async function post(request) {
     }
   };
 
-  if (!request.locals.loggedIn) {
-    return error;
+  if (!locals.loggedIn) {
+    throw error(401, 'logout failed');
   }
 
-  const db = request.locals.db;
+  const db = locals.db;
   const c = await db.collection('sessions');
   const r = await c.deleteOne({
-    uuid: request.locals.sessionId
+    uuid: locals.sessionId
   });
-  if (!r) return error;
+  if (!r) throw error(401, 'logout failed');
 
-  return {
-    body: '',
-    headers: {
-      'set-cookie': [
-        cookie.serialize(
-          COOKIENAME,
-          request.locals.sessionId,
-          {
-            httpOnly: true,
-            sameSite: true,
-            //secure: true,
-            maxAge: 0
-          }
-        )
-      ]
-    }
-  };
+  cookies.delete(COOKIENAME);
 
+  return json('');
 }

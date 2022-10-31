@@ -1,5 +1,4 @@
 <script>
-  //import { session } from '$app/stores';
   import { page } from '$app/stores';
 
   let username = '';
@@ -38,7 +37,6 @@
 			if (res.ok) {
         console.log('logout successful')
         // reload page
-        loggedIn = false;
         window.location.reload();
 				return;
 			}

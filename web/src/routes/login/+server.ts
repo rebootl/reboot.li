@@ -1,6 +1,5 @@
 import { json, error } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
-//import cookie from 'cookie';
 import { v4 as uuidv4 } from 'uuid';
 import { COOKIENAME } from '$env/static/private';
 
@@ -55,5 +54,4 @@ export async function POST({ request, locals, cookies }) {
     console.log("login failed");
     throw error(401, 'login failed');;
   }
-
 }
