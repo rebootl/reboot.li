@@ -1,5 +1,3 @@
-//import cookie from 'cookie';
-//import { COOKIENAME } from '../config.js';
 import { COOKIENAME } from '$env/static/private';
 import { getDb } from '$lib/server/db';
 
@@ -15,7 +13,6 @@ export async function handle({ event, resolve }) {
   //console.log('hook handle')
 	event.locals.db = db;
 
-  //const cookies = cookie.parse(event.request.headers.cookie || '');
   const sessionId = event.cookies.get(COOKIENAME) || null;
   //console.log(sessionId)
   let r = null;
