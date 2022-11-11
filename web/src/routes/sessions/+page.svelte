@@ -1,38 +1,19 @@
-<script context="module">
-  export async function load({ page, fetch, session, context }) {
-
-  	const url = '/sessions.json';
-
-  	const res = await fetch(url);
-  	if (res.ok) {
-  		return {
-  			props: {
-  				sessions: await res.json(),
-  			}
-  		};
-  	}
-
-  	return {
-  		status: res.status,
-  		error: new Error(`Could not load ${url}`)
-  	};
-  }
-</script>
-
 <script>
   import moment from 'moment';
   import SideNav from '$lib/SideNav.svelte';
-  import { session } from '$app/stores';
+  //import { session } from '$app/stores';
+  import { page } from "$app/stores";
   import { sendRequest } from '$lib/request';
 
-  export let sessions = [];
+  export let data;
+	let sessions = data.sessions || [];
 
   async function revoke(_id) {
     if (!confirm("Do u really want to delete this session?"))
       return;
 
-    const r = await sendRequest('DELETE', '/sessions.json', {
-      user: $session.user,
+    const r = await sendRequest('DELETE', '/sessions', {
+      user: $page.data.user,
       _id: _id
     });
     if (!r.success) {

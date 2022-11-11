@@ -33,8 +33,8 @@ export async function POST({ request, locals, cookies }) {
       user: username,
       admin: r.admin,
       createdAt: new Date(),
-      userAgent: request.headers['user-agent'],
-      host: request.headers['x-forwarded-for'],
+      userAgent: request.headers.get('user-agent'),
+      host: request.headers.get('x-forwarded-for') || request.headers.get('origin'),
     });
 
     cookies.set(
