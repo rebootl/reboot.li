@@ -13,7 +13,6 @@
   $: init(entries);
   
   function init() {
-    console.log(entries)
     noEntries = entries.length > 0 ? false : true;
   }
 
