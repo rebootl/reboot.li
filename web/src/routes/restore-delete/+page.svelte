@@ -1,36 +1,21 @@
-<script context="module">
-  export async function load({ page, fetch, session, context }) {
-
-  	const url = '/restore-delete.json';
-
-  	const res = await fetch(url);
-  	if (res.ok) {
-      const entries = await res.json();
-  		return {
-  			props: {
-  				entries: entries,
-          noEntries: entries.length > 0 ? false : true
-  			}
-  		};
-  	}
-
-  	return {
-  		status: res.status,
-  		error: new Error(`Could not load ${url}`)
-  	};
-  }
-</script>
-
 <script>
   import moment from 'moment';
   import SideNav from '$lib/SideNav.svelte';
   import { sendRequest, getToken, sendTokenRequest } from '$lib/request';
-  import { MEDIASERVER } from '../../config.js';
+  import { PUBLIC_MEDIASERVER } from '$env/static/public';
 
   const dateFormat = 'MMM D YYYY - HH:mm';
 
-  export let entries = [];
-  export let noEntries = false;
+  export let data;
+	let entries = data.entries;
+  let noEntries = false;
+  
+  $: init(entries);
+  
+  function init() {
+    console.log(entries)
+    noEntries = entries.length > 0 ? false : true;
+  }
 
   function updateEntries(id) {
     entries = entries.filter(e => e.id !== id);
@@ -40,7 +25,7 @@
   async function restore(entry) {
     if (!confirm("Restore entry?"))
       return;
-    const r = await sendRequest('PUT', '/restore-delete.json', {
+    const r = await sendRequest('PUT', '/restore-delete', {
       id: entry.id,
       user: entry.user
     });
@@ -66,7 +51,7 @@
 
       for (const i of entry.images) {
         const r = await sendTokenRequest('POST',
-          new URL('/api/deleteImage', MEDIASERVER),
+          new URL('/api/deleteImage', PUBLIC_MEDIASERVER),
           { filepath: i.filepath },
           token
         );
@@ -77,7 +62,7 @@
       }
     }
 
-    const r = await sendRequest('DELETE', '/restore-delete.json', {
+    const r = await sendRequest('DELETE', '/restore-delete', {
       id: entry.id,
       user: entry.user
     });
