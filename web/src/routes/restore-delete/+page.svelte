@@ -94,7 +94,7 @@
             </div>
             {#if [ 'task', 'note', 'link', 'news' ].includes(e.type)}
               <pre>{e.text}</pre>
-            {:else if e.type === 'image'}
+            {:else if e.type === 'image' && e.images.length > 0}
               <img src={e.images[0].previewData} alt="preview" />
             {/if}
           </div>
