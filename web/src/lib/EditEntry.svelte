@@ -90,7 +90,7 @@
 
   async function getTitle(text) {
     //console.log('getTitle')
-    const r = await sendRequest('POST', '/getTitle.json', {
+    const r = await sendRequest('POST', '/getTitle', {
       url: text
     });
     if (!r.success) {
