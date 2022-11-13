@@ -6,3 +6,4 @@ node_modules
 /build
 /static/media
 /config_prod.js
+/.env
