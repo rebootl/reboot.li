@@ -11,9 +11,9 @@ services:
   db:
     build: ./db
     environment:
-      - "MONGO_INITDB_ROOT_USERNAME=better-reflectapp-admin"
+      - "MONGO_INITDB_ROOT_USERNAME=reboot-li-admin"
       - "MONGO_INITDB_ROOT_PASSWORD=example123"
-      - "MONGO_INITDB_DATABASE=better-reflectapp"
+      - "MONGO_INITDB_DATABASE=rebootli"
     restart: unless-stopped
   mediaserver:
     build: ./mediaserver

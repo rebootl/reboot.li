@@ -7,13 +7,13 @@ COPY package*.json ./
 RUN npm i
 
 # copy files
-COPY svelte.config.js ./
-COPY tsconfig.json ./
-
-COPY static ./static
 COPY src ./src
-
-COPY config_prod.js ./config.js
+COPY static ./static
+COPY .env ./
+COPY svelte.config.js ./
+COPY vite.config.ts ./
+#COPY tsconfig.json ./
+#COPY config_prod.js ./config.js
 
 # build
 RUN npm run build
