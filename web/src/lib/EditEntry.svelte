@@ -15,7 +15,7 @@
   import EditTopics from './EditTopics.svelte';
   import EditTags from './EditTags.svelte';
   import LoadImages from './LoadImages.svelte';
-  import { sendRequest, sendTokenRequest } from '$lib/request';
+  import { sendRequest, sendTokenRequest, getToken } from '$lib/request';
   import { debounce } from '$lib/helper';
   import { currentTopics, currentTags, currentTagsByTopics } from '$lib/store';
   import { refs } from '$lib/refs';
@@ -179,7 +179,7 @@
       return;
     }
 
-    const r = await sendRequest('DELETE', `/entry/${entry.id}.json`, entry);
+    const r = await sendRequest('DELETE', `/entry/${entry.id}`, entry);
     if (!r.success) {
       console.log('error deleting entry');
       return;
@@ -217,7 +217,7 @@
     entry.images = entry.images.filter(i => i.filepath !== image.filepath);
 
     // update image array on server
-    const s = await sendRequest('PUT', `/entry/${entry.id}.json`, entry);
+    const s = await sendRequest('PUT', `/entry/${entry.id}`, entry);
     if (!s.success) {
       console.log('error updating entry');
       return;

@@ -53,7 +53,7 @@ export async function sendTokenRequest(type, url, data, token) {
 
 export async function getToken() {
   try {
-    const res = await fetch('/getToken.json');
+    const res = await fetch('/getToken');
     if (!res.ok) {
       return false;
     }

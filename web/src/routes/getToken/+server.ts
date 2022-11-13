@@ -1,3 +1,4 @@
+import { json, error } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 import { SECRET } from '$env/static/private';
 
@@ -11,15 +12,11 @@ function createToken(user) : string {
   return token;
 }
 
-export async function get(request) {
+export async function GET({ request, params, locals }) {
 
-  if (!request.locals.loggedIn || !request.locals?.user) return { status: 403 };
+  if (!locals.loggedIn || !locals?.user) throw error(403);
 
-  const t = createToken(request.locals.user);
+  const t = createToken(locals.user);
 
-  return {
-    body: {
-      token: t
-    }
-  }
+  return json({ token: t });
 }
