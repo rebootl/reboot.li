@@ -21,7 +21,7 @@
 	}
 </script>
 
-<!--<SideNav entries={[]} showOnWide={false} />-->
+<SideNav entries={[]} showOnWide={false} />
 <main>
 	<h1>Welcome!</h1>
 
