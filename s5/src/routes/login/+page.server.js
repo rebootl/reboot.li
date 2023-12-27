@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { COOKIENAME } from '$env/static/private';
-import { getUser } from '$lib/server/db.js';
+import { getUser, createSession } from '$lib/server/db.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
@@ -20,25 +20,29 @@ export const actions = {
     const password = data.get('password');
 
     if (!username || !password) return fail(401, { username, missing: true });
+    
+    console.log("username", username);
+    console.log("password", password);
 
-    const r = getUser(username);
+    const r = getUser(/** @type {string} */ (username));
     if (!r) return fail(401, { username, missing: true });
 
-    const check = await bcrypt.compare(password as string, r.pwhash);
-
-    if (check) {
+    console.log("r", r);
+    
+    const loginOk = await bcrypt.compare(/** @type {string} */ (password), r.pwhash);
+    console.log("loginOk", loginOk);
+    
+    if (loginOk) {
       console.log("login ok");
 
       // uuid
       const uuid = uuidv4();
       // session -> db
-      const c = await prisma.session.create({
-        data: {
-          uuid: uuid,
-            userId: r.id,
-            userAgent: request.headers.get('user-agent') ?? '',
-            host: (request.headers.get('x-forwarded-for') || request.headers.get('origin')) ?? '',
-        }
+      const c = createSession({
+        uuid: uuid,
+        userId: r.id,
+        userAgent: request.headers.get('user-agent') ?? '',
+        host: (request.headers.get('x-forwarded-for') || request.headers.get('origin')) ?? '',
       });
 
       cookies.set(

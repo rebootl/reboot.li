@@ -1,7 +1,6 @@
 import { COOKIENAME } from '$env/static/private';
-import { getSession } from '$lib/server/db.js';
+import { getSessionUser } from '$lib/server/db.js';
 
-// import type { Handle } from '@sveltejs/kit';
 /**
   * @type {import('@sveltejs/kit').Handle}
   */
@@ -9,18 +8,17 @@ export const handle = (async ({ event, resolve }) => {
 
   const sessionId = event.cookies.get(COOKIENAME);
 
-  /** @type {import('$lib/server/db').SessionData | undefined} */
+  /** @type {import('$lib/server/db').SessionUserData | undefined} */
   let r = undefined;
   if (sessionId) {
-    r = getSession(sessionId);
+    r = getSessionUser(sessionId);
   }
   console.log('r', r);
 
   if (r) {
     event.locals = {
       user: {
-        // name: r.username,
-        id: r.user_id,
+        name: r.username,
       }
     };
   } else {

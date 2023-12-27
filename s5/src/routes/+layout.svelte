@@ -6,7 +6,16 @@
   import 'material-icons/iconfont/material-icons.css';
 	import '../global.css';
   import Login from '$lib/Login.svelte';
-	// import HeaderLinks from '$lib/HeaderLinks.svelte';
+
+  /** @typedef clientData
+    * @property {boolean} loggedIn
+    * @property {string | null} username
+    */
+  /**
+   * @type {{clientData: clientData}}
+   */
+  export let data;
+  // console.log('data layout', data);
 
   /**
    * @type {boolean}
@@ -49,7 +58,7 @@
     </footer>
   </div>
   <div class="login-box" class:shown={showLogin}>
-    <Login />
+    <Login clientData={data.clientData} />
   </div>
 </div>
 
@@ -92,8 +101,6 @@
   }
   .main-wrapper {
     display: flex;
-    /*flex-direction: column;
-    align-items: center;*/
     justify-content: center;
     position: absolute;
     top: 0;
@@ -135,7 +142,5 @@
   div.credits {
     padding: 10px;
     text-align: center;
-    /*color: var(--text-color-dimmed);*/
-    /*font-weight: lighter;*/
   }
 </style>

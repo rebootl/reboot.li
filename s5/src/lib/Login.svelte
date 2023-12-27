@@ -1,13 +1,14 @@
 <script>
-  /**
-   * @type {boolean}
-   */
-  let loggedIn = false;
+  
+  /** @type {import('$lib/types').clientData} */
+  export let clientData;
+
+  console.log('clientData', clientData);
 </script>
 
 <div class="login-box">
-  {#if loggedIn}
-    <h2>[username]</h2>
+  {#if clientData.loggedIn}
+    <h2>{clientData.username}</h2>
 <!--
     <div class="menuitem">
       <a href="/restore-delete"
@@ -18,7 +19,7 @@
     <button on:click={_=>{}}>Logout</button>
   {:else}
     <h2>Login</h2>
-    <form method="POST">
+    <form method="POST" action="/login">
       <input name="username" placeholder="Username">
       <input name="password" type="password" placeholder="Password">
       <button>Login</button>
