@@ -4,9 +4,4 @@
   * @property {string | null} username
   */
 
-// return {
-//   loggedIn: true,
-//   username: locals.user.name,
-// }
-
 export {};

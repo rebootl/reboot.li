@@ -4,7 +4,7 @@ import { getSessionUser } from '$lib/server/db.js';
 /**
   * @type {import('@sveltejs/kit').Handle}
   */
-export const handle = (async ({ event, resolve }) => {
+export const handle = ({ event, resolve }) => {
 
   const sessionId = event.cookies.get(COOKIENAME);
 
@@ -13,7 +13,7 @@ export const handle = (async ({ event, resolve }) => {
   if (sessionId) {
     r = getSessionUser(sessionId);
   }
-  console.log('r', r);
+  // console.log('r', r);
 
   if (r) {
     event.locals = {
@@ -27,6 +27,6 @@ export const handle = (async ({ event, resolve }) => {
     };
   }
 
-  const response = await resolve(event);
+  const response = resolve(event);
   return response;
-});
+};

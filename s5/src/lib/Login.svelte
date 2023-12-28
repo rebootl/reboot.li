@@ -3,7 +3,7 @@
   /** @type {import('$lib/types').clientData} */
   export let clientData;
 
-  console.log('clientData', clientData);
+  // console.log('clientData', clientData);
 </script>
 
 <div class="login-box">
@@ -16,7 +16,9 @@
       <a href="/sessions" class:active={'/sessions' === $page.url.pathname}>Sessions</a>
     </div>
 -->
-    <button on:click={_=>{}}>Logout</button>
+    <form method="POST" action="/logout">
+      <button>Logout</button>
+    </form>
   {:else}
     <h2>Login</h2>
     <form method="POST" action="/login">

@@ -59,12 +59,23 @@ export function getUser(username) {
 
 /**
   * @param {SessionCreateData} data
+  * @returns {Database.RunResult}
   */
 export function createSession(data) {
-  console.log('createSession', data);
+  // console.log('createSession', data);
   const stmt = db.prepare(`INSERT INTO sessions (uuid, user_id, user_agent, ip, created_at)
     VALUES (?, ?, ?, ?, datetime('now'))`);
   const r = stmt.run(data.uuid, data.userId, data.userAgent, data.host);
-  console.log('createSession r', r);
+  // console.log('createSession r', r);
+  return r;
+}
+
+/**
+  * @param {string} sessionId
+  * @returns {Database.RunResult}
+  */
+export function destroySession(sessionId) {
+  const stmt = db.prepare(`DELETE FROM sessions WHERE uuid = ?`);
+  const r = stmt.run(sessionId);
   return r;
 }

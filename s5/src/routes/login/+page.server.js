@@ -1,5 +1,4 @@
 import { fail, redirect } from '@sveltejs/kit';
-// import prisma from '$lib/server/prisma';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,6 +7,7 @@ import { getUser, createSession } from '$lib/server/db.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
+  /** @typedef {{ loggedIn: boolean, username: string | null }} */
 	if (locals.user) throw redirect(303, '/');
 }
 
@@ -21,20 +21,15 @@ export const actions = {
 
     if (!username || !password) return fail(401, { username, missing: true });
     
-    console.log("username", username);
-    console.log("password", password);
+    // console.log("username", username);
 
     const r = getUser(/** @type {string} */ (username));
     if (!r) return fail(401, { username, missing: true });
 
-    console.log("r", r);
-    
     const loginOk = await bcrypt.compare(/** @type {string} */ (password), r.pwhash);
     console.log("loginOk", loginOk);
     
     if (loginOk) {
-      console.log("login ok");
-
       // uuid
       const uuid = uuidv4();
       // session -> db

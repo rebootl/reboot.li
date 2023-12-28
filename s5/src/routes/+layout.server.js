@@ -3,7 +3,7 @@
 
 export const load = (async ({ locals }) => {
 
-  console.log('locals', locals);
+  // console.log('locals', locals);
   if (locals.user) {
     return {
       loggedIn: true,
