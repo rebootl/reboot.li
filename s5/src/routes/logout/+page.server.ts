@@ -15,12 +15,13 @@ export const actions = {
     if (!sessionId) return fail(401, { message: 'Session not found' });
 
 		const r = await destroySession(sessionId);
-		console.log('destroySession', r);
+		// console.log('destroySession', r);
     if (!r) return fail(401, { message: 'Session not found' });
 
     cookies.delete(COOKIENAME, { path: '/' });
 
     locals.user = null;
+		console.log('logout ok');
 	  throw redirect(303, '/');
   }
 };
