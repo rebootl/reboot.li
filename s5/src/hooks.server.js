@@ -19,6 +19,7 @@ export const handle = ({ event, resolve }) => {
     event.locals = {
       user: {
         name: r.username,
+        id: r.user_id,
       }
     };
   } else {
