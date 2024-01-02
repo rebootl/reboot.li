@@ -6,16 +6,19 @@ body {
 	--background-color: #111;
 	--text-color: #fff;
 	--text-color-dimmed: #a4a4a4;
+	--text-color-dimmed: #adadbc;
 
 	--primary-color: #5af0a4;
 	--secondary-color: #c9a6a4;
 	--primary-color-dimmed: #5af0a455;
 
+	/*--line-color: #4f5260;*/
+
 	--header-height: 55px;
 
 	--side-width: 260px;
 	--max-main-width: 600px;
-	--min-main-width: 300px;
+	--min-main-width: 400px;
 
 	background-color: var(--background-color);
 
@@ -50,6 +53,15 @@ button.icon-button {
 }
 
 input {
+	background-color: var(--background-color);
+	border: 1px solid var(--primary-color-dimmed);
+	border-radius: 10px;
+	padding: 15px;
+	font-size: 1em;
+	color: var(--text-color);
+}
+
+textarea {
 	background-color: var(--background-color);
 	border: 1px solid var(--primary-color-dimmed);
 	border-radius: 10px;

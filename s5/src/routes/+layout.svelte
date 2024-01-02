@@ -115,6 +115,7 @@
   }
   main {
     max-width: var(--max-main-width);
+    min-width: var(--min-main-width);
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -142,5 +143,6 @@
   div.credits {
     padding: 10px;
     text-align: center;
+    color: var(--text-color-dimmed);
   }
 </style>

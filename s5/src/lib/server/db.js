@@ -88,8 +88,8 @@ export function destroySession(sessionId) {
   * @property {string} title
   * @property {string} content
   * @property {string} comment
-  * @property {string} private
-  * @property {string} pinned
+  * @property {number} private
+  * @property {number} pinned
   * @property {string[]} tags
   */
 
@@ -97,16 +97,16 @@ export function destroySession(sessionId) {
   * @param {CreateEntryData} data
   * @returns {Database.RunResult}
   */
-export function createEntry(data) {
+export function createEntryDB(data) {
   const stmt = db.prepare(`INSERT INTO entries (user_id, type, title, content, comment, private, pinned, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`);
   const r = stmt.run(data.userId, data.type, data.title, data.content, data.comment, data.private, data.pinned);
 
-  for (const t of data.tags) {
-    const stmt2 = db.prepare(`INSERT INTO tags (user_id, entry_id, name, created_at)
-      VALUES (?, ?, ?, datetime('now'))`);
-    const r2 = stmt2.run(data.userId, r.lastInsertRowid, t);
-  }
+  // for (const t of data.tags) {
+  //   const stmt2 = db.prepare(`INSERT INTO tags (user_id, entry_id, name, created_at)
+  //     VALUES (?, ?, ?, datetime('now'))`);
+  //   const r2 = stmt2.run(data.userId, r.lastInsertRowid, t);
+  // }
   return r;
 }
 
@@ -129,8 +129,6 @@ export function createEntry(data) {
   * @property {string} pinned
   * @property {string} created_at
   * @property {string} updated_at
-  * @property {number} version
-  * @property {number} last
   * @property {Tag[]} tags
   */
 
@@ -143,17 +141,17 @@ export function createEntry(data) {
 export function getEntry(userId, entryId, loggedIn = false) {
   let stmt;
   if (!loggedIn) {
-    stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ? AND private = 0 AND current = 1`);
+    stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ? AND private = 0`);
   } else {
-    stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ? AND current = 1`);
+    stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ?`);
   }
   const r = /** @type {EntryData | undefined} */ (stmt.get(userId, entryId));
   // get tags
-  if (r) {
-    const stmt2 = db.prepare(`SELECT * FROM tags WHERE user_id = ? AND entry_id = ?`);
-    const tags = /** @type {Tag[]} */ (stmt2.all(userId, entryId));
-    r.tags = tags;
-  }
+  // if (r) {
+  //   const stmt2 = db.prepare(`SELECT * FROM tags WHERE user_id = ? AND entry_id = ?`);
+  //   const tags = /** @type {Tag[]} */ (stmt2.all(userId, entryId));
+  //   r.tags = tags;
+  // }
   return r;
 }
 
@@ -169,17 +167,47 @@ export function getEntries(userId, type = null, loggedIn = false, limit = 99, of
   let stmt;
   if (type === null) {
     if (!loggedIn) {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND private = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?`);
+      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND private = 0
+        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
     } else {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`);
+      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ?
+        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
     }
   } else {
     if (!loggedIn) {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ? AND private = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?`);
+      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ? AND private = 0
+        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
     } else {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`);
+      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ?
+        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
     }
   }
   const r = /** @type {EntryData[]} */ (stmt.all(userId, type, limit, offset));
   return r;
 }
+
+/**
+  * @typedef {Object} UpdateEntryData
+  * @property {number} userId
+  * @property {number} entryId
+  * @property {string} type
+  * @property {string} title
+  * @property {string} content
+  * @property {string} comment
+  * @property {number} private
+  * @property {number} pinned
+  * @property {string[]} tags
+  */
+
+/**
+  * @param {UpdateEntryData} data
+  * @returns {Database.RunResult}
+  */
+export function updateEntryDB(data) {
+  const stmt = db.prepare(`UPDATE entries SET title = ?, content = ?, comment = ?, private = ?, pinned = ?,
+    modified_at = datetime('now')
+    WHERE user_id = ? AND id = ?`);
+  const r = stmt.run(data.title, data.content, data.comment, data.private, data.pinned, data.userId, data.entryId);
+  return r;
+}
+
