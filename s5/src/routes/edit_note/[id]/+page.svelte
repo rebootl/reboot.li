@@ -1,6 +1,24 @@
 <script>
+  import { goto } from '$app/navigation';
+  import { sendRequest } from '$lib/request';
+
 	export let data;
   // console.log(data);
+
+  async function confirmDelete() {
+    if (!confirm("Are you sure you want to delete this entry?")) {
+      return;
+    }
+
+    const r = await sendRequest('DELETE', `/entry/${data.entry?.id}`);
+    if (!r.success) {
+      console.log('error deleting entry');
+      return;
+    }
+
+    console.log('success!')
+    goto('/notes');
+  }
 </script>
 
 {#if data.entry}
@@ -15,8 +33,11 @@
       </label>
     </div>
     <div class="buttons">
-      <button>Save</button>
-      <a href="/notes">Cancel</a>
+      <div>
+        <button>Save</button>
+        <a href="/notes">Cancel</a>
+      </div>
+      <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button>
     </div>
   </form>
 {:else}
@@ -50,5 +71,6 @@
     display: flex;
     gap: 20px;
     align-items: center;
+    justify-content: space-between;
   }
 </style>
