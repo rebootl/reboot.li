@@ -10,7 +10,7 @@
 <h1>Notes</h1>
 
 {#if data.clientData.loggedIn}
-  <a href="/edit_note/new">New Note...</a>
+  <a href="/editNote/new">New Note...</a>
 {/if}
 
 <div class="note-list">
@@ -23,7 +23,11 @@
           <small><span class="material-icons">lock</span> Private</small>
         {/if}
       </div>
-      <small><a href={ `/edit_note/${entry.id}` }><span class="material-icons">edit</span></a></small>
+      {#if data.clientData.loggedIn}
+        <small><a href={ `/deleteNote/${entry.id}` }><span class="material-icons">delete</span></a></small>
+      {:else}
+        <span></span>
+      {/if}
     </div>
   {:else}
     <p>No entries yet.</p>

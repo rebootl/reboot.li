@@ -55,13 +55,13 @@
 <h1>Collected Links</h1>
 
 {#if data.clientData.loggedIn}
-  <form action="/edit_link/new?/createEntry" method="POST">
+  <form action="/editLink/new?/createEntry" method="POST">
     <input type="text" name="url" placeholder="Add link" oninput={ (ev) => linkInsert(ev) } />
     {#if showAddLink}
       <input type="text" name="title" placeholder="Link title..."
              bind:value={title} disabled={titleDisabled}>
       {#if linkErr}
-        <small class="error">Error getting title: {linkErrMessage}</small>
+        <small class="warning">Error getting title: {linkErrMessage}</small>
       {/if}
       <input type="text" name="comment" placeholder="Comment" />
       <button>Add</button>
@@ -77,7 +77,11 @@
         {#if entry.private}
           <small><span class="material-icons">lock</span> Private</small>
         {/if}
-        <small><a href={ `/edit_link/${entry.id}` }><span class="material-icons">edit</span></a></small>
+        {#if data.clientData.loggedIn}
+          <small><a href={ `/editLink/${entry.id}` }><span class="material-icons">edit</span></a></small>
+        {:else}
+          <span></span>
+        {/if}
       </div>
       <div class="item-content">
         <a class="item-link" href={entry.content}><small>{entry.content}</small></a>

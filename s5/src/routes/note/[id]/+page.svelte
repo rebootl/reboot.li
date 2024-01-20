@@ -17,7 +17,7 @@
 		{/if}
   </div>
 	{#if data.clientData.loggedIn}
-		<small><a href="/edit_note/{entry.id}"><span class="material-icons">edit</span></a></small>
+		<small><a href="/editNote/{entry.id}"><span class="material-icons">edit</span></a></small>
 	{/if}
 </div>
 

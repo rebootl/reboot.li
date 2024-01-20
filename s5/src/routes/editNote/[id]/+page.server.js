@@ -40,6 +40,7 @@ export const actions = {
       comment: '',
       private: isPrivate,
       pinned: 0,
+      manualDate: '',
       tags: [],
     });
 
@@ -66,6 +67,7 @@ export const actions = {
       comment: '',
       private: isPrivate,
       pinned: 0,
+      manualDate: '',
       tags: [],
     });
 
