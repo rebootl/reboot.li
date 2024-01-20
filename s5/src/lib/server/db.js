@@ -90,6 +90,7 @@ export function destroySession(sessionId) {
   * @property {string} comment
   * @property {number} private
   * @property {number} pinned
+  * @property {string} manualDate
   * @property {string[]} tags
   */
 
@@ -129,6 +130,7 @@ export function createEntryDB(data) {
   * @property {string} pinned
   * @property {string} created_at
   * @property {string} updated_at
+  * @property {string} manual_date
   * @property {Tag[]} tags
   */
 
@@ -140,11 +142,8 @@ export function createEntryDB(data) {
   */
 export function getEntry(userId, entryId, loggedIn = false) {
   let stmt;
-  if (!loggedIn) {
-    stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ? AND private = 0`);
-  } else {
-    stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ?`);
-  }
+  const privateWhere = loggedIn ? '' : 'AND private = 0';
+  stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND id = ? ${privateWhere}`);
   const r = /** @type {EntryData | undefined} */ (stmt.get(userId, entryId));
   // get tags
   // if (r) {
@@ -157,32 +156,18 @@ export function getEntry(userId, entryId, loggedIn = false) {
 
 /**
   * @param {number} userId
-  * @param {string|null} type
+  * @param {string} type
   * @param {boolean} loggedIn
   * @param {number} limit
   * @param {number} offset
   * @returns {EntryData[]}
   */
-export function getEntries(userId, type = null, loggedIn = false, limit = 99, offset = 0) {
+export function getEntries(userId, type = '', loggedIn = false, limit = 99999, offset = 0, orderBy = 'created_at') {
   let stmt;
-  if (type === null) {
-    if (!loggedIn) {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND private = 0
-        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
-    } else {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ?
-        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
-    }
-  } else {
-    if (!loggedIn) {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ? AND private = 0
-        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
-    } else {
-      stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ?
-        ORDER BY created_at DESC LIMIT ? OFFSET ?`);
-    }
-  }
-  const r = /** @type {EntryData[]} */ (stmt.all(userId, type, limit, offset));
+  const privateWhere = loggedIn ? '' : 'AND private = 0';
+  stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ? ${privateWhere}
+    ORDER BY ? DESC LIMIT ? OFFSET ?`);
+  const r = /** @type {EntryData[]} */ (stmt.all(userId, type, orderBy, limit, offset));
   return r;
 }
 
@@ -196,6 +181,7 @@ export function getEntries(userId, type = null, loggedIn = false, limit = 99, of
   * @property {string} comment
   * @property {number} private
   * @property {number} pinned
+  * @property {string} manualDate
   * @property {string[]} tags
   */
 
