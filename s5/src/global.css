@@ -13,6 +13,8 @@ body {
 	--primary-color-dimmed: #5af0a455;
 
 	/*--line-color: #4f5260;*/
+	--warning-red-color: #f05a5a;
+	--warning-yellow-color: #f0f05a;
 
 	--header-height: 55px;
 
@@ -78,4 +80,19 @@ button {
 	font-size: 1em;
 	cursor: pointer;
 	text-transform: uppercase;
+}
+
+button.small-button {
+	padding: 5px;
+	border-radius: 5px;
+	font-size: 0.8em;
+}
+
+button.danger-button {
+	background-color: var(--warning-red-color);
+	color: var(--text-color);
+}
+
+.warning {
+	color: var(--warning-yellow-color);
 }

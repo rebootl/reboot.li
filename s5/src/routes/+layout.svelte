@@ -43,7 +43,8 @@
     <nav>
       <a href="/">Home</a> | 
       <a href="/timeline">Timeline</a> | 
-      <a href="/notes">Notes</a>
+      <a href="/notes">Notes</a> |
+      <a href="/links">Links</a>
     </nav>
     <div class="credits">
       <small>Copyright 2023 Cem Aydin<br />
@@ -139,6 +140,7 @@
     display: flex;
     gap: 10px;
     padding: 20px;
+    flex-wrap: wrap;
   }
   div.credits {
     padding: 10px;

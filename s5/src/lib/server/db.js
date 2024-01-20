@@ -211,3 +211,18 @@ export function updateEntryDB(data) {
   return r;
 }
 
+/**
+  * @typedef {Object} DeleteEntryData
+  * @property {number} userId
+  * @property {number} entryId
+  */
+
+/**
+  * @param {DeleteEntryData} data
+  * @returns {Database.RunResult}
+  */
+export function deleteEntryDB(data) {
+  const stmt = db.prepare(`DELETE FROM entries WHERE user_id = ? AND id = ?`);
+  const r = stmt.run(data.userId, data.entryId);
+  return r;
+}
