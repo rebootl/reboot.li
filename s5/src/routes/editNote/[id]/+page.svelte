@@ -23,7 +23,7 @@
 
 {#if data.entry}
   <h1>Edit Note</h1>
-  <form method="POST" action={ `/edit_note/${ data.entry.id }?/updateEntry` }>
+  <form method="POST" action={ `/editNote/${ data.entry.id }?/updateEntry` }>
     <input type="text" name="title" placeholder="Title" value={ data.entry.title } />
     <textarea name="content" placeholder="Text...">{ data.entry.content }</textarea>
     <div>
@@ -42,7 +42,7 @@
   </form>
 {:else}
   <h1>New Note</h1>
-  <form method="POST" action="/edit_note/new?/createEntry">
+  <form method="POST" action="/editNote/new?/createEntry">
     <input type="text" name="title" placeholder="Title" />
     <textarea name="content" placeholder="Text..."></textarea>
     <div>

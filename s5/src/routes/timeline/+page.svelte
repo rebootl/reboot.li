@@ -28,7 +28,7 @@
         {/if}
       </div>
       <div class="item-content">
-        {entry.content}>
+        {entry.content}
         {#if entry.comment}
           <small>{entry.comment}</small>
         {/if}

@@ -6,12 +6,13 @@
   // console.log(data);
 	let content = data.entry?.content;
   let title = data.entry?.title;
-  let titleDisabled = true;
+  let titleDisabled = false;
   let linkErr = false;
   let linkErrMessage = '';
 
   async function getTitle() {
     console.log('getTitle')
+    titleDisabled = true;
     const r = await sendRequest('POST', '/getTitle', {
       url: content
     });
@@ -50,7 +51,7 @@
 </script>
 
 <h1>Edit Link</h1>
-<form method="POST" action={ `/edit_link/${ data.entry?.id }?/updateEntry` }>
+<form method="POST" action={ `/editLink/${ data.entry?.id }?/updateEntry` }>
   <input type="text" name="content" placeholder="URL" bind:value={content} />
   <input type="text" name="title" placeholder="Title" bind:value={title} disabled={titleDisabled} />
 	<div>

@@ -1,7 +1,11 @@
 import Database from 'better-sqlite3';
+import dayjs from 'dayjs';
+
 import { DBPATH } from '$env/static/private'; 
 
 export const db = new Database(DBPATH);
+
+const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 /**
   * @typedef {Object} SessionData
@@ -99,9 +103,13 @@ export function destroySession(sessionId) {
   * @returns {Database.RunResult}
   */
 export function createEntryDB(data) {
-  const stmt = db.prepare(`INSERT INTO entries (user_id, type, title, content, comment, private, pinned, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`);
-  const r = stmt.run(data.userId, data.type, data.title, data.content, data.comment, data.private, data.pinned);
+  const manualDate = data.manualDate ? dayjs(data.manualDate).format(DATE_FORMAT) : undefined;
+
+  const stmt = db.prepare(`INSERT INTO entries (user_id, type, title, content, comment, private, pinned,
+    created_at, manual_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)`);
+  const r = stmt.run(data.userId, data.type, data.title, data.content, data.comment, data.private,
+    data.pinned, manualDate);
 
   // for (const t of data.tags) {
   //   const stmt2 = db.prepare(`INSERT INTO tags (user_id, entry_id, name, created_at)
@@ -181,7 +189,7 @@ export function getEntries(userId, type = '', loggedIn = false, limit = 99999, o
   * @property {string} comment
   * @property {number} private
   * @property {number} pinned
-  * @property {string} manualDate
+  * @property {Date|undefined} manualDate
   * @property {string[]} tags
   */
 
@@ -190,10 +198,13 @@ export function getEntries(userId, type = '', loggedIn = false, limit = 99999, o
   * @returns {Database.RunResult}
   */
 export function updateEntryDB(data) {
+  const manualDate = data.manualDate ? dayjs(data.manualDate).format(DATE_FORMAT) : undefined;
+
   const stmt = db.prepare(`UPDATE entries SET title = ?, content = ?, comment = ?, private = ?, pinned = ?,
-    modified_at = datetime('now')
+    modified_at = datetime('now'), manual_date = ?
     WHERE user_id = ? AND id = ?`);
-  const r = stmt.run(data.title, data.content, data.comment, data.private, data.pinned, data.userId, data.entryId);
+  const r = stmt.run(data.title, data.content, data.comment, data.private, data.pinned,
+    manualDate, data.userId, data.entryId);
   return r;
 }
 

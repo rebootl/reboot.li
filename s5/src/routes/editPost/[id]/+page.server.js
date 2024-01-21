@@ -27,54 +27,55 @@ export const actions = {
 
     const data = await request.formData();
     
-    const title = String(data.get('title'));
-    // if (!title) return fail(400, { title, missing: true });
-    const content = String(data.get('url'));
-    // validate content (url)
-    // ...
+    const manualDate = data.get('manualdate') ? new Date(String(data.get('manualdate'))) : undefined;
+
+    const content = data.get('content');
+    const comment = data.get('comment');
     
     const isPrivate = data.get('isPrivate') ? 1 : 0;
 
     const r = createEntryDB({
       userId: locals.user.id,
-      type: 'link',
-      title,
-      content,
-      comment: String(data.get('comment')) ?? '',
+      type: 'post',
+      title: '',
+      content: typeof content === 'string' ? content : '',
+      comment: typeof comment === 'string' ? comment : '',
       private: isPrivate,
       pinned: 0,
+      manualDate,
       tags: [],
     });
 
-    // return { success: true }
     console.log('r', r);
-    redirect(303, '/links')
+    redirect(303, '/timeline')
   },
   async updateEntry({ locals, request, params }) {
     if (!locals.user) throw error(401, 'Unauthorized');
 
     const data = await request.formData();
     
-    const title = String(data.get('title'));
-    // if (!title) return fail(400, { title, missing: true });
-    const content = String(data.get('content'));
+    const manualDate = data.get('manualdate') ? new Date(String(data.get('manualdate'))) : undefined;
+
+    const content = data.get('content');
+    const comment = data.get('comment');
+
     const isPrivate = data.get('isPrivate') ? 1 : 0;
 
     const r = updateEntryDB({
       entryId: parseInt(params.id) ?? 0,
       userId: locals.user.id,
-      type: 'link',
-      title,
-      content,
-      comment: String(data.get('comment')) ?? '',
+      type: 'post',
+      title: '',
+      content: typeof content === 'string' ? content : '',
+      comment: typeof comment === 'string' ? comment : '',
       private: isPrivate,
       pinned: 0,
+      manualDate,
       tags: [],
     });
 
-    // return { success: true }
     console.log('r', r);
     if (r.changes === 0) throw error(400, 'Error updating entry');
-    redirect(303, `/links`)
+    redirect(303, `/timeline`)
   }
 }
