@@ -47,7 +47,7 @@
       <a href="/links">Links</a>
     </nav>
     <div class="credits">
-      <small>Copyright 2023 Cem Aydin<br />
+      <small>Copyright 2024 Cem Aydin<br />
         Created with <a href="https://kit.svelte.dev/" target="_blank">SvelteKit</a></small>
     </div>
   </aside>

@@ -24,7 +24,7 @@
         {/if}
       </div>
       {#if data.clientData.loggedIn}
-        <small><a href={ `/deleteNote/${entry.id}` }><span class="material-icons">delete</span></a></small>
+        <small><a href={ `/editNote/${entry.id}` }><span class="material-icons">edit</span></a></small>
       {:else}
         <span></span>
       {/if}

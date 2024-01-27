@@ -8,6 +8,7 @@ ToDo:
 - markdown preview
 - syntax highlighting
 - lazy loading
+- export/import entries
 
 Questions:
 

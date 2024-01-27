@@ -1,9 +1,76 @@
 <script>
+  import dayjs from 'dayjs';
+
 	export let data;
   // console.log(data);
   
 	let entries = data.entries;
   console.log(entries);
+
+  let previousYear = dayjs(entries[0].created_at).year();
+  let previousMonth = dayjs(entries[0].created_at).format('MMMM');
+  
+  /** @type {{type: 'year' | 'month' | 'entry', year: number | null, entry: any | null,
+   month: string | null, date: string | null }[]} */
+  const timelineEntries = [
+    {
+      type: 'year',
+      year: previousYear,
+      month: null,
+      entry: null,
+      date: null,
+    },
+    {
+      type: 'month',
+      year: null,
+      month: previousMonth,
+      entry: null,
+      date: null,
+    },
+  ];
+
+  const sortedEntries = entries.sort((a, b) => {
+    const aDate = a.manual_date || a.created_at;
+    const bDate = b.manual_date || b.created_at;
+    return dayjs(aDate).isBefore(dayjs(bDate)) ? 1 : -1;
+  });
+
+  for (const entry of sortedEntries) {
+    const entryDate = entry.manual_date || entry.created_at;
+    
+    const entryYear = dayjs(entryDate).year();
+    const entryMonth = dayjs(entryDate).format('MMMM');
+    console.log(entryYear);
+    // console.log(entryMonth);
+    if (entryYear !== previousYear) {
+      timelineEntries.push({
+        type: 'year',
+        year: entryYear,
+        month: null,
+        entry: null,
+        date: null,
+      });
+      previousYear = entryYear;
+    }
+    if (entryMonth !== previousMonth) {
+      timelineEntries.push({
+        type: 'month',
+        year: null,
+        month: entryMonth,
+        entry: null,
+        date: null,
+      });
+      previousMonth = entryMonth;
+    }
+    timelineEntries.push({
+      type: 'entry',
+      year: null,
+      month: null,
+      entry: entry,
+      date: entryDate,
+    });
+  }
+  console.log(timelineEntries);
 
 </script>
 
@@ -14,26 +81,32 @@
 {/if}
 
 <div class="list">
-  {#each entries as entry}
-    <div class="list-item">
-      <div class="item-header">
-        <small>{entry.created_at}</small>
-        {#if entry.private}
-          <small><span class="material-icons">lock</span> Private</small>
-        {/if}
-        {#if data.clientData.loggedIn}
-          <small><a href={ `/editPost/${entry.id}` }><span class="material-icons">edit</span></a></small>
-        {:else}
-          <span></span>
-        {/if}
+  {#each timelineEntries as t}
+    {#if t.type === 'year'}
+      <h2 class="year">{t.year}</h2>
+    {:else if t.type === 'month'}
+      <h3 class="month">{t.month}</h3>
+    {:else}
+      <div class="list-item">
+        <div class="item-header">
+          <small>{ t.date }</small>
+          {#if t.entry.private}
+            <small><span class="material-icons">lock</span> Private</small>
+          {/if}
+          {#if data.clientData.loggedIn}
+            <small><a href={ `/editPost/${t.entry.id}` }><span class="material-icons">edit</span></a></small>
+          {:else}
+            <span></span>
+          {/if}
+        </div>
+        <div class="item-content">
+          {t.entry.content}
+          {#if t.entry.comment}
+            <small>{t.entry.comment}</small>
+          {/if}
+        </div>
       </div>
-      <div class="item-content">
-        {entry.content}
-        {#if entry.comment}
-          <small>{entry.comment}</small>
-        {/if}
-      </div>
-    </div>
+    {/if}
   {:else}
     <p>No entries yet.</p>
   {/each}
@@ -47,6 +120,7 @@
   }
   .list {
     margin-top: 30px;
+    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -54,8 +128,8 @@
   .list-item {
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    background-color: #1e1e1e;
+    /*padding: 20px;*/
+    /*background-color: #1e1e1e;*/
     border-radius: 15px;
   }
   .list-item .item-header {
@@ -68,8 +142,21 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    margin-left: 20px;
+    padding: 20px 40px 20px 40px;
+    border-left: 1px solid var(--primary-color-dimmed);
   }
   small .material-icons {
     font-size: 0.85em;
+  }
+  .year {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+    color: var(--text-color-dimmed);
+  }
+  .month {
+    /*margin-top: 0;
+    margin-bottom: 0;*/
+    color: var(--text-color-dimmed);
   }
 </style>
