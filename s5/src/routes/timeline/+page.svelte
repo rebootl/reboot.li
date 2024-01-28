@@ -104,6 +104,16 @@
           {#if t.entry.comment}
             <small>{t.entry.comment}</small>
           {/if}
+          {#if t.entry.images}
+            <div class="image-preview-box">
+              {#each t.entry.images as image}
+                <!--<img src={ image.path } alt={ image.comment } />-->
+                <a href={ image.path }>
+                  <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
+                </a>
+              {/each}
+            </div>
+          {/if}
         </div>
       </div>
     {/if}
@@ -158,5 +168,15 @@
     /*margin-top: 0;
     margin-bottom: 0;*/
     color: var(--text-color-dimmed);
+  }
+  .image-preview-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .image-preview {
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: contain;
   }
 </style>

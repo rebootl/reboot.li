@@ -22,9 +22,11 @@
 	"dependencies": {
 		"bcrypt": "^5.1.1",
 		"better-sqlite3": "^9.2.2",
+		"compressorjs": "^1.2.1",
 		"dayjs": "^1.11.10",
 		"marked": "^11.1.0",
 		"material-icons": "^1.13.12",
+		"sharp": "^0.33.2",
 		"uuid": "^9.0.1"
 	}
 }

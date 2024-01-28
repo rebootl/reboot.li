@@ -86,6 +86,32 @@ export function destroySession(sessionId) {
 }
 
 /**
+  * @typedef {Object} ImageData
+  * @property {string} path
+  * @property {string} comment
+  * @property {string} previewData
+  */
+
+/**
+  * @param {ImageData[]} images
+  * @param {number|bigint} entryId
+  * @returns {boolean} success
+  */
+export function insertImagesDB(images, entryId) {
+  let success = true;
+  for (const i of images) {
+    const stmt = db.prepare(`INSERT INTO images (entry_id, path, comment, preview_data, created_at)
+      VALUES (?, ?, ?, ?, datetime('now'))`);
+    const r = stmt.run(entryId, i.path, i.comment, i.previewData);
+    if (!r) {
+      success = false;
+      break;
+    }
+  }
+  return success;
+}
+
+/**
   * @typedef {Object} CreateEntryData
   * @property {number} userId
   * @property {string} type
@@ -94,7 +120,7 @@ export function destroySession(sessionId) {
   * @property {string} comment
   * @property {number} private
   * @property {number} pinned
-  * @property {string} manualDate
+  * @property {Date|undefined} manualDate
   * @property {string[]} tags
   */
 
@@ -140,6 +166,7 @@ export function createEntryDB(data) {
   * @property {string} updated_at
   * @property {string} manual_date
   * @property {Tag[]} tags
+  * @property {ImageData[]} images
   */
 
 /**
@@ -176,6 +203,12 @@ export function getEntries(userId, type = '', loggedIn = false, limit = 99999, o
   stmt = db.prepare(`SELECT * FROM entries WHERE user_id = ? AND type = ? ${privateWhere}
     ORDER BY ? DESC LIMIT ? OFFSET ?`);
   const r = /** @type {EntryData[]} */ (stmt.all(userId, type, orderBy, limit, offset));
+  for (const e of r) {
+    // get images
+    const stmt2 = db.prepare(`SELECT * FROM images WHERE entry_id = ?`);
+    const images = /** @type {ImageData[]} */ (stmt2.all(e['id']));
+    e.images = images;
+  }
   return r;
 }
 
