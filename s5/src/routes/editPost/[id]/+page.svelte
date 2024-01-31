@@ -2,28 +2,70 @@
   import dayjs from 'dayjs';
 
   import { goto } from '$app/navigation';
-  import { sendRequest } from '$lib/request';
+  import { sendJSONRequest } from '$lib/request';
 
-  // import LoadImages from '$lib/LoadImages.svelte';
   import { compressImage, encodeData } from '$lib/images';
 
   const manualDateFmt = 'YYYY-MM-DDTHH:mm';
 
+  // -> these types should be imported from db!!
+  /** @typedef {Object} ImageData
+   * @property {File} file
+   * @property {string} path
+   * @property {string} preview_data
+   * @property {string} [comment]
+   */
+  /** @typedef {Object} EntryData
+   * @property {number} id
+   * @property {string} content
+   * @property {string} comment
+   * @property {string} date
+   * @property {string} manual_date
+   * @property {boolean} private
+   * @property {ImageData[]} images
+   */
+  /** @typedef {Object} Data
+   * @property {EntryData} entry
+   */
+  /** @type {Data} */
 	export let data;
 
+  /** @typedef {Object} CreateImageData
+   * @property {File} file
+   * @property {string} filename
+   * @property {string} previewData
+   * @property {string} [comment]
+   */
+  /** image array used for preview
+    * @type {CreateImageData[]}
+    */
   let images = [];
 
-  // console.log(data);
-	// let content = data.entry?.content;
-  let manualDate = data.entry?.manual_date ? dayjs(data.entry?.manual_date).format(manualDateFmt) : '';
-  // let title = data.entry?.title;
+  /** max image size
+    * @type {string}
+    */
+  let maxImageSize = '1024';
 
+  /** override date with manual date if set
+    * @type {string}
+    */
+  let manualDate = data.entry?.manual_date ? dayjs(data.entry?.manual_date).format(manualDateFmt) : '';
+
+  /** when deleting an entry we want to at least show a confirmation dialog,
+    * for now we use this function to do that
+    *
+    * we use a JSON request here because the button is located within the form
+    * to save the edit, but we do not want to submit this form
+    *
+    * @todo it would be nice to find a better way to do this, maybe simply a separate
+    *       form for that is triggered by this button
+    */
   async function confirmDelete() {
     if (!confirm("Are you sure you want to delete this entry?")) {
       return;
     }
 
-    const r = await sendRequest('DELETE', `/entry/${data.entry?.id}`);
+    const r = await sendJSONRequest('DELETE', `/entry/${data.entry?.id}`);
     if (!r.success) {
       console.log('error deleting entry');
       return;
@@ -33,9 +75,13 @@
     goto('/timeline');
   }
 
-  async function loadImages(f) {
-    console.log(f);
-    const n = await Promise.all(Array.from(f)
+  /** when images are selected we want to show a preview and a comment input,
+    * we generate the preview here and add the images to the images array
+    * @param {FileList} files
+    */
+  async function loadImages(files) {
+    // console.log(files);
+    const n = await Promise.all(Array.from(files)
       .map(async (file) => {
         const blob = await compressImage(file, 240, 240);
         const data = await encodeData(blob);
@@ -50,38 +96,39 @@
     images = n;
   }
 
+  /** reset image file selection
+    */
   function resetImages() {
     images = [];
-    const fileInputElement = document.querySelector('#images-file-input');
+    const fileInputElement = /** @type {HTMLInputElement} */ (document.querySelector('#images-fie-input'));
     fileInputElement.value = "";
   }
 
-  /*function unloadImage(filename) {
-    images = images.filter(e => e.filename !== filename);
-  }*/
+  /** create entry via function in order to pre-compress the images
+    */
+  async function createEntry() {
 
-  /*function setComment(v, filename) {
-    const image = images.find(e => e.filename === filename);
-    image.comment = v;
-    images = images;
-  }*/
+    // console.log('maxImageSize', maxImageSize);
+    const maxSize = !isNaN(parseInt(maxImageSize)) ? parseInt(maxImageSize) : 1024;
 
-  async function submit() {
+    // create a new form for submission
+    const formData = new FormData();
 
     // compress images
-    const maxSizeEl = document.querySelector('#max-size');
-    const maxSize = maxSizeEl ? parseInt(maxSizeEl.value) : 1024;
-    console.log(maxSize);
-
-    const formData = new FormData();
-    // -> use promise.all
-    for (const image of images) {
+    // time it
+    // console.time('compress images');
+    await Promise.all(images.map(async (image) => {
       const blob = await compressImage(image.file, maxSize, maxSize);
       formData.append('images', blob, image.filename);
-    }
+    }));
+    // for (const image of images) {
+    //   const blob = await compressImage(image.file, maxSize, maxSize);
+    //   formData.append('images', blob, image.filename);
+    // }
+    // console.timeEnd('compress images');
 
     // add other form data
-    const form = document.querySelector('#new-entry-form');
+    const form = /** @type {HTMLFormElement} */ (document.querySelector('#new-entry-form'));
     const formDataOrig = new FormData(form);
     for (const [key, value] of formDataOrig.entries()) {
       if (key === 'images') continue;
@@ -93,18 +140,16 @@
       method: "POST",
       body: formData,
     });
-    console.log(response);
+    // console.log(response);
     if (!response) {
       console.log('error creating entry');
       return;
     }
 
-    // reset file input element
-    // const fileInputElement = document.querySelector('#images-file-input');
-    // fileInputElement.value = "";
-
-    // const form = document.querySelector('#new-entry-form');
-    // form.submit();
+    console.log('success!')
+    // reset images
+    images = [];
+    goto('/timeline');
   }
 
 </script>
@@ -132,6 +177,17 @@
       <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button>
     </div>
   </form>
+  <h2>Edit Images</h2>
+  {#each data.entry.images as image}
+    <div class="image-load-preview">
+      <img src={'data:image/png;base64,' + image.preview_data} alt={image.path} class="image-preview"
+        title={image.path} />
+      <input type="text" name="imagecomment" placeholder="Comment" value={image.comment} />
+      <div>
+        <button class="danger-button small-button" onclick={() => deleteImage(image.path)}>Delete image</button>
+      </div>
+    </div>
+  {/each}
 {:else}
   <h1>New Post</h1>
   <form method="POST" action="/editPost/new?/createEntry" enctype="multipart/form-data" id="new-entry-form">
@@ -139,26 +195,15 @@
     <input type="text" name="comment" placeholder="Comment" />
     <label>
       <input type="datetime-local" name="manualdate" value={ data.entry?.date } 
-              on:change={(e) => loadImages(e.target.files) } />
+              on:change={(e) => loadImages(e.target.files) } /> 
     </label>
     <input type="file" name="images" accept="image/*" multiple onchange={(e) => loadImages(e.target.files) }
-      id="images-file-input"/>
+      id="images-file-input" />
     {#if images.length > 0}
       <div>
         <button type="button" class="small-button" onclick={() => resetImages()}>Reset images</button>
-        <label>
-          Max size:
-          <input type="number" id="max-size" value="1024" />
-        </label>
       </div>
     {/if}
-    {#each images as image}
-      <div class="image-load-preview">
-        <img src={image.previewData} alt={image.filename} width="240" height="240" />
-        <input type="text" name="imagecomment" placeholder="Comment" />
-        <!--<button type="button" onclick={() => unloadImage(image.filename)}>Unload</button>-->
-      </div>
-    {/each}
     <div>
       <label>
         <input type="checkbox" name="isPrivate" />
@@ -166,9 +211,25 @@
       </label>
     </div>
     <div class="buttons">
-      <button type="button" onclick={() => submit()}>Create</button>
+      <button type="button" onclick={() => createEntry()}>Create</button>
       <a href="/timeline">Cancel</a>
     </div>
+    {#if images.length > 0}
+      <h2>Images</h2>
+      <div>
+        <label>
+          Max. image size:
+          <input type="text" id="max-size" bind:value={maxImageSize} />
+        </label>
+      </div>
+    {/if}
+    {#each images as image}
+      <div class="image-load-preview">
+        <img src={image.previewData} alt={image.filename} class="image-preview" title={image.filename} />
+        <input type="text" name="imagecomment" placeholder="Comment" />
+        <!--<button type="button" onclick={() => unloadImage(image.filename)}>Unload</button>-->
+      </div>
+    {/each}
   </form>
 {/if}
 
@@ -195,5 +256,10 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+  }
+  .image-preview {
+    max-width: 240px;
+    max-height: 240px;
+    object-fit: contain;
   }
 </style>

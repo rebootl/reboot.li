@@ -3,6 +3,7 @@ import Compressor from 'compressorjs';
 // import { PUBLIC_MEDIASERVER } from '$env/static/public';
 
 // Note: this works on client side only!!
+// (Compressor uses HTMLCanvasElement which is not available on server side)
 /** @param {File} file
   * @param {number} maxWidth
   * @param {number} maxHeight

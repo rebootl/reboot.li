@@ -86,14 +86,14 @@ export function destroySession(sessionId) {
 }
 
 /**
-  * @typedef {Object} ImageData
+  * @typedef {Object} CreateImageData
   * @property {string} path
   * @property {string} comment
   * @property {string} previewData
   */
 
 /**
-  * @param {ImageData[]} images
+  * @param {CreateImageData[]} images
   * @param {number|bigint} entryId
   * @returns {boolean} success
   */
@@ -153,6 +153,13 @@ export function createEntryDB(data) {
 */
 
 /**
+  * @typedef {Object} ImageData
+  * @property {string} path
+  * @property {string} comment
+  * @property {string} preview_data
+  */
+
+/**
   * @typedef {Object} EntryData
   * @property {number} id
   * @property {number} user_id
@@ -186,6 +193,12 @@ export function getEntry(userId, entryId, loggedIn = false) {
   //   const tags = /** @type {Tag[]} */ (stmt2.all(userId, entryId));
   //   r.tags = tags;
   // }
+  // get images
+  if (r) {
+    const stmt2 = db.prepare(`SELECT * FROM images WHERE entry_id = ?`);
+    const images = /** @type {ImageData[]} */ (stmt2.all(r['id']));
+    r.images = images;
+  }
   return r;
 }
 
