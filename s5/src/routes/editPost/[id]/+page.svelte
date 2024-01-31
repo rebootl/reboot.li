@@ -2,43 +2,20 @@
   import dayjs from 'dayjs';
 
   import { goto } from '$app/navigation';
-  import { sendJSONRequest } from '$lib/request';
 
   import { compressImage, encodeData } from '$lib/images';
 
   const manualDateFmt = 'YYYY-MM-DDTHH:mm';
 
-  // -> these types should be imported from db!!
-  /** @typedef {Object} ImageData
-   * @property {File} file
-   * @property {string} path
-   * @property {string} preview_data
-   * @property {string} [comment]
-   */
-  /** @typedef {Object} EntryData
-   * @property {number} id
-   * @property {string} content
-   * @property {string} comment
-   * @property {string} date
-   * @property {string} manual_date
-   * @property {boolean} private
-   * @property {ImageData[]} images
-   */
-  /** @typedef {Object} Data
-   * @property {EntryData} entry
-   */
-  /** @type {Data} */
+  /** @type {import('./$types').PageData} */
 	export let data;
 
-  /** @typedef {Object} CreateImageData
-   * @property {File} file
-   * @property {string} filename
-   * @property {string} previewData
-   * @property {string} [comment]
-   */
-  /** image array used for preview
-    * @type {CreateImageData[]}
+  /** @typedef {Object} Image
+    * @property {File} file
+    * @property {string} filename
+    * @property {string} previewData
     */
+  /** @type {Image[]} */
   let images = [];
 
   /** max image size
@@ -53,20 +30,19 @@
 
   /** when deleting an entry we want to at least show a confirmation dialog,
     * for now we use this function to do that
-    *
-    * we use a JSON request here because the button is located within the form
-    * to save the edit, but we do not want to submit this form
-    *
-    * @todo it would be nice to find a better way to do this, maybe simply a separate
-    *       form for that is triggered by this button
     */
   async function confirmDelete() {
     if (!confirm("Are you sure you want to delete this entry?")) {
       return;
     }
 
-    const r = await sendJSONRequest('DELETE', `/entry/${data.entry?.id}`);
-    if (!r.success) {
+    const r = await fetch(`/editPost/${data.entry?.id}?/deleteEntry`, {
+      method: "POST",
+      body: new FormData(),
+    });
+    // console.log(r);
+    
+    if (!r.ok) {
       console.log('error deleting entry');
       return;
     }
@@ -141,7 +117,7 @@
       body: formData,
     });
     // console.log(response);
-    if (!response) {
+    if (!response.ok) {
       console.log('error creating entry');
       return;
     }
@@ -188,14 +164,17 @@
       </div>
     </div>
   {/each}
+
+  <!--<form method="POST" action={ `/editPost/${ data.entry?.id }?/deleteEntry` } id="delete-entry-form">
+  </form>-->
 {:else}
   <h1>New Post</h1>
   <form method="POST" action="/editPost/new?/createEntry" enctype="multipart/form-data" id="new-entry-form">
     <textarea name="content" placeholder="Text..."></textarea>
     <input type="text" name="comment" placeholder="Comment" />
     <label>
-      <input type="datetime-local" name="manualdate" value={ data.entry?.date } 
-              on:change={(e) => loadImages(e.target.files) } /> 
+      <input type="datetime-local" name="manualdate" value="" />
+      Set to use manual date
     </label>
     <input type="file" name="images" accept="image/*" multiple onchange={(e) => loadImages(e.target.files) }
       id="images-file-input" />

@@ -1,7 +1,9 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import path from 'path';
-import { getEntry, createEntryDB, updateEntryDB, insertImagesDB } from '$lib/server/db.js';
-import { storeImage } from '$lib/server/imageStorage.js';
+
+import { getEntry, createEntryDB, updateEntryDB, deleteEntryDB,
+  insertImagesDB, deleteImageDB } from '$lib/server/db.js';
+import { storeImage, deleteImage } from '$lib/server/imageStorage.js';
 import { MEDIADIR } from '$env/static/private';
 
 /** @type {import('./$types').PageServerLoad} */
@@ -55,8 +57,14 @@ export const actions = {
     const images = data.getAll('images') ?? [];
 
     // store images on fs
-    const rs = await Promise.all(images.map(async (i) => await storeImage(i, locals.user.name)));
-    console.log('rs', rs);
+    let rs;
+    try {
+      rs = await Promise.all(images.map(async (i) => await storeImage(i, locals.user.name)));
+      console.log('rs', rs);
+    } catch (error) {
+      console.error(error);
+      throw error(400, 'Something went wrong while storing images');
+    }
 
     // insert images into db
     const imageComments = data.getAll('imagecomment') ?? [];
@@ -65,7 +73,7 @@ export const actions = {
       comment: String(imageComments[i] ?? ''),
       previewData: r.previewData,
     }));
-    const r2 = insertImagesDB(imageData, r.lastInsertRowid);
+    const r2 = insertImagesDB(imageData, r.lastInsertRowid, locals.user.id);
 
     // -> improve error handling
     if (!r2) throw error(400, 'Something went wrong while inserting images into db');
@@ -101,5 +109,33 @@ export const actions = {
     console.log('r', r);
     if (r.changes === 0) throw error(400, 'Error updating entry');
     redirect(303, `/timeline`)
-  }
+  },
+  async deleteEntry({ locals, params }) {
+  
+    if (!locals.user) throw error(401, 'Unauthorized');
+    
+    // delete images from fs
+    const entry = getEntry(locals.user.id, parseInt(params.id) ?? 0, true);
+    if (!entry) throw error(404, 'Not found');
+
+    const images = entry.images ?? [];
+    for (const i of images) {
+      // delete image from fs
+      const imagepath = path.join('static', i.path);
+
+      const r = await deleteImage(imagepath);
+      if (!r) throw error(400, `Error deleting image ${i.id} from fs`);
+
+      // delete entry from db
+      const r2 = deleteImageDB(i.id, locals.user.id);
+      if (r2.changes === 0) throw error(400, `Error deleting image ${i.id} from db`);
+    }
+
+    // delete entry from db
+    const r = deleteEntryDB(parseInt(params.id) ?? 0, locals.user.id);
+
+    console.log('r', r);
+    if (r.changes === 0) throw error(400, 'Error deleting entry');
+    redirect(303, `/timeline`)
+  },
 }

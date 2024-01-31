@@ -95,14 +95,15 @@ export function destroySession(sessionId) {
 /**
   * @param {CreateImageData[]} images
   * @param {number|bigint} entryId
+  * @param {number|bigint} userId
   * @returns {boolean} success
   */
-export function insertImagesDB(images, entryId) {
+export function insertImagesDB(images, entryId, userId) {
   let success = true;
   for (const i of images) {
-    const stmt = db.prepare(`INSERT INTO images (entry_id, path, comment, preview_data, created_at)
-      VALUES (?, ?, ?, ?, datetime('now'))`);
-    const r = stmt.run(entryId, i.path, i.comment, i.previewData);
+    const stmt = db.prepare(`INSERT INTO images (entry_id, user_id, path, comment, preview_data, created_at)
+      VALUES (?, ?, ?, ?, ?, datetime('now'))`);
+    const r = stmt.run(entryId, userId, i.path, i.comment, i.previewData);
     if (!r) {
       success = false;
       break;
@@ -154,6 +155,9 @@ export function createEntryDB(data) {
 
 /**
   * @typedef {Object} ImageData
+  * @property {number} id
+  * @property {number} entry_id
+  * @property {number} user_id
   * @property {string} path
   * @property {string} comment
   * @property {string} preview_data
@@ -255,17 +259,23 @@ export function updateEntryDB(data) {
 }
 
 /**
-  * @typedef {Object} DeleteEntryData
-  * @property {number} userId
-  * @property {number} entryId
-  */
-
-/**
-  * @param {DeleteEntryData} data
+  * @param {number} entryId
+  * @param {number} userId
   * @returns {Database.RunResult}
   */
-export function deleteEntryDB(data) {
+export function deleteEntryDB(entryId, userId) {
   const stmt = db.prepare(`DELETE FROM entries WHERE user_id = ? AND id = ?`);
-  const r = stmt.run(data.userId, data.entryId);
+  const r = stmt.run(userId, entryId);
+  return r;
+}
+
+/**
+  * @param {number} imageId
+  * @param {number} userId
+  * @returns {Database.RunResult}
+  */
+export function deleteImageDB(imageId, userId) {
+  const stmt = db.prepare(`DELETE FROM images WHERE user_id = ? AND id = ?`);
+  const r = stmt.run(userId, imageId);
   return r;
 }

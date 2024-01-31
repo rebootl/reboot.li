@@ -37,12 +37,23 @@ CREATE TABLE IF NOT EXISTS "entries" (
 	"content"	TEXT,
 	"created_at"	TEXT NOT NULL,
 	"modified_at"	TEXT,
-	"version"	INTEGER NOT NULL,
-	"current"	INTEGER NOT NULL,
+	"manual_date"	TEXT,
 	"title"	TEXT,
 	"comment"	TEXT,
 	"pinned"	INTEGER,
 	"private"	INTEGER,
+	FOREIGN KEY("user_id") REFERENCES "users"("id"),
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE IF NOT EXISTS "images" (
+	"id"	INTEGER NOT NULL UNIQUE,
+	"entry_id"	INTEGER NOT NULL,
+	"user_id"	INTEGER NOT NULL,
+	"path"	TEXT NOT NULL UNIQUE,
+	"comment"	TEXT,
+	"created_at"	TEXT NOT NULL,
+	"preview_data"	TEXT,
+	FOREIGN KEY("entry_id") REFERENCES "entries"("id"),
 	FOREIGN KEY("user_id") REFERENCES "users"("id"),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
