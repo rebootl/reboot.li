@@ -1,6 +1,6 @@
 <script>
   import { goto } from '$app/navigation';
-  import { sendRequest } from '$lib/request';
+  import { sendJSONRequest } from '$lib/request';
 
 	export let data;
   // console.log(data);
@@ -13,7 +13,7 @@
   async function getTitle() {
     console.log('getTitle')
     titleDisabled = true;
-    const r = await sendRequest('POST', '/getTitle', {
+    const r = await sendJSONRequest('POST', '/getTitle', {
       url: content
     });
     if (!r.success) {
@@ -39,7 +39,7 @@
       return;
     }
 
-    const r = await sendRequest('DELETE', `/entry/${data.entry?.id}`);
+    const r = await sendJSONRequest('DELETE', `/entry/${data.entry?.id}`);
     if (!r.success) {
       console.log('error deleting entry');
       return;

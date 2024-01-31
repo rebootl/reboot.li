@@ -1,4 +1,4 @@
-export async function sendRequest(type, url, data) {
+export async function sendJSONRequest(type, url, data) {
   try {
     const res = await fetch(url, {
       method: type,

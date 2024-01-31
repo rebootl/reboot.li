@@ -1,6 +1,6 @@
 <script>
   import { debounce } from '$lib/helper';
-  import { sendRequest } from '$lib/request';
+  import { sendJSONRequest } from '$lib/request';
 
 	export let data;
   // console.log(data);
@@ -32,7 +32,7 @@
   /** @param {string} text */
   async function getTitle(text) {
     console.log('getTitle')
-    const r = await sendRequest('POST', '/getTitle', {
+    const r = await sendJSONRequest('POST', '/getTitle', {
       url: text
     });
     if (!r.success) {
