@@ -212,11 +212,15 @@
       <div class="image-load-preview">
         <img src={'data:image/png;base64,' + image.preview_data} alt={image.path} class="image-preview"
           title={image.path} />
-        <input type="text" name="imagecomment" placeholder="Comment" value={image.comment} />
-        <div class="buttons">
-          <button class="small-button" onclick={() => updateComment(image.id)}>Update comment</button>
-          <button class="danger-button small-button" onclick={() => deleteImage(image.id)}>Delete image</button>
-        </div>
+        <form method="POST" action={ `/editPost/${ data.entry?.id }?/updateImageComment` }>
+          <input type="text" name="imagecomment" placeholder="Comment" value={image.comment} />
+          <input type="hidden" name="imageid" value={image.id} />
+          <div class="buttons">
+            <button class="small-button">Update comment</button>
+            <button type="button" class="danger-button small-button"
+              onclick={() => deleteImage(image.id)}>Delete image</button>
+          </div>
+        </form>
       </div>
     {/each}
   </div>

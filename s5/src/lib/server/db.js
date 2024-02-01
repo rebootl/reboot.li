@@ -290,3 +290,15 @@ export function deleteImageDB(imageId, userId) {
   const r = stmt.run(userId, imageId);
   return r;
 }
+
+/**
+  * @param {number} imageId
+  * @param {number} userId
+  * @param {string} comment
+  * @returns {Database.RunResult}
+  */
+export function updateImageCommentDB(imageId, userId, comment) {
+  const stmt = db.prepare(`UPDATE images SET comment = ? WHERE user_id = ? AND id = ?`);
+  const r = stmt.run(comment, userId, imageId);
+  return r;
+}

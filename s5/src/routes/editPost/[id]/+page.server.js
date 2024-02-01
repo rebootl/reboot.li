@@ -2,9 +2,8 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import path from 'path';
 
 import { getEntry, createEntryDB, updateEntryDB, deleteEntryDB,
-  insertImagesDB, getImageDB, deleteImageDB } from '$lib/server/db.js';
+  insertImagesDB, getImageDB, deleteImageDB, updateImageCommentDB} from '$lib/server/db.js';
 import { storeImage, deleteImage } from '$lib/server/imageStorage.js';
-import { MEDIADIR } from '$env/static/private';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, params }) {
@@ -28,8 +27,9 @@ export async function load({ locals, params }) {
 /** handle images
   * @param {File[]} images
   * @param {string[]} imageComments
-  * @param {number} entryId
+  * @param {number|bigint} entryId
   * @param {number} userId
+  * @param {string} username
   * @returns {Promise<boolean>} success
   */
 async function handleImages(images, imageComments, entryId, userId, username) {
@@ -85,13 +85,13 @@ export const actions = {
     if (r.changes === 0) throw error(400, 'Error creating entry');
     
     // handle images
-    const images = data.getAll('images') ?? [];
-    const imageComments = data.getAll('imagecomment') ?? [];
+    const images = /** @type {File[]} */ (data.getAll('images') ?? []);
+    const imageComments = /** @type {string[]} */ (data.getAll('imagecomment') ?? []);
 
     try {
       await handleImages(images, imageComments, r.lastInsertRowid, locals.user.id, locals.user.name);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       throw error(400, 'Something went wrong while handling images');
     }
 
@@ -129,14 +129,13 @@ export const actions = {
     if (r.changes === 0) throw error(400, 'Error updating entry');
 
     // handle images
-    // handle images
-    const images = data.getAll('images') ?? [];
-    const imageComments = data.getAll('imagecomment') ?? [];
+    const images = /** @type {File[]} */ (data.getAll('images') ?? []);
+    const imageComments = /** @type {string[]} */ (data.getAll('imagecomment') ?? []);
 
     try {
       await handleImages(images, imageComments, entryId, locals.user.id, locals.user.name);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       throw error(400, 'Something went wrong while handling images');
     }
 
@@ -174,7 +173,7 @@ export const actions = {
     if (!locals.user) throw error(401, 'Unauthorized');
 
     const data = await request.formData();
-    const imageId = parseInt(data.get('imageId') ?? 0) ?? 0;
+    const imageId = parseInt(String(data.get('imageId'))) ?? 0;
 
     // delete image from fs
     const image = getImageDB(imageId, locals.user.id);
@@ -190,5 +189,18 @@ export const actions = {
     if (r2.changes === 0) throw error(400, `Error deleting image ${imageId} from db`);
 
     redirect(303, `/editPost/${params.id}`)
-  }
+  },
+  async updateImageComment({ locals, params, request }) {
+    if (!locals.user) throw error(401, 'Unauthorized');
+
+    const data = await request.formData();
+    const imageId = parseInt(String(data.get('imageid') ?? 0));
+    const imageComment = String(data.get('imagecomment') ?? '');
+
+    // update entry from db
+    const r = updateImageCommentDB(imageId, locals.user.id, imageComment);
+    if (r.changes === 0) throw error(400, `Error updating image ${imageId} in db`);
+
+    redirect(303, `/editPost/${params.id}`)
+  },
 }
