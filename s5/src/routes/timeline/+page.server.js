@@ -24,14 +24,7 @@ export async function load({ locals }) {
   // we do this by creating a new array with entries and year/month headers
   // we also sort the entries by date
 
-  /** @typedef {Object} TimelineEntry
-    * @property {'year' | 'month' | 'entry'} type
-    * @property {string | null} year
-    * @property {string | null} month
-    * @property {import('$lib/server/db.js').EntryData | null} entry
-    * @property {string | null} date
-    */
-  /** @type {TimelineEntry[]} */
+  /** @type {import('$lib/types').TimelineEntry[]} */
   const timelineEntries = [];
 
   const sortedEntries = entries.sort((a, b) => {

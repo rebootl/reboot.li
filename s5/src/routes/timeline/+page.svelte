@@ -1,5 +1,10 @@
 <script>
 
+  /** @typedef {Object} Data
+    * @property {import('$lib/types').TimelineEntry[]} timelineEntries
+    * @property {import('$lib/types').ClientData} clientData
+    */
+  /** @type {{ data: Data }} */
   let { data } = $props();
   // console.log(data);
 
@@ -39,7 +44,7 @@
             <div class="image-preview-box">
               {#each t.entry.images as image}
                 <!--<img src={ image.path } alt={ image.comment } />-->
-                <a href={ image.path }>
+                <a href={ image.path } target="_blank">
                   <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
                 </a>
               {/each}

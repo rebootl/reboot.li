@@ -2,18 +2,18 @@
 ToDo:
 
 - timeline w/ images
-  - edit: add images
-  - delete single images
-  - update image comment
+  - edit: add images => DONE
+  - delete single images => DONE
+  - update image comment => DONE
   - image UI
   - read EXIF data
 - tags
 - privacy policy
 - nerd stuff
-- markdown preview
 - syntax highlighting
-- lazy loading
 - export/import entries
+- edit: markdown preview
+- lazy loading
 
 Questions:
 
