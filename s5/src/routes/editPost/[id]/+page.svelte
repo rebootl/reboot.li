@@ -253,6 +253,8 @@
       <button type="button" onclick={(e) => createUpdateEntry(e.target.form)}>Create</button>
       <a href="/timeline">Cancel</a>
     </div>
+
+    <!-- ToDo: for this part a snippet could be used -->
     {#if images.length > 0}
       <h2>Images</h2>
       <div>
@@ -269,6 +271,7 @@
         <!--<button type="button" onclick={() => unloadImage(image.filename)}>Unload</button>-->
       </div>
     {/each}
+
   </form>
 {/if}
 
