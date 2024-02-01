@@ -1,17 +1,28 @@
 <script>
   import dayjs from 'dayjs';
 
-	export let data;
+	// export let data;
+  let { data } = $props();
   // console.log(data);
   
 	let entries = data.entries;
-  console.log(entries);
+  // console.log(entries);
 
-  let previousYear = dayjs(entries[0].created_at).year();
+  let previousYear = dayjs(entries[0].created_at).format('YYYY');
   let previousMonth = dayjs(entries[0].created_at).format('MMMM');
   
-  /** @type {{type: 'year' | 'month' | 'entry', year: number | null, entry: any | null,
-   month: string | null, date: string | null }[]} */
+  // we want to display a timeline with entries grouped by year and month
+  // we do this by creating a new array with entries and year/month headers
+  // we also sort the entries by date
+  
+  /** @typedef {Object} TimelineEntry
+    * @property {'year' | 'month' | 'entry'} type
+    * @property {string | null} year
+    * @property {string | null} month
+    * @property {import('$lib/server/db.js').EntryData | null} entry
+    * @property {string | null} date
+    */
+  /** @type {TimelineEntry[]} */
   const timelineEntries = [
     {
       type: 'year',
@@ -38,9 +49,9 @@
   for (const entry of sortedEntries) {
     const entryDate = entry.manual_date || entry.created_at;
     
-    const entryYear = dayjs(entryDate).year();
+    const entryYear = dayjs(entryDate).format('YYYY');
     const entryMonth = dayjs(entryDate).format('MMMM');
-    console.log(entryYear);
+    // console.log(entryYear);
     // console.log(entryMonth);
     if (entryYear !== previousYear) {
       timelineEntries.push({
@@ -70,7 +81,7 @@
       date: entryDate,
     });
   }
-  console.log(timelineEntries);
+  // console.log(timelineEntries);
 
 </script>
 
@@ -90,21 +101,21 @@
       <div class="list-item">
         <div class="item-header">
           <small>{ t.date }</small>
-          {#if t.entry.private}
+          {#if t.entry?.private}
             <small><span class="material-icons">lock</span> Private</small>
           {/if}
           {#if data.clientData.loggedIn}
-            <small><a href={ `/editPost/${t.entry.id}` }><span class="material-icons">edit</span></a></small>
+            <small><a href={ `/editPost/${t.entry?.id}` }><span class="material-icons">edit</span></a></small>
           {:else}
             <span></span>
           {/if}
         </div>
         <div class="item-content">
-          {t.entry.content}
-          {#if t.entry.comment}
+          {t.entry?.content}
+          {#if t.entry?.comment}
             <small>{t.entry.comment}</small>
           {/if}
-          {#if t.entry.images}
+          {#if t.entry?.images}
             <div class="image-preview-box">
               {#each t.entry.images as image}
                 <!--<img src={ image.path } alt={ image.comment } />-->
@@ -138,8 +149,6 @@
   .list-item {
     display: flex;
     flex-direction: column;
-    /*padding: 20px;*/
-    /*background-color: #1e1e1e;*/
     border-radius: 15px;
   }
   .list-item .item-header {
@@ -165,8 +174,6 @@
     color: var(--text-color-dimmed);
   }
   .month {
-    /*margin-top: 0;
-    margin-bottom: 0;*/
     color: var(--text-color-dimmed);
   }
   .image-preview-box {

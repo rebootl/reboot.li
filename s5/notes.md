@@ -2,6 +2,11 @@
 ToDo:
 
 - timeline w/ images
+  - edit: add images
+  - delete single images
+  - update image comment
+  - image UI
+  - read EXIF data
 - tags
 - privacy policy
 - nerd stuff
