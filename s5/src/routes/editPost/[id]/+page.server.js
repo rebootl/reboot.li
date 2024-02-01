@@ -25,6 +25,37 @@ export async function load({ locals, params }) {
   return { entry: r };
 }
 
+/** handle images
+  * @param {File[]} images
+  * @param {string[]} imageComments
+  * @param {number} entryId
+  * @param {number} userId
+  * @returns {Promise<boolean>} success
+  */
+async function handleImages(images, imageComments, entryId, userId, username) {
+
+  // store images on fs
+  let rs = [];
+  try {
+    rs = await Promise.all(images.map(async (i) => await storeImage(i, username)));
+    // console.log('rs', rs);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+
+  // insert images into db
+  const imageData = rs.map((r, i) => ({
+    path: r.url,
+    comment: String(imageComments[i] ?? ''),
+    previewData: r.previewData,
+  }));
+  const r2 = insertImagesDB(imageData, entryId, userId);
+  if (!r2) throw new Error('Error inserting images into db');
+
+  return r2;
+}
+
 /** @type {import('./$types').Actions} */
 export const actions = {
   async createEntry({ locals, request }) {
@@ -55,28 +86,14 @@ export const actions = {
     
     // handle images
     const images = data.getAll('images') ?? [];
+    const imageComments = data.getAll('imagecomment') ?? [];
 
-    // store images on fs
-    let rs;
     try {
-      rs = await Promise.all(images.map(async (i) => await storeImage(i, locals.user.name)));
-      console.log('rs', rs);
+      await handleImages(images, imageComments, r.lastInsertRowid, locals.user.id, locals.user.name);
     } catch (error) {
       console.error(error);
-      throw error(400, 'Something went wrong while storing images');
+      throw error(400, 'Something went wrong while handling images');
     }
-
-    // insert images into db
-    const imageComments = data.getAll('imagecomment') ?? [];
-    const imageData = rs.map((r, i) => ({
-      path: r.url,
-      comment: String(imageComments[i] ?? ''),
-      previewData: r.previewData,
-    }));
-    const r2 = insertImagesDB(imageData, r.lastInsertRowid, locals.user.id);
-
-    // -> improve error handling
-    if (!r2) throw error(400, 'Something went wrong while inserting images into db');
 
     console.log('r', r);
     redirect(303, '/timeline')
@@ -93,8 +110,10 @@ export const actions = {
 
     const isPrivate = data.get('isPrivate') ? 1 : 0;
 
+    const entryId = parseInt(params.id) ?? 0;
+
     const r = updateEntryDB({
-      entryId: parseInt(params.id) ?? 0,
+      entryId,
       userId: locals.user.id,
       type: 'post',
       title: '',
@@ -106,8 +125,21 @@ export const actions = {
       tags: [],
     });
 
-    console.log('r', r);
+    // console.log('r', r);
     if (r.changes === 0) throw error(400, 'Error updating entry');
+
+    // handle images
+    // handle images
+    const images = data.getAll('images') ?? [];
+    const imageComments = data.getAll('imagecomment') ?? [];
+
+    try {
+      await handleImages(images, imageComments, entryId, locals.user.id, locals.user.name);
+    } catch (error) {
+      console.error(error);
+      throw error(400, 'Something went wrong while handling images');
+    }
+
     redirect(303, `/timeline`)
   },
   async deleteEntry({ locals, params }) {

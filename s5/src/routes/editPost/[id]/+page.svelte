@@ -1,7 +1,7 @@
 <script>
   import dayjs from 'dayjs';
 
-  import { goto } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
 
   import { compressImage, encodeData } from '$lib/images';
 
@@ -57,8 +57,11 @@
   }
 
   /** create entry via function in order to pre-compress the images
+    * @param {HTMLFormElement} form
     */
-  async function createEntry() {
+  async function createUpdateEntry(form) {
+
+    // console.log(form);
 
     // console.log('maxImageSize', maxImageSize);
     const maxSize = !isNaN(parseInt(maxImageSize)) ? parseInt(maxImageSize) : 1024;
@@ -80,7 +83,7 @@
     // console.timeEnd('compress images');
 
     // add other form data
-    const form = /** @type {HTMLFormElement} */ (document.querySelector('#new-entry-form'));
+    // const form = /** @type {HTMLFormElement} */ (document.querySelector('#new-entry-form'));
     const formDataOrig = new FormData(form);
     for (const [key, value] of formDataOrig.entries()) {
       if (key === 'images') continue;
@@ -88,7 +91,7 @@
     }
 
     // send request
-    const response = await fetch('/editPost/new?/createEntry', {
+    const response = await fetch(form.action, {
       method: "POST",
       body: formData,
     });
@@ -128,7 +131,7 @@
   }
 
   /** delete image from entry
-    * @param {string} imageId
+    * @param {number} imageId
     */
   async function deleteImage(imageId) {
     if (!confirm("Are you sure you want to delete this image?")) {
@@ -136,7 +139,7 @@
     }
 
     const formData = new FormData();
-    formData.append('imageId', imageId);
+    formData.append('imageId', String(imageId));
 
     const r = await fetch(`/editPost/${data.entry?.id}?/deleteImage`, {
       method: "POST",
@@ -150,7 +153,9 @@
     }
 
     console.log('success!')
-    goto(`/editPost/${data.entry?.id}`);
+    // reload data
+    invalidateAll();
+    // goto(`/editPost/${data.entry?.id}`);
   }
 
 </script>
@@ -179,7 +184,7 @@
     </div>
     <div class="buttons">
       <div>
-        <button>Save</button>
+        <button type="button" onclick={(e) => createUpdateEntry(e.target.form)}>Save</button>
         <a href="/timeline">Cancel</a>
       </div>
       <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button>
@@ -241,7 +246,7 @@
       </label>
     </div>
     <div class="buttons">
-      <button type="button" onclick={() => createEntry()}>Create</button>
+      <button type="button" onclick={(e) => createUpdateEntry(e.target.form)}>Create</button>
       <a href="/timeline">Cancel</a>
     </div>
     {#if images.length > 0}
