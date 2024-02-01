@@ -272,6 +272,17 @@ export function deleteEntryDB(entryId, userId) {
 /**
   * @param {number} imageId
   * @param {number} userId
+  * @returns {ImageData | undefined}
+  */
+export function getImageDB(imageId, userId) {
+  const stmt = db.prepare(`SELECT * FROM images WHERE user_id = ? AND id = ?`);
+  const r = /** @type {ImageData | undefined} */ (stmt.get(userId, imageId));
+  return r;
+}
+
+/**
+  * @param {number} imageId
+  * @param {number} userId
   * @returns {Database.RunResult}
   */
 export function deleteImageDB(imageId, userId) {
