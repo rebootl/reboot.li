@@ -2,7 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import path from 'path';
 
 import { getEntry, createEntryDB, updateEntryDB, deleteEntryDB,
-  insertImagesDB, deleteImageDB } from '$lib/server/db.js';
+  insertImagesDB, getImageDB, deleteImageDB } from '$lib/server/db.js';
 import { storeImage, deleteImage } from '$lib/server/imageStorage.js';
 import { MEDIADIR } from '$env/static/private';
 
@@ -138,4 +138,25 @@ export const actions = {
     if (r.changes === 0) throw error(400, 'Error deleting entry');
     redirect(303, `/timeline`)
   },
+  async deleteImage({ locals, params, request }) {
+    if (!locals.user) throw error(401, 'Unauthorized');
+
+    const data = await request.formData();
+    const imageId = parseInt(data.get('imageId') ?? 0) ?? 0;
+
+    // delete image from fs
+    const image = getImageDB(imageId, locals.user.id);
+    if (!image) throw error(404, 'Not found');
+
+    const imagepath = path.join('static', image.path);
+
+    const r = await deleteImage(imagepath);
+    if (!r) throw error(400, `Error deleting image ${imageId} from fs`);
+
+    // delete entry from db
+    const r2 = deleteImageDB(imageId, locals.user.id);
+    if (r2.changes === 0) throw error(400, `Error deleting image ${imageId} from db`);
+
+    redirect(303, `/editPost/${params.id}`)
+  }
 }

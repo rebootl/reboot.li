@@ -7,8 +7,7 @@
 
   const manualDateFmt = 'YYYY-MM-DDTHH:mm';
 
-  /** @type {import('./$types').PageData} */
-	export let data;
+  let { data } = $props();
 
   /** @typedef {Object} Image
     * @property {File} file
@@ -16,40 +15,17 @@
     * @property {string} previewData
     */
   /** @type {Image[]} */
-  let images = [];
+  let images = $state([]);
 
   /** max image size
     * @type {string}
     */
-  let maxImageSize = '1024';
+  let maxImageSize = $state('1024');
 
   /** override date with manual date if set
     * @type {string}
     */
   let manualDate = data.entry?.manual_date ? dayjs(data.entry?.manual_date).format(manualDateFmt) : '';
-
-  /** when deleting an entry we want to at least show a confirmation dialog,
-    * for now we use this function to do that
-    */
-  async function confirmDelete() {
-    if (!confirm("Are you sure you want to delete this entry?")) {
-      return;
-    }
-
-    const r = await fetch(`/editPost/${data.entry?.id}?/deleteEntry`, {
-      method: "POST",
-      body: new FormData(),
-    });
-    // console.log(r);
-    
-    if (!r.ok) {
-      console.log('error deleting entry');
-      return;
-    }
-
-    console.log('success!')
-    goto('/timeline');
-  }
 
   /** when images are selected we want to show a preview and a comment input,
     * we generate the preview here and add the images to the images array
@@ -76,7 +52,7 @@
     */
   function resetImages() {
     images = [];
-    const fileInputElement = /** @type {HTMLInputElement} */ (document.querySelector('#images-fie-input'));
+    const fileInputElement = /** @type {HTMLInputElement} */ (document.querySelector('#images-file-input'));
     fileInputElement.value = "";
   }
 
@@ -128,6 +104,55 @@
     goto('/timeline');
   }
 
+  /** when deleting an entry we want to at least show a confirmation dialog,
+    * for now we use this function to do that
+    */
+  async function confirmDelete() {
+    if (!confirm("Are you sure you want to delete this entry?")) {
+      return;
+    }
+
+    const r = await fetch(`/editPost/${data.entry?.id}?/deleteEntry`, {
+      method: "POST",
+      body: new FormData(),
+    });
+    // console.log(r);
+    
+    if (!r.ok) {
+      console.log('error deleting entry');
+      return;
+    }
+
+    console.log('success!')
+    goto('/timeline');
+  }
+
+  /** delete image from entry
+    * @param {string} imageId
+    */
+  async function deleteImage(imageId) {
+    if (!confirm("Are you sure you want to delete this image?")) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('imageId', imageId);
+
+    const r = await fetch(`/editPost/${data.entry?.id}?/deleteImage`, {
+      method: "POST",
+      body: formData,
+    });
+    // console.log(r);
+    
+    if (!r.ok) {
+      console.log('error deleting image');
+      return;
+    }
+
+    console.log('success!')
+    goto(`/editPost/${data.entry?.id}`);
+  }
+
 </script>
 
 {#if data.entry}
@@ -139,6 +164,13 @@
       <input type="datetime-local" name="manualdate" value={ manualDate } />
       Set to use manual date
     </label>
+    <input type="file" name="images" accept="image/*" multiple onchange={(e) => loadImages(e.target.files) }
+      id="images-file-input" />
+    {#if images.length > 0}
+      <div>
+        <button type="button" class="small-button" onclick={() => resetImages()}>Reset images</button>
+      </div>
+    {/if}
     <div>
       <label>
         <input type="checkbox" name="isPrivate" checked={ data.entry?.private ? true : false }/>
@@ -152,18 +184,37 @@
       </div>
       <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button>
     </div>
+    {#if images.length > 0}
+      <h2>Add Images</h2>
+      <div>
+        <label>
+          Max. image size:
+          <input type="text" id="max-size" bind:value={maxImageSize} />
+        </label>
+      </div>
+    {/if}
+    {#each images as image}
+      <div class="image-load-preview">
+        <img src={image.previewData} alt={image.filename} class="image-preview" title={image.filename} />
+        <input type="text" name="imagecomment" placeholder="Comment" />
+        <!--<button type="button" onclick={() => unloadImage(image.filename)}>Unload</button>-->
+      </div>
+    {/each}
   </form>
   <h2>Edit Images</h2>
-  {#each data.entry.images as image}
-    <div class="image-load-preview">
-      <img src={'data:image/png;base64,' + image.preview_data} alt={image.path} class="image-preview"
-        title={image.path} />
-      <input type="text" name="imagecomment" placeholder="Comment" value={image.comment} />
-      <div>
-        <button class="danger-button small-button" onclick={() => deleteImage(image.path)}>Delete image</button>
+  <div class="image-list">
+    {#each data.entry.images as image}
+      <div class="image-load-preview">
+        <img src={'data:image/png;base64,' + image.preview_data} alt={image.path} class="image-preview"
+          title={image.path} />
+        <input type="text" name="imagecomment" placeholder="Comment" value={image.comment} />
+        <div class="buttons">
+          <button class="small-button" onclick={() => updateComment(image.id)}>Update comment</button>
+          <button class="danger-button small-button" onclick={() => deleteImage(image.id)}>Delete image</button>
+        </div>
       </div>
-    </div>
-  {/each}
+    {/each}
+  </div>
 
   <!--<form method="POST" action={ `/editPost/${ data.entry?.id }?/deleteEntry` } id="delete-entry-form">
   </form>-->
@@ -231,10 +282,17 @@
 		display: flex;
 	  align-items: center;
   }
+  .image-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
   .image-load-preview {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--primary-color-dimmed);
   }
   .image-preview {
     max-width: 240px;
