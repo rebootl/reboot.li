@@ -1,6 +1,8 @@
 <script>
   import dayjs from 'dayjs';
 
+  import { onMount } from 'svelte';
+
 	// export let data;
   let { data } = $props();
   // console.log(data);
@@ -23,7 +25,7 @@
     * @property {string | null} date
     */
   /** @type {TimelineEntry[]} */
-  const timelineEntries = [
+  let timelineEntries = $state([
     {
       type: 'year',
       year: previousYear,
@@ -38,50 +40,52 @@
       entry: null,
       date: null,
     },
-  ];
+  ]);
 
-  const sortedEntries = entries.sort((a, b) => {
-    const aDate = a.manual_date || a.created_at;
-    const bDate = b.manual_date || b.created_at;
-    return dayjs(aDate).isBefore(dayjs(bDate)) ? 1 : -1;
-  });
-
-  for (const entry of sortedEntries) {
-    const entryDate = entry.manual_date || entry.created_at;
-    
-    const entryYear = dayjs(entryDate).format('YYYY');
-    const entryMonth = dayjs(entryDate).format('MMMM');
-    // console.log(entryYear);
-    // console.log(entryMonth);
-    if (entryYear !== previousYear) {
-      timelineEntries.push({
-        type: 'year',
-        year: entryYear,
-        month: null,
-        entry: null,
-        date: null,
-      });
-      previousYear = entryYear;
-    }
-    if (entryMonth !== previousMonth) {
-      timelineEntries.push({
-        type: 'month',
-        year: null,
-        month: entryMonth,
-        entry: null,
-        date: null,
-      });
-      previousMonth = entryMonth;
-    }
-    timelineEntries.push({
-      type: 'entry',
-      year: null,
-      month: null,
-      entry: entry,
-      date: entryDate,
+  onMount(() => {
+    const sortedEntries = entries.sort((a, b) => {
+      const aDate = a.manual_date || a.created_at;
+      const bDate = b.manual_date || b.created_at;
+      return dayjs(aDate).isBefore(dayjs(bDate)) ? 1 : -1;
     });
-  }
-  // console.log(timelineEntries);
+
+    for (const entry of sortedEntries) {
+      const entryDate = entry.manual_date || entry.created_at;
+  
+      const entryYear = dayjs(entryDate).format('YYYY');
+      const entryMonth = dayjs(entryDate).format('MMMM');
+      // console.log(entryYear);
+      // console.log(entryMonth);
+      if (entryYear !== previousYear) {
+        timelineEntries.push({
+          type: 'year',
+          year: entryYear,
+          month: null,
+          entry: null,
+          date: null,
+        });
+        previousYear = entryYear;
+      }
+      if (entryMonth !== previousMonth) {
+        timelineEntries.push({
+          type: 'month',
+          year: null,
+          month: entryMonth,
+          entry: null,
+          date: null,
+        });
+        previousMonth = entryMonth;
+      }
+      timelineEntries.push({
+        type: 'entry',
+        year: null,
+        month: null,
+        entry: entry,
+        date: entryDate,
+      });
+    }
+    // console.log(timelineEntries);
+  });
 
 </script>
 
