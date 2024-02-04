@@ -1,13 +1,46 @@
 <script>
+  import { browser } from '$app/environment';
+
+  import ImageViewer from '$lib/ImageViewer.svelte';
 
   /** @typedef {Object} Data
     * @property {import('$lib/types').TimelineEntry[]} timelineEntries
     * @property {import('$lib/types').ClientData} clientData
     */
   /** @type {{ data: Data }} */
-  let { data } = $props();
+  // let { data } = $props();
+
+  /** @type {Data} */
+  export let data;
   // console.log(data);
 
+  let showImageViewer = false;
+  /** @type {import('$lib/server/db.js').ImageData[]} */
+  let imageViewerImages = [];
+  /** @type {import('$lib/server/db.js').ImageData} */
+  let imageViewerCurrentImageIdx;
+
+  function keydownHandler(e) {
+    if (e.key === 'Escape') {
+      showImageViewer = false;
+    }
+  }
+
+  if (browser) {
+    window.addEventListener('keydown', keydownHandler);
+  };
+
+  function handleImageKeyDown(e, entry, i) {
+    if (e.key === 'Enter') {
+      openImageViewer(entry, i);
+    }
+  }
+
+  function openImageViewer(entry, i) {
+    imageViewerImages = entry.images;
+    imageViewerCurrentImageIdx = i;
+    showImageViewer = true;
+  }
 </script>
 
 <h1>Timeline</h1>
@@ -42,11 +75,18 @@
           {/if}
           {#if t.entry?.images}
             <div class="image-preview-box">
-              {#each t.entry.images as image}
-                <!--<img src={ image.path } alt={ image.comment } />-->
-                <a href={ image.path } target="_blank">
-                  <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
-                </a>
+              {#each t.entry.images as image, i}
+                {#if browser}
+                  <div tabindex="0" role="button" aria-label="Show image in overlay"
+                        on:click={ () => openImageViewer(t.entry, i) }
+                        on:keydown={ (e) => handleImageKeyDown(e, t.entry, i) }>
+                    <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
+                  </div>
+                {:else}
+                  <a href={ image.path } target="_blank">
+                    <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
+                  </a>
+                {/if}
               {/each}
             </div>
           {/if}
@@ -57,6 +97,11 @@
     <p>No entries yet.</p>
   {/each}
 </div>
+
+{#if showImageViewer}
+  <ImageViewer images={imageViewerImages} currentImageIdx={imageViewerCurrentImageIdx} show={showImageViewer}
+    close={() => showImageViewer = false}/>
+{/if}
 
 <style>
   form {

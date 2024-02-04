@@ -7,6 +7,7 @@ ToDo:
   - update image comment => DONE
   - image UI
   - read EXIF data
+  - accessibility menu buttons
 - tags
 - privacy policy
 - nerd stuff
