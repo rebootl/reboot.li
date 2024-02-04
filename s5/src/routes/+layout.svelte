@@ -103,10 +103,12 @@
   .main-wrapper {
     display: flex;
     justify-content: center;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: var(--header-height);
     left: 0;
-    width: calc(100%);
+    width: 100%;
+    height: calc(100vh - var(--header-height));
+    overflow-y: scroll;
     min-width: var(--min-main-width);
     transition: left 0.2s ease-in-out, width 0.2s ease-in-out;
   }
@@ -146,5 +148,21 @@
     padding: 10px;
     text-align: center;
     color: var(--text-color-dimmed);
+  }
+  @media (max-width: 660px) {
+    .main-wrapper {
+      min-width: 300px;
+    }
+    main {
+      min-width: 300px;
+    }
+  }
+  @media (max-width: 400px) {
+    .main-wrapper {
+      min-width: 200px;
+    }
+    main {
+      min-width: 200px;
+    }
   }
 </style>
