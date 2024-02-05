@@ -41,16 +41,21 @@
 <div class="wrapper">
   <aside class:shown={showMenu}>
     <nav>
-      <a href="/">Home</a> | 
-      <a href="/timeline">Timeline</a> | 
-      <a href="/notes">Notes</a> |
-      <a href="/links">Links</a>
+      <a href="/" onclick={() => showMenu = false}>Home</a> | 
+      <a href="/timeline" onclick={() => showMenu = false}>Timeline</a> | 
+      <a href="/notes" onclick={() => showMenu = false}>Notes</a> |
+      <a href="/links" onclick={() => showMenu = false}>Links</a>
     </nav>
     <div class="credits">
       <small>Copyright 2024 Cem Aydin<br />
         Created with <a href="https://kit.svelte.dev/" target="_blank">SvelteKit</a></small>
     </div>
   </aside>
+  <div class="overlay" class:shown={showMenu || showLogin}
+       onclick={() => {showMenu = false ; showLogin = false}}
+       onkeydown={()=>{}}
+       role="dialog"
+       aria-disabled="true"></div>
   <div class="main-wrapper" class:menu-shown={showMenu}>
     <main>
       <slot></slot>
@@ -70,7 +75,7 @@
     display: flex;
     justify-content: space-between;
     position: fixed;
-    width: 100%;
+    width: 100vw;
     top: 0;
     left: 0;
     z-index: 100;
@@ -89,36 +94,41 @@
   }
   .login-box {
     display: none;
-    position: absolute;
-    top: 10px;
+    position: fixed;
+    top: calc(var(--header-height) + 10px);
     right: 10px;
+    z-index: 130;
   }
   .login-box.shown {
     display: flex;
   }
   .wrapper {
     margin-top: var(--header-height);
-    position: relative;
+    width: 100vw;
+    overflow-x: hidden;
+  }
+  .overlay {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    background-color: rgba(0,0,0,0.5);
+  }
+  .overlay.shown {
+    display: block;
   }
   .main-wrapper {
     display: flex;
     justify-content: center;
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
     width: 100%;
-    height: calc(100vh - var(--header-height));
-    overflow-y: scroll;
-    min-width: var(--min-main-width);
-    transition: left 0.2s ease-in-out, width 0.2s ease-in-out;
-  }
-  .main-wrapper.menu-shown {
-    left: var(--side-width);
-    width: calc(100% - var(--side-width));
+    /*margin-left: 0;
+    transition: margin-left 0.2s ease-in-out, width 0.2s ease-in-out;*/
   }
   main {
     max-width: var(--max-main-width);
-    min-width: var(--min-main-width);
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -134,6 +144,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: var(--background-color);
+    z-index: 120;
   }
   aside.shown {
     left: 0;
@@ -149,14 +161,15 @@
     text-align: center;
     color: var(--text-color-dimmed);
   }
-  @media (max-width: 660px) {
+/*  @media (max-width: 660px) {
     .main-wrapper {
       min-width: 300px;
     }
     main {
       min-width: 300px;
     }
-  }
+  }*/
+  /*
   @media (max-width: 400px) {
     .main-wrapper {
       min-width: 200px;
@@ -165,4 +178,5 @@
       min-width: 200px;
     }
   }
+  */
 </style>
