@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,12 +19,12 @@ export const actions = {
     const username = data.get('username');
     const password = data.get('password');
 
-    if (!username || !password) return fail(401, { username, missing: true });
+    if (!username || !password) throw error(401, 'Login failed, username or password missing');
     
     // console.log("username", username);
 
     const r = getUser(/** @type {string} */ (username));
-    if (!r) return fail(401, { username, missing: true });
+    if (!r) throw error(401, 'Login failed.');
 
     const loginOk = await bcrypt.compare(/** @type {string} */ (password), r.pwhash);
     console.log("loginOk", loginOk);
@@ -55,6 +55,6 @@ export const actions = {
       throw redirect(303, '/');
     }
     console.log("login failed");
-    return fail(401, { username, invalid: true });
+    throw error(401, 'Login failed.');
 	}
 };
