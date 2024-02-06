@@ -9,7 +9,7 @@ body {
 	--text-color-dimmed: #adadbc;
 
 	--primary-color: #5af0a4;
-	--secondary-color: #c9a6a4;
+	--secondary-color: #ddb7b4;
 	--primary-color-dimmed: #5af0a455;
 
 	--card-background-color: #1e1e2d;
@@ -94,9 +94,22 @@ button.small-button {
 	font-size: 0.8em;
 }
 
+button.secondary-button {
+	background-color: var(--card-background-color);
+	color: var(--primary-color);
+}
+
 button.danger-button {
 	background-color: var(--warning-red-color);
 	color: var(--text-color);
+}
+
+button:focus {
+	outline: 3px solid var(--secondary-color);
+}
+
+a:focus {
+	outline: 3px solid var(--secondary-color);
 }
 
 .warning {

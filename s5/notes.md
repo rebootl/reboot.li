@@ -7,7 +7,8 @@ ToDo:
   - update image comment => DONE
   - image UI
   - read EXIF data
-  - accessibility menu buttons
+- accessibility menu buttons
+- title for individual sites
 - tags
 - privacy policy
 - nerd stuff
@@ -22,4 +23,7 @@ Questions:
 
 Bugs:
 
+- scrollbar in chromium
+- notes 404 when logged out
+- login with blank credentials goes to blank page
 - error when no entries in timeline and navigate somewhere else

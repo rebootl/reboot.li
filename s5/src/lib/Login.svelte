@@ -1,12 +1,13 @@
 <script>
   
   /** @type {import('$lib/types').clientData} */
-  export let clientData;
+  // export let clientData;
+  let { clientData, close } = $props();
 
   // console.log('clientData', clientData);
 </script>
 
-<div class="login-box">
+<div class="user-menu-box">
   {#if clientData.loggedIn}
     <h2>{clientData.username}</h2>
 <!--
@@ -25,12 +26,17 @@
       <input name="username" placeholder="Username">
       <input name="password" type="password" placeholder="Password">
       <button>Login</button>
+      <button type="button" class="secondary-button"
+              onclick={close}
+              aria-label="Close user menu"
+              aria-controls="user-menu"
+              >cancel</button>
     </form>
   {/if}
 </div>
 
 <style>
-  .login-box {
+  .user-menu-box {
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.9);
