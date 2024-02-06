@@ -1,7 +1,9 @@
 <script>
-  
-  /** @type {import('$lib/types').clientData} */
-  // export let clientData;
+
+  /** @type {{
+    *   clientData: import('$lib/types').ClientData,
+    *   close: () => void
+    * }} */
   let { clientData, close } = $props();
 
   // console.log('clientData', clientData);

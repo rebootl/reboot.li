@@ -9,24 +9,18 @@
 	import '../global.css';
   import Login from '$lib/Login.svelte';
 
-  /** @typedef clientData
-    * @property {boolean} loggedIn
-    * @property {string | null} username
-    */
-  /**
-   * @type {{clientData: clientData}}
+  /** @typedef {Object} PropsData
+   * @property {import('$lib/types').ClientData} clientData
    */
-  export let data;
+  /** @type {{ data: PropsData }} */
+  let { data } = $props();
   // console.log('data layout', data);
 
-  /**
-   * @type {boolean}
-   */
-  let showMenu = false;
-  /**
-   * @type {boolean}
-   */
-  let showLogin = false;
+  /** @type {boolean} */
+  let showMenu = $state(false);
+
+  /** @type {boolean} */
+  let showLogin = $state(false);
 
   if (browser) {
     document.addEventListener('keydown', (e) => {
@@ -73,13 +67,6 @@
         <li><a href="/notes" onclick={() => showMenu = false}>Notes</a> | </li>
         <li><a href="/links" onclick={() => showMenu = false}>Links</a></li>
       </ul>
-      
-      <!--<a href="/"
-         onclick={() => showMenu = false}
-         >Home</a> | 
-      <a href="/timeline" onclick={() => showMenu = false}>Timeline</a> | 
-      <a href="/notes" onclick={() => showMenu = false}>Notes</a> |
-      <a href="/links" onclick={() => showMenu = false}>Links</a>-->
       <button class="secondary-button"
               onclick={() => showMenu = false}
               aria-label="Close main menu"
@@ -190,8 +177,6 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    /*margin-left: 0;
-    transition: margin-left 0.2s ease-in-out, width 0.2s ease-in-out;*/
   }
   main {
     max-width: var(--max-main-width);
@@ -237,22 +222,4 @@
     text-align: center;
     color: var(--text-color-dimmed);
   }
-/*  @media (max-width: 660px) {
-    .main-wrapper {
-      min-width: 300px;
-    }
-    main {
-      min-width: 300px;
-    }
-  }*/
-  /*
-  @media (max-width: 400px) {
-    .main-wrapper {
-      min-width: 200px;
-    }
-    main {
-      min-width: 200px;
-    }
-  }
-  */
 </style>
