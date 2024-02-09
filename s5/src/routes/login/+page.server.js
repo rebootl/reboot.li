@@ -6,10 +6,13 @@ import { COOKIENAME } from '$env/static/private';
 import { getUser, createSession } from '$lib/server/db.js';
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ locals }) {
-  /** @typedef {{ loggedIn: boolean, username: string | null }} */
-	if (locals.user) throw redirect(303, '/');
-}
+// export async function load({ locals }) {
+
+//   /** @typedef {{ loggedIn: boolean, username: string | null }} */
+// 	// if (locals.user) throw redirect(303, '/');
+
+//   return {};
+// }
 
 /** @type {import('./$types').Actions} */
 export const actions = {

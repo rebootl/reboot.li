@@ -5,7 +5,7 @@ ToDo:
   - edit: add images => DONE
   - delete single images => DONE
   - update image comment => DONE
-  - image UI
+  - image UI => DONE
   - read EXIF data
 - accessibility menu buttons => DONE
 - title for individual sites
