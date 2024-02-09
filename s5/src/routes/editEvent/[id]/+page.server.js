@@ -72,7 +72,7 @@ export const actions = {
 
     const r = createEntryDB({
       userId: locals.user.id,
-      type: 'post',
+      type: 'event',
       title: '',
       content: typeof content === 'string' ? content : '',
       comment: typeof comment === 'string' ? comment : '',
@@ -115,7 +115,7 @@ export const actions = {
     const r = updateEntryDB({
       entryId,
       userId: locals.user.id,
-      type: 'post',
+      type: 'event',
       title: '',
       content: typeof content === 'string' ? content : '',
       comment: typeof comment === 'string' ? comment : '',
@@ -188,7 +188,7 @@ export const actions = {
     const r2 = deleteImageDB(imageId, locals.user.id);
     if (r2.changes === 0) throw error(400, `Error deleting image ${imageId} from db`);
 
-    redirect(303, `/editPost/${params.id}`)
+    redirect(303, `/editEvent/${params.id}`)
   },
   async updateImageComment({ locals, params, request }) {
     if (!locals.user) throw error(401, 'Unauthorized');
@@ -201,6 +201,6 @@ export const actions = {
     const r = updateImageCommentDB(imageId, locals.user.id, imageComment);
     if (r.changes === 0) throw error(400, `Error updating image ${imageId} in db`);
 
-    redirect(303, `/editPost/${params.id}`)
+    redirect(303, `/editEvent/${params.id}`)
   },
 }

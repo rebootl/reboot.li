@@ -6,7 +6,7 @@ import { getEntries } from '$lib/server/db.js';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
 
-  const type = 'post';
+  const type = 'event';
   const userId = 1;
 
   let loggedIn = false;
@@ -16,6 +16,7 @@ export async function load({ locals }) {
 
   const entries = getEntries(userId, type, loggedIn);
   if (!entries) throw error(404, 'Not found');
+  if (entries.length === 0) return { timelineEntries: [] };
 
   let previousYear = dayjs(entries[0].created_at).format('YYYY');
   let previousMonth = dayjs(entries[0].created_at).format('MMMM');

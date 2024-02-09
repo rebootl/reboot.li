@@ -115,7 +115,7 @@
       return;
     }
 
-    const r = await fetch(`/editPost/${data.entry?.id}?/deleteEntry`, {
+    const r = await fetch(`/editEvent/${data.entry?.id}?/deleteEntry`, {
       method: "POST",
       body: new FormData(),
     });
@@ -141,7 +141,7 @@
     const formData = new FormData();
     formData.append('imageId', String(imageId));
 
-    const r = await fetch(`/editPost/${data.entry?.id}?/deleteImage`, {
+    const r = await fetch(`/editEvent/${data.entry?.id}?/deleteImage`, {
       method: "POST",
       body: formData,
     });
@@ -155,14 +155,14 @@
     console.log('success!')
     // reload data
     invalidateAll();
-    // goto(`/editPost/${data.entry?.id}`);
+    // goto(`/editEvent/${data.entry?.id}`);
   }
 
 </script>
 
 {#if data.entry}
-  <h1>Edit Post</h1>
-  <form method="POST" action={ `/editPost/${ data.entry?.id }?/updateEntry` }>
+  <h1>Edit Event</h1>
+  <form method="POST" action={ `/editEvent/${ data.entry?.id }?/updateEntry` }>
     <textarea name="content" placeholder="Text...">{ data.entry.content }</textarea>
     <input type="text" name="comment" placeholder="Comment" value={ data.entry?.comment } />
     <label>
@@ -212,7 +212,7 @@
       <div class="image-load-preview">
         <img src={'data:image/png;base64,' + image.preview_data} alt={image.path} class="image-preview"
           title={image.path} />
-        <form method="POST" action={ `/editPost/${ data.entry?.id }?/updateImageComment` }>
+        <form method="POST" action={ `/editEvent/${ data.entry?.id }?/updateImageComment` }>
           <input type="text" name="imagecomment" placeholder="Comment" value={image.comment} />
           <input type="hidden" name="imageid" value={image.id} />
           <div class="buttons">
@@ -225,11 +225,11 @@
     {/each}
   </div>
 
-  <!--<form method="POST" action={ `/editPost/${ data.entry?.id }?/deleteEntry` } id="delete-entry-form">
+  <!--<form method="POST" action={ `/editEvent/${ data.entry?.id }?/deleteEntry` } id="delete-entry-form">
   </form>-->
 {:else}
-  <h1>New Post</h1>
-  <form method="POST" action="/editPost/new?/createEntry" enctype="multipart/form-data" id="new-entry-form">
+  <h1>New Event</h1>
+  <form method="POST" action="/editEvent/new?/createEntry" enctype="multipart/form-data" id="new-entry-form">
     <textarea name="content" placeholder="Text..."></textarea>
     <input type="text" name="comment" placeholder="Comment" />
     <label>

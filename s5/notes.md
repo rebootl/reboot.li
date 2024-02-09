@@ -12,8 +12,11 @@ ToDo:
 - tags
 - privacy policy
 - nerd stuff
+- import entries / insert content
+
+==> publish <==
+
 - syntax highlighting
-- export/import entries
 - edit: markdown preview
 - lazy loading
 - login shouldn't be a route, just a JSON endpoint,
@@ -26,7 +29,7 @@ Questions:
 
 Bugs:
 
-- scrollbar in chromium
+- scrollbar in chromium look weird
 - notes 404 when logged out
 - error when no entries in timeline and navigate somewhere else
 

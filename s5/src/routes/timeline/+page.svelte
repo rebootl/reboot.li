@@ -48,7 +48,7 @@
 <h1>Timeline</h1>
 
 {#if data.clientData.loggedIn}
-  <a href="/editPost/new">New Post...</a>
+  <a href="/editEvent/new">New Event...</a>
 {/if}
 
 {#if showImageViewer}
@@ -65,12 +65,14 @@
     {:else if t.type === 'entry'}
       <div class="list-item">
         <div class="item-header">
-          <small>{ t.date }</small>
-          {#if t.entry?.private}
-            <small><span class="material-icons">lock</span> Private</small>
-          {/if}
+          <div>
+            <small>{ t.date }</small>
+            {#if t.entry?.private}
+              <small><span class="material-icons">lock</span> Private</small>
+            {/if}
+          </div>
           {#if data.clientData.loggedIn}
-            <small><a href={ `/editPost/${t.entry?.id}` }><span class="material-icons">edit</span></a></small>
+            <small><a href={ `/editEvent/${t.entry?.id}` }><span class="material-icons">edit</span></a></small>
           {:else}
             <span></span>
           {/if}
