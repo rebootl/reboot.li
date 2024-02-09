@@ -7,6 +7,8 @@ ToDo:
   - update image comment => DONE
   - image UI => DONE
   - read EXIF data
+
+- fix entry min. width
 - accessibility menu buttons => DONE
 - title for individual sites
 - tags
@@ -30,7 +32,7 @@ Questions:
 Bugs:
 
 - scrollbar in chromium look weird
-- notes 404 when logged out
 - error when no entries in timeline and navigate somewhere else
 
+- notes 404 when logged out => FIXED, default was 0 inst. of 1
 - login with blank credentials goes to blank page => FIXED, use 401 page for now
