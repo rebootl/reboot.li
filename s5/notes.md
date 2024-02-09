@@ -16,6 +16,9 @@ ToDo:
 - export/import entries
 - edit: markdown preview
 - lazy loading
+- login shouldn't be a route, just a JSON endpoint,
+  or it should use form enhancement properly -> this may not work,
+  because we're not actually on the login page
 
 Questions:
 

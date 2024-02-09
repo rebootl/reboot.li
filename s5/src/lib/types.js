@@ -4,12 +4,31 @@
   * @property {string | null} username
   */
 
-/** @typedef {Object} TimelineEntry
-  * @property {'year' | 'month' | 'entry'} type
-  * @property {string | null} year
-  * @property {string | null} month
-  * @property {import('$lib/server/db.js').EntryData | null} entry
-  * @property {string | null} date
+/** @typedef {TimelineYearEntry|TimelineMonthEntry|TimelineDataEntry} TimelineEntry */
+
+/** @typedef {Object} TimelineYearEntry
+  * @property {'year'} type
+  * @property {string} year
+  * @property {null} month
+  * @property {null} entry
+  * @property {null} date
   */
+
+/** @typedef {Object} TimelineMonthEntry
+  * @property {'month'} type
+  * @property {null} year
+  * @property {string} month
+  * @property {null} entry
+  * @property {null} date
+  */
+
+/**
+ * @typedef {Object} TimelineDataEntry
+ * @property {'entry'} type
+ * @property {null} year
+ * @property {null} month
+ * @property {import('$lib/server/db.js').EntryData} entry
+ * @property {string} date
+ */
 
 export {};

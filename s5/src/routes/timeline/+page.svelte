@@ -8,18 +8,15 @@
     * @property {import('$lib/types').ClientData} clientData
     */
   /** @type {{ data: Data }} */
-  // let { data } = $props();
+  let { data } = $props();
 
-  /** @type {Data} */
-  export let data;
-  // console.log(data);
-
-  let showImageViewer = false;
+  let showImageViewer = $state(false);
   /** @type {import('$lib/server/db.js').ImageData[]} */
-  let imageViewerImages = [];
-  /** @type {import('$lib/server/db.js').ImageData} */
-  let imageViewerCurrentImageIdx;
+  let imageViewerImages = $state([]);
+  /** @type {number} */
+  let imageViewerCurrentImageIdx = $state(0);
 
+  /** @param {KeyboardEvent} e */
   function keydownHandler(e) {
     if (e.key === 'Escape') {
       showImageViewer = false;
@@ -30,12 +27,17 @@
     window.addEventListener('keydown', keydownHandler);
   };
 
+  /** @param {KeyboardEvent} e
+    * @param {import('$lib/server/db.js').EntryData } entry
+    * @param {number} i */
   function handleImageKeyDown(e, entry, i) {
     if (e.key === 'Enter') {
       openImageViewer(entry, i);
     }
   }
 
+  /** @param {import('$lib/server/db.js').EntryData } entry
+    * @param {number} i */
   function openImageViewer(entry, i) {
     imageViewerImages = entry.images;
     imageViewerCurrentImageIdx = i;
@@ -49,13 +51,18 @@
   <a href="/editPost/new">New Post...</a>
 {/if}
 
+{#if showImageViewer}
+  <ImageViewer images={imageViewerImages} currentImageIdx={imageViewerCurrentImageIdx} show={showImageViewer}
+    close={() => showImageViewer = false}/>
+{/if}
+
 <div class="list">
   {#each data.timelineEntries as t}
     {#if t.type === 'year'}
       <h2 class="year">{t.year}</h2>
     {:else if t.type === 'month'}
       <h3 class="month">{t.month}</h3>
-    {:else}
+    {:else if t.type === 'entry'}
       <div class="list-item">
         <div class="item-header">
           <small>{ t.date }</small>
@@ -79,7 +86,11 @@
                 {#if browser}
                   <div tabindex="0" role="button" aria-label="Show image in overlay"
                         on:click={ () => openImageViewer(t.entry, i) }
-                        on:keydown={ (e) => handleImageKeyDown(e, t.entry, i) }>
+                        on:keydown={ (e) => handleImageKeyDown(e, t.entry, i) }
+                        aria-controls="image-viewer"
+                        aria-expanded={showImageViewer}
+                        aria-haspopup="dialog"
+                        >
                     <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
                   </div>
                 {:else}
@@ -97,11 +108,6 @@
     <p>No entries yet.</p>
   {/each}
 </div>
-
-{#if showImageViewer}
-  <ImageViewer images={imageViewerImages} currentImageIdx={imageViewerCurrentImageIdx} show={showImageViewer}
-    close={() => showImageViewer = false}/>
-{/if}
 
 <style>
   form {
