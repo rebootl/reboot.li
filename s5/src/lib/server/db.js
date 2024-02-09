@@ -112,10 +112,12 @@ export function insertImagesDB(images, entryId, userId) {
   return success;
 }
 
+/** @typedef {'event'|'note'|'task'|'link'} EntryType */
+
 /**
   * @typedef {Object} CreateEntryData
   * @property {number} userId
-  * @property {string} type
+  * @property {EntryType} type
   * @property {string} title
   * @property {string} content
   * @property {string} comment
@@ -167,7 +169,7 @@ export function createEntryDB(data) {
   * @typedef {Object} EntryData
   * @property {number} id
   * @property {number} user_id
-  * @property {string} type
+  * @property {EntryType} type
   * @property {string} title
   * @property {string} content
   * @property {string} comment
@@ -208,7 +210,7 @@ export function getEntry(userId, entryId, loggedIn = false) {
 
 /**
   * @param {number} userId
-  * @param {string} type
+  * @param {EntryType|''} type
   * @param {boolean} loggedIn
   * @param {number} limit
   * @param {number} offset
@@ -233,7 +235,7 @@ export function getEntries(userId, type = '', loggedIn = false, limit = 99999, o
   * @typedef {Object} UpdateEntryData
   * @property {number} userId
   * @property {number} entryId
-  * @property {string} type
+  * @property {EntryType} type
   * @property {string} title
   * @property {string} content
   * @property {string} comment
