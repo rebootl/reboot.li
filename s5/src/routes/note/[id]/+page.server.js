@@ -8,7 +8,7 @@ export async function load({ locals, params }) {
   const entryId = parseInt(params.id) ?? 0;
   const loggedIn = locals.user ? true : false;
 
-  console.log('userId:', userId);
+  // console.log('userId:', userId);
   
   const r = getEntry(userId, entryId, loggedIn);
   if (!r) throw error(404, 'Not found');

@@ -179,7 +179,7 @@
     width: 100%;
   }
   main {
-    max-width: var(--max-main-width);
+    width: var(--max-main-width);
     padding-left: 10px;
     padding-right: 10px;
   }

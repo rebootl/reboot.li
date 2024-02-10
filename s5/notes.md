@@ -2,14 +2,10 @@
 ToDo:
 
 - timeline w/ images
-  - edit: add images => DONE
-  - delete single images => DONE
-  - update image comment => DONE
   - image UI => DONE
   - read EXIF data
+  - open images with keyboard 
 
-- fix entry min. width
-- accessibility menu buttons => DONE
 - title for individual sites
 - tags
 - privacy policy
@@ -32,7 +28,15 @@ Questions:
 Bugs:
 
 - scrollbar in chromium look weird
-- error when no entries in timeline and navigate somewhere else
 
+Done:
+
+- error when no entries in timeline and navigate somewhere else => got fixed somehow
 - notes 404 when logged out => FIXED, default was 0 inst. of 1
 - login with blank credentials goes to blank page => FIXED, use 401 page for now
+- timeline w/ images
+  - edit: add images => DONE
+  - delete single images => DONE
+  - update image comment => DONE
+- fix entry min. width => DONE
+- accessibility menu buttons => DONE
