@@ -1,5 +1,6 @@
 <script>
   import dayjs from 'dayjs';
+  import exifr from 'exifr';
 
   import { goto, invalidateAll } from '$app/navigation';
 
@@ -13,6 +14,7 @@
     * @property {File} file
     * @property {string} filename
     * @property {string} previewData
+    * @property {string} exifData
     */
   /** @type {Image[]} */
   let images = $state([]);
@@ -37,10 +39,14 @@
       .map(async (file) => {
         const blob = await compressImage(file, 240, 240);
         const data = await encodeData(blob);
+        const exifData = JSON.stringify(await exifr.parse(file));
+        // console.log('exifdata', exifData);
+
         const image = {
           file: file,
           filename: file.name,
           previewData: data,
+          exifData: exifData || "{}",
         };
         return image;
       })
@@ -75,6 +81,7 @@
     await Promise.all(images.map(async (image) => {
       const blob = await compressImage(image.file, maxSize, maxSize);
       formData.append('images', blob, image.filename);
+      formData.append('imageexifdata', image.exifData);
     }));
     // for (const image of images) {
     //   const blob = await compressImage(image.file, maxSize, maxSize);

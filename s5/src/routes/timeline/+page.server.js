@@ -61,6 +61,36 @@ export async function load({ locals }) {
       });
       previousMonth = entryMonth;
     }
+
+    // pre-process image exif data
+    for (const image of entry.images) {
+      // console.log(image.exif_data);
+      if (image.exif_data) {
+        // console.log(image.exif_data);
+        const exifData = JSON.parse(image.exif_data);
+        // convert exposure time from floating point to 1/x format
+        let exposureTime = exifData?.ExposureTime;
+        if (exposureTime) {
+          const exposureTimeFloat = parseFloat(exposureTime);
+          if (exposureTimeFloat < 1) {
+            exposureTime = '1/' + Math.round(1 / exposureTimeFloat);
+          }
+        }
+        const exifDataOut = {
+          make: exifData?.Make,
+          model: exifData?.Model,
+          createDate: exifData?.CreateDate,
+          exposureTime: exposureTime,
+          fNumber: exifData?.FNumber,
+          focalLength: exifData?.FocalLength,
+          iso: exifData?.ISO,
+          lensModel: exifData?.LensModel,
+        };
+        // console.log(exifDataOut);
+        image.exifData = exifDataOut;
+        delete image.exif_data;
+      }
+    }
     timelineEntries.push({
       type: 'entry',
       year: null,

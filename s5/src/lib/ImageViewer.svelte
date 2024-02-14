@@ -14,6 +14,11 @@
 
 	/** @type {HTMLButtonElement|null} */
 	let closeButton = $state(null);
+
+	// console.log('image', images[currentImageIdx]);
+	let exifData = $derived(images[currentImageIdx].exifData);
+
+	// console.log('exifData', exifData);
 	
 	function nextImage() {
 		if (currentImageIdx < images.length - 1) {
@@ -26,11 +31,6 @@
       currentImageIdx--;
     }
   }
-
-	/** @param {number} i */
-	/*function setImage(i) {
-	  currentImageIdx = i;
-  }*/
 
 	/** @param {KeyboardEvent} e */
   function keydownHandler(e) {
@@ -64,7 +64,8 @@
      >
 	<div class="image-box">
 		<div class="image-header">
-			<button class="icon-button close-button" onclick={close} bind:this={closeButton}
+			<button class="icon-button close-button"
+							onclick={close} bind:this={closeButton}
 				      aria-label="Close Image Viewer"
 							>
 				<span class="material-icons">close</span>
@@ -106,6 +107,33 @@
         <span class="material-icons">navigate_next</span>
       </button>
 		</div>
+		{#if images[currentImageIdx].exifData}
+      <div class="exif-info">
+				{#if exifData.fNumber || exifData.exposureTime || exifData.iso || exifData.focalLength}
+	        <small>
+						<i>f</i> / { exifData.fNumber }
+						| { exifData.exposureTime } s
+						| ISO { exifData.iso }
+						| { exifData.focalLength }mm
+					</small>
+        {/if}
+        {#if exifData.make || exifData.model}
+          <small>
+            { exifData.make } { exifData.model }
+          </small>
+        {/if}
+				{#if exifData.lensModel}
+          <small>
+            { exifData.lensModel }
+          </small>
+        {/if}
+        {#if exifData.dateTimeOriginal}
+          <small>
+            { exifData.dateTimeOriginal }
+          </small>
+        {/if}
+      </div>
+    {/if}
 	</div>
 </div>
 
@@ -117,9 +145,10 @@
     z-index: 100;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0,0,0,0.8);
     display: none;
 		flex-direction: column;
+		overflow: scroll;
   }
   #image-viewer.show {
     display: flex;
@@ -157,7 +186,6 @@
   .image-footer-inner {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
   }
   .image-index-indicator {
@@ -170,15 +198,16 @@
 		font-size: 10px;
   }
   .comment {
-		display: flex;
-	  justify-content: center;
-	  align-items: center;
 		width: 100%;
-		/*background-color: rgba(0,0,0,0.7);*/
 		color: var(--text-color-dimmed);
 		height: 100%;
+		text-align: center;
   }
-	.icon-button {
-		background-color: rgba(0,0,0,0.7);
+  .exif-info {
+		display: flex;
+    flex-direction: column;
+	  width: 100%;
+	  color: var(--text-color-dimmed);
+	  text-align: center;
   }
 </style>

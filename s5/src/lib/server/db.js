@@ -90,6 +90,7 @@ export function destroySession(sessionId) {
   * @property {string} path
   * @property {string} comment
   * @property {string} previewData
+  * @property {string} exifData
   */
 
 /**
@@ -101,9 +102,9 @@ export function destroySession(sessionId) {
 export function insertImagesDB(images, entryId, userId) {
   let success = true;
   for (const i of images) {
-    const stmt = db.prepare(`INSERT INTO images (entry_id, user_id, path, comment, preview_data, created_at)
-      VALUES (?, ?, ?, ?, ?, datetime('now'))`);
-    const r = stmt.run(entryId, userId, i.path, i.comment, i.previewData);
+    const stmt = db.prepare(`INSERT INTO images (entry_id, user_id, path, comment, preview_data, exif_data, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`);
+    const r = stmt.run(entryId, userId, i.path, i.comment, i.previewData, i.exifData);
     if (!r) {
       success = false;
       break;

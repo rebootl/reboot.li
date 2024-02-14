@@ -27,12 +27,13 @@ export async function load({ locals, params }) {
 /** handle images
   * @param {File[]} images
   * @param {string[]} imageComments
+  * @param {string[]} imagesExifData
   * @param {number|bigint} entryId
   * @param {number} userId
   * @param {string} username
   * @returns {Promise<boolean>} success
   */
-async function handleImages(images, imageComments, entryId, userId, username) {
+async function handleImages(images, imageComments, imagesExifData, entryId, userId, username) {
 
   // store images on fs
   let rs = [];
@@ -49,6 +50,7 @@ async function handleImages(images, imageComments, entryId, userId, username) {
     path: r.url,
     comment: String(imageComments[i] ?? ''),
     previewData: r.previewData,
+    exifData: String(imagesExifData[i] ?? ''),
   }));
   const r2 = insertImagesDB(imageData, entryId, userId);
   if (!r2) throw new Error('Error inserting images into db');
@@ -87,9 +89,10 @@ export const actions = {
     // handle images
     const images = /** @type {File[]} */ (data.getAll('images') ?? []);
     const imageComments = /** @type {string[]} */ (data.getAll('imagecomment') ?? []);
+    const imagesExifData = /** @type {string[]} */ (data.getAll('imageexifdata') ?? []);
 
     try {
-      await handleImages(images, imageComments, r.lastInsertRowid, locals.user.id, locals.user.name);
+      await handleImages(images, imageComments, imagesExifData, r.lastInsertRowid, locals.user.id, locals.user.name);
     } catch (err) {
       console.error(err);
       throw error(400, 'Something went wrong while handling images');
