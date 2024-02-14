@@ -16,32 +16,43 @@
   /** @type {number} */
   let imageViewerCurrentImageIdx = $state(0);
 
+  /** @type {HTMLElement|null} */
+  let openImageViewerElement = null;
+
   /** @param {KeyboardEvent} e */
-  function keydownHandler(e) {
+  function keyPressHandler(e) {
     if (e.key === 'Escape') {
-      showImageViewer = false;
+      closeImageViewer();
     }
   }
 
   if (browser) {
-    window.addEventListener('keydown', keydownHandler);
+    window.addEventListener('keydown', keyPressHandler);
   };
 
   /** @param {KeyboardEvent} e
     * @param {import('$lib/server/db.js').EntryData } entry
     * @param {number} i */
-  function handleImageKeyDown(e, entry, i) {
+  function handleImageKeyPress(e, entry, i) {
     if (e.key === 'Enter') {
-      openImageViewer(entry, i);
+      openImageViewer(e, entry, i);
     }
   }
 
   /** @param {import('$lib/server/db.js').EntryData } entry
     * @param {number} i */
-  function openImageViewer(entry, i) {
+  function openImageViewer(e, entry, i) {
+    openImageViewerElement = e.target;
+    
     imageViewerImages = entry.images;
     imageViewerCurrentImageIdx = i;
     showImageViewer = true;
+  }
+
+  function closeImageViewer() {
+    // console.log('openImageViewerElement', openImageViewerElement);
+    showImageViewer = false;
+    // openImageViewerElement?.focus();
   }
 </script>
 
@@ -53,7 +64,7 @@
 
 {#if showImageViewer}
   <ImageViewer images={imageViewerImages} currentImageIdx={imageViewerCurrentImageIdx} show={showImageViewer}
-    close={() => showImageViewer = false}/>
+    close={() => closeImageViewer()}/>
 {/if}
 
 <div class="list">
@@ -83,16 +94,18 @@
             <small>{t.entry.comment}</small>
           {/if}
           {#if t.entry?.images}
-            <div class="image-preview-box">
+            <div class="images-preview-box">
               {#each t.entry.images as image, i}
                 {#if browser}
-                  <div tabindex="0" role="button" aria-label="Show image in overlay"
-                        on:click={ () => openImageViewer(t.entry, i) }
-                        on:keydown={ (e) => handleImageKeyDown(e, t.entry, i) }
-                        aria-controls="image-viewer"
-                        aria-expanded={showImageViewer}
-                        aria-haspopup="dialog"
-                        >
+                  <div class="image-preview-box" tabindex="0"
+                       onclick={ (e) => openImageViewer(e, t.entry, i) }
+                       onkeyup={ (e) => handleImageKeyPress(e, t.entry, i) }
+                       role="button"
+                       aria-label="Show image in overlay"
+                       aria-controls="image-viewer"
+                       aria-expanded={showImageViewer}
+                       aria-haspopup="dialog"
+                       >
                     <img class="image-preview" alt={ image.comment } src={ 'data:image/png;base64,' + image.preview_data } />
                   </div>
                 {:else}
@@ -154,10 +167,13 @@
   .month {
     color: var(--text-color-dimmed);
   }
-  .image-preview-box {
+  .images-preview-box {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+  .image-preview-box:focus {
+    outline: 2px solid var(--secondary-color);
   }
   .image-preview {
     max-width: 120px;
