@@ -110,12 +110,12 @@
 		{#if images[currentImageIdx].exifData}
       <div class="exif-info">
 				{#if exifData.fNumber || exifData.exposureTime || exifData.iso || exifData.focalLength}
-	        <small>
-						<i>f</i> / { exifData.fNumber }
-						| { exifData.exposureTime } s
-						| ISO { exifData.iso }
-						| { exifData.focalLength }mm
-					</small>
+					<div class="exif-info-foto">
+		        <small><i>f</i> / { exifData.fNumber }</small>
+						<small>{ exifData.exposureTime } s</small>
+            <small>ISO { exifData.iso }</small>
+            <small>{ exifData.focalLength }mm</small>
+					</div>
         {/if}
         {#if exifData.make || exifData.model}
           <small>
@@ -156,10 +156,10 @@
   .image-box {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /*justify-content: center;*/
     align-items: center;
     /*height: calc(100vh - var(--header-height));*/
-    height: 100%;
+    /*height: 100%;*/
   }
   .image-header {
 		height: var(--header-height);
@@ -209,5 +209,18 @@
 	  width: 100%;
 	  color: var(--text-color-dimmed);
 	  text-align: center;
+		gap: 5px;
+  }
+  .exif-info-foto {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+  }
+  .exif-info-foto small {
+    width: 100%;
+		border-right: 1px solid var(--text-color-dimmed-dark);
+  }
+  .exif-info-foto small:last-child {
+    border-right: none;
   }
 </style>
