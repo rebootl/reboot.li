@@ -3,8 +3,8 @@ ToDo:
 
 - timeline w/ images
   - image UI => DONE
-  - read EXIF data
-  - open images with keyboard 
+  - read EXIF data => DONE
+  - open images with keyboard => DONE 
 
 - title for individual sites
 - tags
