@@ -3,23 +3,25 @@
 }
 
 body {
-	--background-color: #111;
+	--background-color: #113d4d;
+	--header-background-color: #295565;
 	--text-color: #fff;
 	--text-color-dimmed: #a4a4a4;
 	--text-color-dimmed: #adadbc;
 	--text-color-dimmed-dark: #5f5f5f;
 
-	--primary-color: #5af0a4;
+	--primary-color: #bffbf2;
 	--secondary-color: #ddb7b4;
-	--primary-color-dimmed: #5af0a455;
+	--primary-color-dimmed: #bffbf255;
 
-	--card-background-color: #1e1e2d;
+	--card-background-color: #092631;
 
 	/*--line-color: #4f5260;*/
 	--warning-red-color: #f05a5a;
 	--warning-yellow-color: #f0f05a;
 
 	--header-height: 55px;
+	--footer-height: 65px;
 
 	--side-width: 260px;
 	--max-main-width: 600px;
@@ -30,9 +32,10 @@ body {
 	color: var(--text-color);
 	margin: 0;
 
-	line-height: 1.5em;
+	line-height: 1.6em;
 
-	font-family: sans-serif;
+	font-family: monospace;
+	font-size: 1.1em;
 
 	/*overflow: hidden;*/
 }

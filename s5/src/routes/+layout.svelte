@@ -22,6 +22,14 @@
   /** @type {boolean} */
   let showLogin = $state(false);
 
+  $effect(() => {
+    if (showMenu || showLogin) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  });
+
   if (browser) {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -33,15 +41,28 @@
 </script>
 
 <header>
+  <nav>
+    <ul>
+      <li><a href="/" onclick={() => showMenu = false}>about</a></li>
+      <li><a href="/timeline" onclick={() => showMenu = false}>timeline</a></li>
+      <li><a href="/notes" onclick={() => showMenu = false}>notes</a></li>
+      <li><a href="/links" onclick={() => showMenu = false}>links</a></li>
+    </ul>
+  </nav>
   <button id="main-menu-button" class="icon-button"
           onclick={() => showMenu = !showMenu}
           aria-haspopup="true"
           aria-expanded={showMenu}
           aria-controls="main-menu"
-          aria-label="Open / close main menu"
+          aria-label="Open / Close main menu"
           >
-		<span class="material-icons">menu</span>
+    {#if showMenu}
+      <span class="material-icons">close</span>
+    {:else}
+      <span class="material-icons">menu</span>
+    {/if}
   </button>
+  <!--
   <div class="logo-box">
     <img class="logo" alt="" src="/logo.png" />
   </div>
@@ -53,7 +74,7 @@
           aria-label="Open / close user menu"
           >
     <span class="material-icons">account_circle</span>
-  </button>
+  </button>-->
 </header>
 <div class="wrapper">
   <aside id="main-menu" class:shown={showMenu}
@@ -62,16 +83,16 @@
           >
     <nav>
       <ul>
-        <li><a href="/" onclick={() => showMenu = false}>Home</a> | </li>
-        <li><a href="/timeline" onclick={() => showMenu = false}>Timeline</a> | </li>
-        <li><a href="/notes" onclick={() => showMenu = false}>Notes</a> | </li>
-        <li><a href="/links" onclick={() => showMenu = false}>Links</a></li>
+        <li><a href="/nerd_stuff" onclick={() => showMenu = false}>Nerd stuff</a></li>
+        <li><a href="/privacy_policy" onclick={() => showMenu = false}>Privacy policy</a></li>
+        <!--<li><a href="/login" onclick={() => showMenu = false}>Login</a></li>-->
       </ul>
+      <!--
       <button class="secondary-button"
               onclick={() => showMenu = false}
               aria-label="Close main menu"
               aria-controls="main-menu"
-              >Close menu</button>
+              >Close menu</button>-->
     </nav>
     <footer class="credits">
       <small>Copyright 2024 Cem Aydin<br />
@@ -100,20 +121,43 @@
       <slot></slot>
     </main>
   </div>
+  <footer>
+    Copyright 2024 Cem Aydin<br />
+    Created with <a href="https://kit.svelte.dev/" target="_blank">SvelteKit</a>
+  </footer>
 </div>
 
 <style>
   header {
     height: var(--header-height);
-    border-bottom: 2px solid var(--primary-color);
+    /*border-bottom: 2px solid var(--primary-color);*/
     display: flex;
     justify-content: space-between;
-    position: fixed;
+    /*position: fixed;
     width: 100vw;
     top: 0;
     left: 0;
-    z-index: 100;
-    background-color: var(--background-color);
+    z-index: 100;*/
+    background-color: var(--header-background-color);
+  }
+  header nav {
+    width: 100%;
+  }
+  header nav ul {
+    list-style-type: none;
+    height: var(--header-height);
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  header nav ul a {
+    font-size: 1.2rem;
+    font-weight: bold;
+    vertical-align: middle;
   }
   .logo-box {
     display: flex;
@@ -137,8 +181,8 @@
     display: flex;
   }
   .wrapper {
-    margin-top: var(--header-height);
-    width: 100vw;
+    /*margin-top: var(--header-height);*/
+    /*width: 100vw;*/
     overflow-x: hidden;
   }
   .overlay {
@@ -177,19 +221,21 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
   }
   main {
     width: var(--max-main-width);
     padding-left: 10px;
     padding-right: 10px;
+    margin-bottom: 20px;
   }
   aside {
     margin-top: var(--header-height);
     width: var(--side-width);
-    border-right: 1px solid var(--primary-color-dimmed);
+    border-left: 1px solid var(--primary-color-dimmed);
     position: fixed;
     top: 0;
-    left: calc(var(--side-width) * -1);
+    left: 100vw;
     min-height: calc(100vh - var(--header-height));
     transition: left 0.2s ease-in-out;
     display: flex;
@@ -200,7 +246,7 @@
     visibility: hidden;
   }
   aside.shown {
-    left: 0;
+    left: calc(100vw - var(--side-width));
     visibility: visible;
   }
   aside nav {
@@ -209,17 +255,26 @@
     justify-content: center;
   }
   aside nav ul {
-    list-style-type: none;
+    list-style-type: square;
+    color: var(--primary-color);
     display: flex;
+    flex-direction: column;
     margin: 0;
-    padding: 15px;
+    padding: 20px 0 20px 0;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
   }
   aside footer {
     padding: 10px;
     text-align: center;
     color: var(--text-color-dimmed);
+  }
+  footer {
+    background-color: var(--card-background-color);
+    color: var(--text-color-dimmed);
+    text-align: center;
+    padding: 10px;
+    height: var(--footer-height);
   }
 </style>

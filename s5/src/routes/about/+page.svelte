@@ -11,7 +11,7 @@ as a playground for experimentation and trying out new stuff.
 
 My name is Cem. I'm a web dev, kinda, and sysadmin, maybe?
 
-![Me](/me-small.jpeg)
+![me](/me-small.jpeg)
 
 I'm 40+, yikes.
 

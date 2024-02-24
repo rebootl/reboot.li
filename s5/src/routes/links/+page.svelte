@@ -112,7 +112,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: #1e1e1e;
+    background-color: var(--card-background-color);
     border-radius: 15px;
   }
   .list-item .item-header {
