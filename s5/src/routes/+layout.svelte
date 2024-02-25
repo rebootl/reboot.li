@@ -99,12 +99,14 @@
         Created with <a href="https://kit.svelte.dev/" target="_blank">SvelteKit</a></small>
     </footer>
   </aside>
+  <!--
   <div id="user-menu" class="login-box" class:shown={showLogin}
        role="menu"
        aria-label="User menu"
        >
     <Login clientData={data.clientData} close={() => showLogin = false} />
   </div>
+  -->
   <div class="overlay" class:shown={showMenu || showLogin}
        onclick={() => {showMenu = false ; showLogin = false}}
        onkeydown={(e) => {if (e.key === 'Enter' || e.key === 'Space') {showMenu = false ; showLogin = false}}}
@@ -159,6 +161,7 @@
     font-weight: bold;
     vertical-align: middle;
   }
+  /*
   .logo-box {
     display: flex;
     justify-content: center;
@@ -180,6 +183,7 @@
   .login-box.shown {
     display: flex;
   }
+  */
   .wrapper {
     /*margin-top: var(--header-height);*/
     /*width: 100vw;*/
@@ -206,13 +210,13 @@
     display: none;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     height: 100%;
     color: var(--secondary-color);
     font-size: 2em;
     text-align: center;
     text-transform: uppercase;
-    margin-left: var(--side-width);
+    margin-right: var(--side-width);
   }
   .overlay:focus div {
     display: flex;

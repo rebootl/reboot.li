@@ -136,6 +136,9 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    background-color: var(--card-background-color);
+    padding: 20px;
+    border-radius: 15px;
   }
   .list-item {
     display: flex;
@@ -146,7 +149,7 @@
     display: flex;
     justify-content: space-between;
     color: var(--text-color-dimmed);
-    font-size: 0.85em;
+    /*font-size: 0.85em;*/
   }
   .list-item .item-content {
     display: flex;
@@ -157,7 +160,7 @@
     border-left: 1px solid var(--primary-color-dimmed);
   }
   small .material-icons {
-    font-size: 0.85em;
+    font-size: small;
   }
   .year {
     margin-top: 0.5em;
@@ -171,6 +174,8 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    padding: 10px;
+    background-color: var(--card-background-color);
   }
   .image-preview-box:focus {
     outline: 2px solid var(--secondary-color);

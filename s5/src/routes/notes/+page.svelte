@@ -65,9 +65,9 @@
     justify-content: space-between;
   }
   small {
-    font-size: 0.85em;
+    /*font-size: 0.85em;*/
   }
   small .material-icons {
-    font-size: 0.85em;
+    font-size: small;
   }
 </style>

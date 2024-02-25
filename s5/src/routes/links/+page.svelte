@@ -6,7 +6,7 @@
   // console.log(data);
   
 	let entries = data.entries;
-  console.log(entries);
+  // console.log(entries);
 
   let showAddLink = false;
   let title = '';
@@ -84,7 +84,7 @@
         {/if}
       </div>
       <div class="item-content">
-        <a class="item-link" href={entry.content}><small>{entry.content}</small></a>
+        <small class="item-link"><a href={entry.content}>{entry.content}</a></small>
         {entry.title}
         {#if entry.comment}
           <small>{entry.comment}</small>
@@ -119,14 +119,20 @@
     display: flex;
     justify-content: space-between;
     color: var(--text-color-dimmed);
-    font-size: 0.85em;
+    /*font-size: 0.85em;*/
   }
   .list-item .item-content {
     display: flex;
     flex-direction: column;
     gap: 5px;
   }
+  small.item-link {
+    font-size: small;
+  }
   small .material-icons {
-    font-size: 0.85em;
+    font-size: small;
+  }
+  a {
+    line-break: anywhere;
   }
 </style>

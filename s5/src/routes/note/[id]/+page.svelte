@@ -2,7 +2,7 @@
 	import { marked } from 'marked';
 
 	export let data;
-  console.log(data);
+  // console.log(data);
   
 	const entry = data.entry;
 
@@ -32,10 +32,10 @@
 		padding-top: 10px;
   }
   .note-header small {
-    font-size: 0.85em;
+    /*font-size: 0.85em;*/
     color: var(--text-color-dimmed);
   }
   .note-header small .material-icons {
-    font-size: 0.85em;
+    font-size: small;
   }
 </style>
