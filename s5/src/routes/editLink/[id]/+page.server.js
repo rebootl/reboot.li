@@ -1,5 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { getEntry, createEntryDB, updateEntryDB } from '$lib/server/db.js';
+import { getEntry, createEntryDB, updateEntryDB,
+  createTagDB, getTagsDB, insertEntryToTagDB } from '$lib/server/db.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, params }) {
@@ -47,7 +48,24 @@ export const actions = {
       tags: [],
     });
 
-    // return { success: true }
+    if (r.changes === 0) throw error(400, 'Error creating entry');
+
+    const tags = data.getAll('tags') ?? [];
+    // console.log('tags', tags);
+    
+    // create tags
+    for (const tag of tags) {
+      createTagDB(locals.user.id, tag);
+    }
+
+    const tagsFromDB = getTagsDB(locals.user.id);
+
+    // link entry to tags
+    for (const tag of tags) {
+      const tagId = tagsFromDB.find(t => t.name === tag)?.id;
+      insertEntryToTagDB(r.lastInsertRowid, tagId);
+    }
+
     console.log('r', r);
     redirect(303, '/links')
   },

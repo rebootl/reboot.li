@@ -119,3 +119,15 @@ a:focus {
 .warning {
 	color: var(--warning-yellow-color);
 }
+
+.tag-list {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.tag {
+	padding: 5px;
+	background-color: var(--primary-color-dimmed);
+	border-radius: 10px;
+}

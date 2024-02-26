@@ -2,17 +2,23 @@
   import { debounce } from '$lib/helper';
   import { sendJSONRequest } from '$lib/request';
 
-	export let data;
+	// export let data;
+  let { data } = $props();
   // console.log(data);
-  
+
 	let entries = data.entries;
   // console.log(entries);
 
-  let showAddLink = false;
-  let title = '';
-  let titleDisabled = true;
-  let linkErr = false;
-  let linkErrMessage = '';
+  let existingTags = data.tags;
+
+  let showAddLink = $state(false);
+  let title = $state('');
+  let titleDisabled = $state(true);
+  let linkErr = $state(false);
+  let linkErrMessage = $state('');
+
+  let newTags = $state([]);
+  let tagInput = $state('');
 
   /** @param {Event} event */
   function linkInsert(event) {
@@ -50,6 +56,20 @@
     title = r.result.title;
     titleDisabled = false;
   }
+
+  function addTag() {
+    console.log('add tag');
+    if (tagInput === '') {
+      return;
+    }
+    if (newTags.includes(tagInput)) {
+      return;
+    }
+
+    newTags.push(tagInput);
+    tagInput = '';
+  }
+
 </script>
 
 <h1>Collected Links</h1>
@@ -64,6 +84,26 @@
         <small class="warning">Error getting title: {linkErrMessage}</small>
       {/if}
       <input type="text" name="comment" placeholder="Comment" />
+      <div class="tag-list">
+        {#each newTags as tag}
+          <div class="tag">
+            {tag}
+            <button type="button" class="small-button" on:click={() => newTags = newTags.filter(t => t !== tag)}>X</button>
+            <input type="hidden" name="tags" value={tag} />
+          </div>
+        {/each}
+      </div>
+      <div>
+        <input type="text" id="tag-input" name="taginput" placeholder="Tag"
+               list="existing-tags-list"
+               bind:value={tagInput} />
+        <datalist id="existing-tags-list">
+          {#each existingTags as tag}
+            <option value={tag.name} />
+          {/each}
+        </datalist>
+        <button type="button" class="small-button" onclick={ () => addTag() }>Add tag</button>
+      </div>
       <button>Add</button>
     {/if}
   </form>
@@ -89,6 +129,11 @@
         {#if entry.comment}
           <small>{entry.comment}</small>
         {/if}
+        <div class="tag-list">
+          {#each entry.tags as tag}
+            <div class="tag"><small>{tag.name}</small></div>
+          {/each}
+        </div>
       </div>
     </div>
   {:else}

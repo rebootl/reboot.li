@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getEntries } from '$lib/server/db.js';
+import { getEntries, getTagsDB } from '$lib/server/db.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
@@ -15,5 +15,10 @@ export async function load({ locals }) {
   const r = getEntries(userId, type, loggedIn);
   if (!r) throw error(404, 'Not found');
 
-  return { entries: r };
+  const tags = getTagsDB(userId);
+
+  return {
+    entries: r.reverse(),
+    tags,
+  };
 }

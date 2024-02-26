@@ -7,7 +7,7 @@
 
   import 'material-icons/iconfont/material-icons.css';
 	import '../global.css';
-  import Login from '$lib/Login.svelte';
+  // import Login from '$lib/Login.svelte';
 
   /** @typedef {Object} PropsData
    * @property {import('$lib/types').ClientData} clientData
