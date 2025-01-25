@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 CREATE TABLE IF NOT EXISTS "sessions" (
 	"id"	INTEGER NOT NULL UNIQUE,
-	"uuid"	TEXT NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,
+	"uuid"	TEXT NOT NULL UNIQUE,
 	"user_agent"	TEXT,
 	"ip"	TEXT,
 	"created_at"	TEXT NOT NULL,
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS "link_categories" (
 );
 CREATE TABLE IF NOT EXISTS "entries" (
 	"id"	INTEGER NOT NULL UNIQUE,
-	"type"	INTEGER NOT NULL,
 	"user_id"	INTEGER NOT NULL,
+	"type"	TEXT NOT NULL,
 	"created_at"	TEXT NOT NULL,
 	"modified_at"	TEXT,
 	"title"	TEXT,
