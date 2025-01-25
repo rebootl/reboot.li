@@ -32,3 +32,4 @@ dbtosqlite/db.sqlite
 dbtosqlite/db.sqlite-*
 
 go/tmp/
+go/db/db.sqlite*
