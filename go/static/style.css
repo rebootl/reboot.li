@@ -144,6 +144,16 @@ footer {
   /* height: var(--footer-height); */
 }
 
+.last-modified {
+	padding-top: 20px;
+	padding-bottom: 20px;
+  display: block;
+}
+
+.text-dimmed {
+  color: var(--text-color-dimmed);
+}
+
 /* a:focus {
 	outline: 3px solid var(--secondary-color);
 } */

@@ -7,20 +7,17 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// func renderPage(w http.ResponseWriter, content string, tmpl *template.Template) {
-// 	tmpl.Execute(w, template.HTML(content))
-// }
-
 type Entry struct {
 	Id         int
-	Type       string
 	UserId     int
+	Type       string
 	CreatedAt  string
 	ModifiedAt string
 	Title      string
@@ -54,6 +51,10 @@ func main() {
 		renderMainPage("maincontent", w, r, db, baseTemplate, entryTemplate)
 	})
 
+	r.HandleFunc("/privacypolicy", func(w http.ResponseWriter, r *http.Request) {
+		renderMainPage("privacypolicy", w, r, db, baseTemplate, entryTemplate)
+	})
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
@@ -69,8 +70,8 @@ func renderMainPage(
 	var entry Entry
 	err := db.QueryRow("SELECT * FROM entries WHERE type = ? AND user_id = 1 AND private = 0", entryType).Scan(
 		&entry.Id,
-		&entry.Type,
 		&entry.UserId,
+		&entry.Type,
 		&entry.CreatedAt,
 		&entry.ModifiedAt,
 		&entry.Title,
@@ -80,6 +81,7 @@ func renderMainPage(
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")
+			// TODO: return a 404 page
 		} else {
 			fmt.Println(err)
 		}
@@ -93,11 +95,14 @@ func renderMainPage(
 	//          so I leave it like this for now
 	htmlContent := markdown.ToHTML([]byte(entry.Content), nil, nil)
 
+	// preprocesse date
+	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
+
 	var content bytes.Buffer
 	entryTemplate.Execute(&content, EntryPageData{
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
-		ModifiedAt: entry.ModifiedAt,
+		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 	})
 
 	baseTemplate.Execute(w, template.HTML(content.String()))
