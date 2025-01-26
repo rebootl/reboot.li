@@ -17,10 +17,10 @@ import (
 
 type Entry struct {
 	Id         int
-	UserId     int
+	UserId     int `db:"user_id"`
 	Type       string
-	CreatedAt  string
-	ModifiedAt string
+	CreatedAt  string `db:"created_at"`
+	ModifiedAt string `db:"modified_at"`
 	Title      string
 	Content    string
 	Private    bool
@@ -76,6 +76,7 @@ func main() {
 	baseTemplate := template.Must(template.ParseFiles("templates/index.html"))
 	entryTemplate := template.Must(template.ParseFiles("templates/entry.html"))
 	linksTemplate := template.Must(template.ParseFiles("templates/links.html"))
+	cheatsheetsTemplate := template.Must(template.ParseFiles("templates/cheatsheets.html"))
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		renderMainPage("maincontent", w, r, db, baseTemplate, entryTemplate)
@@ -110,33 +111,60 @@ func main() {
 
 		baseTemplate.Execute(w, template.HTML(content.String()))
 	})
+
+	r.HandleFunc("/cheatsheets", func(w http.ResponseWriter, r *http.Request) {
+		var entries []Entry
+		err := db.Select(&entries, "SELECT * FROM entries WHERE type = 'cheatsheet' AND private = 0 ORDER BY id DESC")
+		if err != nil {
+			if err == sql.ErrNoRows {
+				fmt.Println("No rows found")
+				// TODO: return a 404 page
+			} else {
+				fmt.Println(err)
+			}
+			return
+		}
+
+		var content bytes.Buffer
+		cheatsheetsTemplate.Execute(&content, entries)
+		baseTemplate.Execute(w, template.HTML(content.String()))
+	})
+
+	r.HandleFunc("/cheatsheets/{id}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		var entry Entry
+		err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", vars["id"])
+		if err != nil {
+			if err == sql.ErrNoRows {
+				fmt.Println("No rows found")
+				// TODO: return a 404 page
+			} else {
+				fmt.Println(err)
+			}
+			return
+		}
+
+		// convert content to html
+		// WARNING: apparently markdown does not sanitize the content,
+		//          so if we insert content from a random source this is a security risk,
+		//          however I'm only planning to insert my own content here for now,
+		//          so I leave it like this for now
+		htmlContent := markdown.ToHTML([]byte(entry.Content), nil, nil)
+
+		// preprocesse date
+		modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
+
+		var content bytes.Buffer
+		entryTemplate.Execute(&content, EntryPageData{
+			Title:      entry.Title,
+			Content:    template.HTML(htmlContent),
+			ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
+		})
+		baseTemplate.Execute(w, template.HTML(content.String()))
+	})
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
-
-// func getLinkCategories(db *sqlx.DB) ([]LinkCategory, error) {
-// rows, err := db.Query("SELECT * FROM link_categories ORDER BY name ASC")
-// if err != nil {
-// 	return nil, err
-// }
-// defer rows.Close()
-
-// var linkCategories []LinkCategory
-// for rows.Next() {
-// 	var linkCategory LinkCategory
-// 	err = rows.Scan(&linkCategory.Id, &linkCategory.Name)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	linkCategories = append(linkCategories, linkCategory)
-// }
-
-// err = rows.Err()
-// if err != nil {
-// 	return nil, err
-// }
-
-// return linkCategories, nil
-// }
 
 func renderMainPage(
 	entryType string,
@@ -148,15 +176,9 @@ func renderMainPage(
 ) {
 	// get the main page content from sqlite database
 	var entry Entry
-	err := db.QueryRow("SELECT * FROM entries WHERE type = ? AND user_id = 1 AND private = 0", entryType).Scan(
-		&entry.Id,
-		&entry.UserId,
-		&entry.Type,
-		&entry.CreatedAt,
-		&entry.ModifiedAt,
-		&entry.Title,
-		&entry.Content,
-		&entry.Private,
+	err := db.Get(&entry,
+		"SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY modified_at DESC LIMIT 1",
+		entryType,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {

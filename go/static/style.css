@@ -16,7 +16,7 @@ body {
 
 	--card-background-color: #092631;
 
-	/*--line-color: #4f5260;*/
+	--line-color: #4f5260;
 	--warning-red-color: #f05a5a;
 	--warning-yellow-color: #f0f05a;
 
@@ -71,6 +71,15 @@ h1 {
 a {
 	color: var(--primary-color);
 	word-wrap: break-word;
+}
+
+pre {
+	padding: 20px;
+  background-color: var(--card-background-color);
+  color: var(--text-color-dimmed);
+  border-radius: 5px;
+  border: 1px solid var(--primary-color-dimmed);
+  overflow-x: auto;
 }
 
 /* img {
