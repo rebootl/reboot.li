@@ -21,11 +21,11 @@ body {
 	--warning-yellow-color: #f0f05a;
 
 	--header-height: 55px;
-	--footer-height: 65px;
+	--footer-height: 94.4px;
 
-	--side-width: 260px;
+	/* --side-width: 260px; */
 	--max-main-width: 600px;
-	--min-main-width: 400px;
+	/* --min-main-width: 400px; */
 
 	background-color: var(--background-color);
 
@@ -37,7 +37,11 @@ body {
 	font-family: monospace;
 	font-size: 1.1em;
 
-	/*overflow: hidden;*/
+	/* expand short pages to bottom of viewport */
+	min-height: 100vh;
+
+	/* used for footer absolute positioning */
+	position: relative;
 }
 
 header {
@@ -54,7 +58,9 @@ header nav ul {
   display: flex;
   justify-content: center;
   width: 100%;
-  /* min-height: calc(100vh - var(--header-height) - var(--footer-height)); */
+
+  /* add a padding space for the footer */
+	padding-bottom: var(--footer-height);
 }
 
 main {
@@ -62,6 +68,9 @@ main {
   padding-left: 10px;
   padding-right: 10px;
   margin-bottom: 20px;
+
+	/* fixes scaling of pre and links in short width (mobile) */
+	overflow-x: auto;
 }
 
 h1 {
@@ -80,6 +89,28 @@ pre {
   border-radius: 5px;
   border: 1px solid var(--primary-color-dimmed);
   overflow-x: auto;
+}
+
+.last-modified {
+	padding-top: 20px;
+	padding-bottom: 20px;
+  display: block;
+}
+
+.text-dimmed {
+  color: var(--text-color-dimmed);
+}
+
+footer {
+  background-color: var(--card-background-color);
+  color: var(--text-color-dimmed);
+  text-align: center;
+
+  /* stick footer to bottom on short pages */
+  padding: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 /* img {
@@ -146,23 +177,6 @@ button:focus {
 	outline: 3px solid var(--secondary-color);
 } */
 
-footer {
-  background-color: var(--card-background-color);
-  color: var(--text-color-dimmed);
-  text-align: center;
-  padding: 10px;
-  /* height: var(--footer-height); */
-}
-
-.last-modified {
-	padding-top: 20px;
-	padding-bottom: 20px;
-  display: block;
-}
-
-.text-dimmed {
-  color: var(--text-color-dimmed);
-}
 
 /* a:focus {
 	outline: 3px solid var(--secondary-color);
