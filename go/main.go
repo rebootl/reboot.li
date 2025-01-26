@@ -11,6 +11,7 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -25,27 +26,56 @@ type Entry struct {
 	Private    bool
 }
 
+type Link struct {
+	Id         int
+	UserId     int    `db:"user_id"`
+	CreatedAt  string `db:"created_at"`
+	ModifiedAt string `db:"modified_at"`
+	Title      string
+	Url        string
+	Comment    string
+	CategoryId string `db:"category_id"`
+}
+
+type LinkCategory struct {
+	Id    int
+	Name  string
+	Links []Link
+}
+
+type LinkCategories struct {
+	Categories []LinkCategory
+}
+
 type EntryPageData struct {
 	Title      string
 	Content    template.HTML
 	ModifiedAt string
 }
 
+type LinkPageData struct {
+}
+
 func main() {
 	r := mux.NewRouter()
 
 	// Initialize the SQLite database
-	db, err := sql.Open("sqlite3", "db/db.sqlite")
+	// db, err := sql.Open("sqlite3", "db/db.sqlite")
+	// if err != nil {
+	// 	log.Fatalf("Error opening database: %v", err)
+	// }
+	// defer db.Close()
+	db, err := sqlx.Connect("sqlite3", "db/db.sqlite")
 	if err != nil {
-		log.Fatalf("Error opening database: %v", err)
+		log.Fatalln(err)
 	}
-	defer db.Close()
 
 	fs := http.FileServer(http.Dir("./static/"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	baseTemplate := template.Must(template.ParseFiles("templates/index.html"))
 	entryTemplate := template.Must(template.ParseFiles("templates/entry.html"))
+	linksTemplate := template.Must(template.ParseFiles("templates/links.html"))
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		renderMainPage("maincontent", w, r, db, baseTemplate, entryTemplate)
@@ -55,14 +85,64 @@ func main() {
 		renderMainPage("privacypolicy", w, r, db, baseTemplate, entryTemplate)
 	})
 
+	r.HandleFunc("/links", func(w http.ResponseWriter, r *http.Request) {
+		// get the link categories from sqlite database
+		var linkCategories []LinkCategory
+		err := db.Select(&linkCategories, "SELECT * FROM link_categories ORDER BY name ASC")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		// fmt.Println(linkCategories)
+
+		// get the links
+		for i, category := range linkCategories {
+			err := db.Select(&category.Links, "SELECT * FROM links WHERE category_id = ? ORDER BY title ASC", category.Id)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			linkCategories[i] = category
+		}
+
+		var content bytes.Buffer
+		linksTemplate.Execute(&content, linkCategories)
+
+		baseTemplate.Execute(w, template.HTML(content.String()))
+	})
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
+
+// func getLinkCategories(db *sqlx.DB) ([]LinkCategory, error) {
+// rows, err := db.Query("SELECT * FROM link_categories ORDER BY name ASC")
+// if err != nil {
+// 	return nil, err
+// }
+// defer rows.Close()
+
+// var linkCategories []LinkCategory
+// for rows.Next() {
+// 	var linkCategory LinkCategory
+// 	err = rows.Scan(&linkCategory.Id, &linkCategory.Name)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	linkCategories = append(linkCategories, linkCategory)
+// }
+
+// err = rows.Err()
+// if err != nil {
+// 	return nil, err
+// }
+
+// return linkCategories, nil
+// }
 
 func renderMainPage(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
-	db *sql.DB,
+	db *sqlx.DB,
 	baseTemplate *template.Template,
 	entryTemplate *template.Template,
 ) {

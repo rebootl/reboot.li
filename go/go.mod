@@ -11,3 +11,5 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62
 	golang.org/x/crypto v0.32.0
 )
+
+require github.com/jmoiron/sqlx v1.4.0 // indirect
