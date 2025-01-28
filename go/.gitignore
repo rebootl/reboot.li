@@ -1,0 +1,4 @@
+
+./tmp/
+./db/db.sqlite*
+./templates/motd.txt
