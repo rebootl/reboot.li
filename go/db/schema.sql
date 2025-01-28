@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,
 	"uuid"	TEXT NOT NULL UNIQUE,
-	"user_agent"	TEXT,
-	"ip"	TEXT,
+	"user_agent"	TEXT NOT NULL DEFAULT "",
+	"ip"	TEXT NOT NULL DEFAULT "",
 	"created_at"	TEXT NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
@@ -34,14 +34,14 @@ CREATE TABLE IF NOT EXISTS "entry_tags" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,
 	"name"	TEXT NOT NULL UNIQUE,
-	"color"	TEXT,
+	"color"	TEXT NOT NULL DEFAULT "",
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "link_tags" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,
 	"name"	TEXT NOT NULL UNIQUE,
-	"color"	TEXT,
+	"color"	TEXT NOT NULL DEFAULT "",
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "images" (
@@ -49,16 +49,16 @@ CREATE TABLE IF NOT EXISTS "images" (
 	"entry_id"	INTEGER NOT NULL,
 	"user_id"	INTEGER NOT NULL,
 	"path"	TEXT NOT NULL UNIQUE,
-	"comment"	TEXT,
+	"comment"	TEXT NOT NULL DEFAULT "",
 	"created_at"	TEXT NOT NULL,
-	"preview_data"	TEXT,
+	"preview_data"	TEXT NOT NULL DEFAULT "",
 	FOREIGN KEY("user_id") REFERENCES "users"("id"),
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("entry_id") REFERENCES "entries"("id")
 );
 CREATE TABLE IF NOT EXISTS "link_categories" (
 	"id"	INTEGER NOT NULL UNIQUE,
-	"name"	TEXT UNIQUE,
+	"name"	TEXT NOT NULL UNIQUE,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "entries" (
@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS "entries" (
 	"user_id"	INTEGER NOT NULL,
 	"type"	TEXT NOT NULL,
 	"created_at"	TEXT NOT NULL,
-	"modified_at"	TEXT,
-	"title"	TEXT,
-	"content"	TEXT,
+	"modified_at"	TEXT NOT NULL,
+	"title"	TEXT NOT NULL,
+	"content"	TEXT NOT NULL,
 	"private"	INTEGER NOT NULL,
 	FOREIGN KEY("user_id") REFERENCES "users"("id"),
 	PRIMARY KEY("id" AUTOINCREMENT)
@@ -77,10 +77,10 @@ CREATE TABLE IF NOT EXISTS "links" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,
 	"created_at"	TEXT NOT NULL,
-	"modified_at"	TEXT,
-	"title"	TEXT,
-	"url"	TEXT,
-	"comment"	TEXT,
+	"modified_at"	TEXT NOT NULL,
+	"title"	TEXT NOT NULL,
+	"url"	TEXT NOT NULL,
+	"comment"	TEXT NOT NULL DEFAULT "",
 	"category_id"	INTEGER NOT NULL,
 	FOREIGN KEY("user_id") REFERENCES "users"("id"),
 	FOREIGN KEY("category_id") REFERENCES "link_categories"("id"),
