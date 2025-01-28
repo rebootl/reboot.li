@@ -16,70 +16,11 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
+
+	"mypersonalwebsite/model"
 )
 
 const cookieName = "rebootli-session-123"
-
-type Entry struct {
-	Id         int
-	UserId     int `db:"user_id"`
-	Type       string
-	CreatedAt  string `db:"created_at"`
-	ModifiedAt string `db:"modified_at"`
-	Title      string
-	Content    string
-	Private    bool
-}
-
-type Link struct {
-	Id         int
-	UserId     int    `db:"user_id"`
-	CreatedAt  string `db:"created_at"`
-	ModifiedAt string `db:"modified_at"`
-	Title      string
-	Url        string
-	Comment    string
-	CategoryId string `db:"category_id"`
-}
-
-type LinkCategory struct {
-	Id    int
-	Name  string
-	Links []Link
-}
-
-type LinkCategories struct {
-	Categories []LinkCategory
-}
-
-type EntryPageData struct {
-	Title      string
-	Content    template.HTML
-	ModifiedAt string
-}
-
-type LinkPageData struct {
-}
-
-type User struct {
-	Id       int
-	UserName string
-	PwHash   string
-}
-
-type Session struct {
-	Id        int
-	Uuid      string
-	UserId    int    `db:"user_id"`
-	UserAgent string `db:"user_agent"`
-	Ip        string
-	CreatedAt string `db:"created_at"`
-}
-
-type Locals struct {
-	LoggedIn bool
-	UserName string
-}
 
 func main() {
 	r := mux.NewRouter()
@@ -152,7 +93,7 @@ func renderMainPage(
 	entryTemplate *template.Template,
 ) {
 	// get the main page content from sqlite database
-	var entry Entry
+	var entry model.Entry
 	err := db.Get(&entry,
 		"SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY modified_at DESC LIMIT 1",
 		entryType,
@@ -177,7 +118,7 @@ func renderLinksPage(
 	linksTemplate *template.Template,
 ) {
 	// get the link categories from sqlite database
-	var linkCategories []LinkCategory
+	var linkCategories []model.LinkCategory
 	err := db.Select(&linkCategories, "SELECT * FROM link_categories ORDER BY name ASC")
 	if err != nil {
 		fmt.Println(err)
@@ -209,7 +150,7 @@ func renderListPage(
 	baseTemplate *template.Template,
 	listPageTemplate *template.Template,
 ) {
-	var entries []Entry
+	var entries []model.Entry
 	err := db.Select(&entries, "SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY id DESC", entryType)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -234,7 +175,7 @@ func renderListEntry(
 	entryTemplate *template.Template,
 	id string,
 ) {
-	var entry Entry
+	var entry model.Entry
 	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -254,7 +195,7 @@ func renderEntry(
 	r *http.Request,
 	entryTemplate *template.Template,
 	baseTemplate *template.Template,
-	entry Entry,
+	entry model.Entry,
 ) {
 	// convert content to html
 	// WARNING: apparently markdown does not sanitize the content,
@@ -267,7 +208,7 @@ func renderEntry(
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
 
 	var content bytes.Buffer
-	entryTemplate.Execute(&content, EntryPageData{
+	entryTemplate.Execute(&content, model.EntryPageData{
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
@@ -315,31 +256,31 @@ func logout(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
-func getLocals(r *http.Request, db *sqlx.DB) Locals {
+func getLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	// Check if the user is logged in
 	cookie, err := r.Cookie(cookieName)
 	if err != nil {
 		// fmt.Println("No cookie found")
-		return Locals{LoggedIn: false, UserName: ""}
+		return model.Locals{LoggedIn: false, UserName: ""}
 	}
 
 	// Get the session from the database
-	var session Session
+	var session model.Session
 	err = db.Get(&session, "SELECT * FROM sessions WHERE uuid = ?", cookie.Value)
 	if err != nil {
 		// fmt.Println("No session found")
-		return Locals{LoggedIn: false, UserName: ""}
+		return model.Locals{LoggedIn: false, UserName: ""}
 	}
 
 	// Get the user from the database
-	var user User
+	var user model.User
 	err = db.Get(&user, "SELECT * FROM users WHERE id = ?", session.UserId)
 	if err != nil {
 		// fmt.Println("No user found")
-		return Locals{LoggedIn: false, UserName: ""}
+		return model.Locals{LoggedIn: false, UserName: ""}
 	}
 
-	return Locals{LoggedIn: true, UserName: user.UserName}
+	return model.Locals{LoggedIn: true, UserName: user.UserName}
 }
 
 func checkLogin(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
@@ -348,7 +289,7 @@ func checkLogin(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
 	password := r.FormValue("password")
 
 	// Check if the username and password are valid
-	var user User
+	var user model.User
 	err := db.Get(&user, "SELECT * FROM users WHERE username = ?", username)
 	if err != nil {
 		if err == sql.ErrNoRows {
