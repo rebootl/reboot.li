@@ -110,14 +110,30 @@ pre {
   border: 1px solid var(--primary-color-dimmed);
 }
 
-.entry-list div {
+/* .entry-list {
+} */
+
+.entry-item {
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+	gap: 10px;
 	border-bottom: 1px solid var(--primary-color-dimmed);
 	padding-bottom: 10px;
 	padding-top: 10px;
 }
+
+.tag-list {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.tag {
+	padding: 0 5px 0 5px;
+	/* background-color: var(--header-background-color); */
+	color: var(--text-color-dimmed);
+	border: 1px solid var(--text-color-dimmed);
+	border-radius: 5px;
+} 
 
 footer {
   background-color: var(--card-background-color);
@@ -246,14 +262,4 @@ aside footer:where() {
 	color: var(--warning-yellow-color);
 }
 
-.tag-list {
-	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
-}
-
-.tag {
-	padding: 5px;
-	background-color: var(--header-background-color);
-	border-radius: 10px;
-} */
+*/

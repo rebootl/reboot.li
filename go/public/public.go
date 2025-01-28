@@ -94,6 +94,44 @@ func RenderListPage(
 		return
 	}
 
+	// select all tags from the database
+	var tags []struct {
+		Id       int    `db:"id"`
+		EntryId  int    `db:"entry_id"`
+		TagId    int    `db:"id"`
+		TagName  string `db:"name"`
+		TagColor string `db:"color"`
+	}
+	err = db.Select(&tags, `
+		SELECT et.entry_id, t.id, t.name, t.color
+		FROM entry_tags t
+		JOIN entry_to_tag et ON t.id = et.tag_id
+		WHERE et.entry_id IN (
+			SELECT id
+			FROM entries
+			WHERE type = ? AND private = 0
+		)
+	`, entryType)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// add tags to entries
+	for _, tag := range tags {
+		for i, entry := range entries {
+			if entry.Id == tag.EntryId {
+				t := model.Tag{
+					Id:    tag.TagId,
+					Name:  tag.TagName,
+					Color: tag.TagColor,
+				}
+
+				entries[i].Tags = append(entries[i].Tags, t)
+			}
+		}
+	}
+
 	var motd bytes.Buffer
 	if entryType == "nerdstuff" {
 		motdTemplate := template.Must(template.ParseFiles("templates/motd.txt"))

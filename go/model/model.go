@@ -13,6 +13,13 @@ type Entry struct {
 	Title      string
 	Content    string
 	Private    bool
+	Tags       []Tag
+}
+
+type Tag struct {
+	Id    int
+	Name  string
+	Color string
 }
 
 type Link struct {

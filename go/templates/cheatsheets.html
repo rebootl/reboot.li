@@ -10,6 +10,13 @@
 
 <div class="entry-list">
   {{range .Entries}}
-    <div class="entry-item"><a href="/cheatsheets/{{.Id}}">{{.Title}}</a></div>
+    <div class="entry-item">
+      <a href="/cheatsheets/{{.Id}}">{{.Title}}</a>
+      <div class="tag-list">
+        {{range .Tags}}
+          <div class="tag"><small>{{.Name}}</small></div>
+        {{end}}
+      </div>
+    </div>
   {{end}}
 </div>
