@@ -8,8 +8,8 @@
 </details>
 <p></p>
 
-<ul class="entries">
-  {{range .}}
-    <li><a href="/cheatsheets/{{.Id}}">{{.Title}}</a></li>
+<div class="entry-list">
+  {{range .Entries}}
+    <div class="entry-item"><a href="/cheatsheets/{{.Id}}">{{.Title}}</a></div>
   {{end}}
-</ul>
+</div>

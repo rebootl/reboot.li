@@ -91,14 +91,32 @@ pre {
   overflow-x: auto;
 }
 
+.text-dimmed {
+  color: var(--text-color-dimmed);
+}
+
 .last-modified {
 	padding-top: 20px;
 	padding-bottom: 20px;
   display: block;
 }
 
-.text-dimmed {
+.motd {
+	padding: 10px;
+	font-size: 0.8em;
+  background-color: var(--card-background-color);
   color: var(--text-color-dimmed);
+  border-radius: 5px;
+  border: 1px solid var(--primary-color-dimmed);
+}
+
+.entry-list div {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	border-bottom: 1px solid var(--primary-color-dimmed);
+	padding-bottom: 10px;
+	padding-top: 10px;
 }
 
 footer {

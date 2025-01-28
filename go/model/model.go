@@ -42,7 +42,9 @@ type EntryPageData struct {
 	ModifiedAt string
 }
 
-type LinkPageData struct {
+type ListPageData struct {
+	Entries []Entry
+	Motd    string
 }
 
 type User struct {
