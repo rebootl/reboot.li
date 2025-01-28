@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -93,6 +94,32 @@ func CheckLogin(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
 	http.SetCookie(w, cookie)
 
 	// Redirect to the dashboard
+	http.Redirect(w, r, "/login", http.StatusFound)
+}
+
+func Logout(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
+	// Get the session from the cookie
+	cookie, err := r.Cookie(config.CookieName)
+	if err != nil {
+		fmt.Println("No cookie found")
+		return
+	}
+
+	// Delete the session from the database
+	_, err = db.Exec("DELETE FROM sessions WHERE uuid = ?", cookie.Value)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Delete the cookie
+	cookie = &http.Cookie{
+		Name:   config.CookieName,
+		Value:  "",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, cookie)
+
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 

@@ -15,7 +15,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	"mypersonalwebsite/auth"
-	"mypersonalwebsite/config"
+	// "mypersonalwebsite/config"
 	"mypersonalwebsite/model"
 )
 
@@ -54,8 +54,7 @@ func main() {
 	})
 
 	r.HandleFunc("/cheatsheets/{id}", func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		renderListEntry(w, r, db, baseTemplate, entryTemplate, vars["id"])
+		renderListEntry(w, r, db, baseTemplate, entryTemplate)
 	})
 
 	r.HandleFunc("/nerdstuff", func(w http.ResponseWriter, r *http.Request) {
@@ -63,8 +62,7 @@ func main() {
 	})
 
 	r.HandleFunc("/nerdstuff/{id}", func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		renderListEntry(w, r, db, baseTemplate, entryTemplate, vars["id"])
+		renderListEntry(w, r, db, baseTemplate, entryTemplate)
 	})
 
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +74,7 @@ func main() {
 	}).Methods("POST")
 
 	r.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
-		logout(w, r, db)
+		auth.Logout(w, r, db)
 	})
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
@@ -170,10 +168,10 @@ func renderListEntry(
 	db *sqlx.DB,
 	baseTemplate *template.Template,
 	entryTemplate *template.Template,
-	id string,
 ) {
+	vars := mux.Vars(r)
 	var entry model.Entry
-	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", id)
+	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", vars["id"])
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")
@@ -225,30 +223,4 @@ func renderLogin(
 	var content bytes.Buffer
 	loginTemplate.Execute(&content, locals)
 	baseTemplate.Execute(w, template.HTML(content.String()))
-}
-
-func logout(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
-	// Get the session from the cookie
-	cookie, err := r.Cookie(config.CookieName)
-	if err != nil {
-		fmt.Println("No cookie found")
-		return
-	}
-
-	// Delete the session from the database
-	_, err = db.Exec("DELETE FROM sessions WHERE uuid = ?", cookie.Value)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// Delete the cookie
-	cookie = &http.Cookie{
-		Name:   config.CookieName,
-		Value:  "",
-		MaxAge: -1,
-	}
-	http.SetCookie(w, cookie)
-
-	http.Redirect(w, r, "/login", http.StatusFound)
 }
