@@ -26,67 +26,80 @@ func main() {
 
 	templates := loadTemplates()
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderMainPage("maincontent", w, r, db, templates)
-	})
-
-	r.HandleFunc("/privacypolicy", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderMainPage("privacypolicy", w, r, db, templates)
-	})
-
-	r.HandleFunc("/links", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderLinksPage(w, r, db, templates)
-	})
-
-	r.HandleFunc("/cheatsheets", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderListPage("cheatsheet", w, r, db, templates)
-	})
-
-	r.HandleFunc("/cheatsheets/{id}", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderListEntry(w, r, db, templates)
-	})
-
-	r.HandleFunc("/nerdstuff", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderListPage("nerdstuff", w, r, db, templates)
-	})
-
-	r.HandleFunc("/nerdstuff/{id}", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderListEntry(w, r, db, templates)
-	})
-
-	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		public.RenderLogin(w, r, db, templates)
-	}).Methods("GET")
-
-	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		auth.CheckLogin(w, r, db)
-	}).Methods("POST")
-
-	r.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
-		auth.Logout(w, r, db)
-	})
-
-	r.HandleFunc("/edit-entry", func(w http.ResponseWriter, r *http.Request) {
-		// auth.Logout(w, r, db)
-
-	})
+	var publicRoutes = []Route{
+		{
+			Path: "/",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderMainPage("maincontent", w, r, db, templates)
+			},
+		},
+		{
+			Path: "/privacypolicy",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderMainPage("privacypolicy", w, r, db, templates)
+			},
+		},
+		{
+			Path: "/links",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderLinksPage(w, r, db, templates)
+			},
+		},
+		{
+			Path: "/cheatsheets",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderListPage("cheatsheet", w, r, db, templates)
+			},
+		},
+		{
+			Path: "/cheatsheets/{id}",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderListEntry(w, r, db, templates)
+			},
+		},
+		{
+			Path: "/nerdstuff",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderListPage("nerdstuff", w, r, db, templates)
+			},
+		},
+		{
+			Path: "/nerdstuff/{id}",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderListEntry(w, r, db, templates)
+			},
+		},
+		{
+			Path: "/login",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				public.RenderLogin(w, r, db, templates)
+			},
+			Methods: []string{"GET"},
+		},
+		{
+			Path: "/login",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				auth.CheckLogin(w, r, db)
+			},
+			Methods: []string{"POST"},
+		},
+		{
+			Path: "/logout",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				auth.Logout(w, r, db)
+			},
+		},
+		{
+			Path: "/edit-entry",
+			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
+				// auth.Logout(w, r, db)
+			},
+		},
+	}
+	loadRoutes(r, publicRoutes)
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
-
-/*
-	 func loadTemplates() map[string]*template.Template {
-		templates := make(map[string]*template.Template)
-		templates["base"] = template.Must(template.ParseFiles("templates/index.html"))
-		templates["entry"] = template.Must(template.ParseFiles("templates/entry.html"))
-		templates["links"] = template.Must(template.ParseFiles("templates/links.html"))
-		templates["cheatsheets"] = template.Must(template.ParseFiles("templates/cheatsheets.html"))
-		templates["nerdstuff"] = template.Must(template.ParseFiles("templates/nerdstuff.html"))
-		templates["login"] = template.Must(template.ParseFiles("templates/login.html"))
-		templates["edit-entry"] = template.Must(template.ParseFiles("templates/edit-entry.html"))
-		return templates
-	}
-*/
 
 var templatePaths = map[string]string{
 	"base":        "templates/index.html",
@@ -108,4 +121,20 @@ func loadTemplates() map[string]*template.Template {
 		templates[name] = getTemplate(path)
 	}
 	return templates
+}
+
+type Route struct {
+	Path        string
+	HandlerFunc http.HandlerFunc
+	Methods     []string
+}
+
+func loadRoutes(r *mux.Router, routes []Route) {
+	for _, route := range routes {
+		if len(route.Methods) > 0 {
+			r.HandleFunc(route.Path, route.HandlerFunc).Methods(route.Methods...)
+		} else {
+			r.HandleFunc(route.Path, route.HandlerFunc)
+		}
+	}
 }
