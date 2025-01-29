@@ -16,7 +16,7 @@ import (
 	"mypersonalwebsite/model"
 )
 
-func RenderMainPage(
+func RouteMainPage(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -41,7 +41,7 @@ func RenderMainPage(
 	renderEntry(w, r, templates, entry)
 }
 
-func RenderLinksPage(
+func RouteLinksPage(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -73,7 +73,7 @@ func RenderLinksPage(
 	templates["base"].Execute(w, template.HTML(content.String()))
 }
 
-func RenderListPage(
+func RouteListPage(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -155,7 +155,7 @@ func RenderListPage(
 	templates["base"].Execute(w, template.HTML(content.String()))
 }
 
-func RenderListEntry(
+func RouteListEntry(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -204,7 +204,7 @@ func renderEntry(
 	templates["base"].Execute(w, template.HTML(content.String()))
 }
 
-func RenderLogin(
+func RouteLogin(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,

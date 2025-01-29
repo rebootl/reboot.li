@@ -44,7 +44,7 @@ func GetLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	return model.Locals{LoggedIn: true, UserName: user.UserName}
 }
 
-func CheckLogin(
+func RouteCheckLogin(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -104,7 +104,7 @@ func CheckLogin(
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
-func Logout(
+func RouteLogout(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
