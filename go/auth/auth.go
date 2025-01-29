@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"fmt"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -43,7 +44,13 @@ func GetLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	return model.Locals{LoggedIn: true, UserName: user.UserName}
 }
 
-func CheckLogin(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
+func CheckLogin(
+	entryType string,
+	w http.ResponseWriter,
+	r *http.Request,
+	db *sqlx.DB,
+	templates map[string]*template.Template,
+) {
 	// Get the username and password from the request
 	username := r.FormValue("username")
 	password := r.FormValue("password")
@@ -97,7 +104,13 @@ func CheckLogin(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
-func Logout(w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
+func Logout(
+	entryType string,
+	w http.ResponseWriter,
+	r *http.Request,
+	db *sqlx.DB,
+	templates map[string]*template.Template,
+) {
 	// Get the session from the cookie
 	cookie, err := r.Cookie(config.CookieName)
 	if err != nil {

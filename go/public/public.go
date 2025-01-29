@@ -42,6 +42,7 @@ func RenderMainPage(
 }
 
 func RenderLinksPage(
+	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
@@ -155,6 +156,7 @@ func RenderListPage(
 }
 
 func RenderListEntry(
+	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
@@ -203,6 +205,7 @@ func renderEntry(
 }
 
 func RenderLogin(
+	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,

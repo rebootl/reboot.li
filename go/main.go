@@ -26,63 +26,57 @@ func main() {
 
 	templates := loadTemplates()
 
-	var publicRoutes = []Route{
+	var routes = []Route{
 		{
-			Path: "/",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderMainPage("maincontent", w, r, db, templates)
-			},
+			Path:        "/",
+			EntryType:   "maincontent",
+			HandlerFunc: public.RenderMainPage,
 		},
 		{
-			Path: "/privacypolicy",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderMainPage("privacypolicy", w, r, db, templates)
-			},
+			Path:        "/privacypolicy",
+			EntryType:   "privacypolicy",
+			HandlerFunc: public.RenderMainPage,
 		},
 		{
-			Path: "/links",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderLinksPage(w, r, db, templates)
-			},
+			Path:        "/links",
+			EntryType:   "link",
+			HandlerFunc: public.RenderLinksPage,
 		},
 		{
-			Path: "/cheatsheets",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderListPage("cheatsheet", w, r, db, templates)
-			},
+			Path:        "/cheatsheets",
+			EntryType:   "cheatsheet",
+			HandlerFunc: public.RenderListPage,
 		},
 		{
-			Path: "/cheatsheets/{id}",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderListEntry(w, r, db, templates)
-			},
+			Path:        "/cheatsheets/{id}",
+			HandlerFunc: public.RenderListEntry,
 		},
 		{
-			Path: "/nerdstuff",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderListPage("nerdstuff", w, r, db, templates)
-			},
+			Path:        "/nerdstuff",
+			EntryType:   "nerdstuff",
+			HandlerFunc: public.RenderListPage,
 		},
 		{
-			Path: "/nerdstuff/{id}",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderListEntry(w, r, db, templates)
-			},
+			Path:        "/nerdstuff/{id}",
+			HandlerFunc: public.RenderListEntry,
 		},
 		{
-			Path: "/login",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				public.RenderLogin(w, r, db, templates)
-			},
-			Methods: []string{"GET"},
+			Path:        "/login",
+			HandlerFunc: public.RenderLogin,
+			Methods:     []string{"GET"},
 		},
 		{
-			Path: "/login",
-			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
-				auth.CheckLogin(w, r, db)
-			},
-			Methods: []string{"POST"},
+			Path:        "/login",
+			HandlerFunc: auth.CheckLogin,
+			Methods:     []string{"POST"},
 		},
+		{
+			Path:        "/logout",
+			HandlerFunc: auth.Logout,
+		},
+	}
+	loadRoutes(r, routes, db, templates)
+	/*
 		{
 			Path: "/logout",
 			HandlerFunc: func(w http.ResponseWriter, r *http.Request) {
@@ -95,8 +89,7 @@ func main() {
 				// auth.Logout(w, r, db)
 			},
 		},
-	}
-	loadRoutes(r, publicRoutes)
+	}*/
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
@@ -125,16 +118,28 @@ func loadTemplates() map[string]*template.Template {
 
 type Route struct {
 	Path        string
-	HandlerFunc http.HandlerFunc
+	EntryType   string
+	HandlerFunc func(entryType string, w http.ResponseWriter, r *http.Request, db *sqlx.DB, templates map[string]*template.Template)
 	Methods     []string
 }
 
-func loadRoutes(r *mux.Router, routes []Route) {
+// type RenderHandler func(entryType string, w http.ResponseWriter, r *http.Request, db *sqlx.DB, templates map[string]*template.Template)
+
+// func renderWrapper(renderFunc RenderHandler, entryType string, db *sqlx.DB, templates map[string]*template.Template) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		renderFunc(entryType, w, r, db, templates)
+// 	}
+// }
+
+func loadRoutes(r *mux.Router, routes []Route, db *sqlx.DB, templates map[string]*template.Template) {
 	for _, route := range routes {
+		handler := func(w http.ResponseWriter, r *http.Request) {
+			route.HandlerFunc(route.EntryType, w, r, db, templates)
+		}
 		if len(route.Methods) > 0 {
-			r.HandleFunc(route.Path, route.HandlerFunc).Methods(route.Methods...)
+			r.HandleFunc(route.Path, handler).Methods(route.Methods...)
 		} else {
-			r.HandleFunc(route.Path, route.HandlerFunc)
+			r.HandleFunc(route.Path, handler)
 		}
 	}
 }
