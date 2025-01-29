@@ -52,6 +52,7 @@ type EntryPageData struct {
 type ListPageData struct {
 	Entries []Entry
 	Motd    string
+	Locals
 }
 
 type User struct {

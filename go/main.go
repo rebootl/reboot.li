@@ -30,6 +30,7 @@ func main() {
 	cheatsheetsTemplate := template.Must(template.ParseFiles("templates/cheatsheets.html"))
 	nerdstuffTemplate := template.Must(template.ParseFiles("templates/nerdstuff.html"))
 	loginTemplate := template.Must(template.ParseFiles("templates/login.html"))
+	// editEntryTemplate := template.Must(template.ParseFiles("templates/edit-entry.html"))
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		public.RenderMainPage("maincontent", w, r, db, baseTemplate, entryTemplate)
@@ -70,5 +71,11 @@ func main() {
 	r.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		auth.Logout(w, r, db)
 	})
+
+	r.HandleFunc("/edit-entry", func(w http.ResponseWriter, r *http.Request) {
+		// auth.Logout(w, r, db)
+
+	})
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

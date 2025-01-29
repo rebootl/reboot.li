@@ -116,9 +116,15 @@ pre {
 .entry-item {
 	display: flex;
 	gap: 10px;
+	justify-content: space-between;
 	border-bottom: 1px solid var(--primary-color-dimmed);
 	padding-bottom: 10px;
 	padding-top: 10px;
+}
+
+.entry-item-l {
+	display: flex;
+	gap: 10px;
 }
 
 .tag-list {

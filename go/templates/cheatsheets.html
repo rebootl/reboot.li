@@ -8,15 +8,23 @@
 </details>
 <p></p>
 
+
 <div class="entry-list">
   {{range .Entries}}
     <div class="entry-item">
-      <a href="/cheatsheets/{{.Id}}">{{.Title}}</a>
-      <div class="tag-list">
-        {{range .Tags}}
-          <div class="tag"><small>{{.Name}}</small></div>
-        {{end}}
+      <div class="entry-item-l">
+        <a href="/cheatsheets/{{.Id}}">{{.Title}}</a>
+        <div class="tag-list">
+          {{range .Tags}}
+            <div class="tag"><small>{{.Name}}</small></div>
+          {{end}}
+        </div>
       </div>
+      {{if $.Locals.LoggedIn}}
+        <div class="entry-item-r">
+          <a href="/edit-entry/{{.Id}}">Edit</a>
+        </div>
+      {{end}}
     </div>
   {{end}}
 </div>

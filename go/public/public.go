@@ -138,10 +138,13 @@ func RenderListPage(
 		motdTemplate.Execute(&motd, nil)
 	}
 
+	locals := auth.GetLocals(r, db)
+
 	var content bytes.Buffer
 	listPageTemplate.Execute(&content, model.ListPageData{
 		Entries: entries,
 		Motd:    motd.String(),
+		Locals:  locals,
 	})
 	baseTemplate.Execute(w, template.HTML(content.String()))
 }
