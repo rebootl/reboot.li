@@ -21,8 +21,7 @@ func RenderMainPage(
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
-	baseTemplate *template.Template,
-	entryTemplate *template.Template,
+	templates map[string]*template.Template,
 ) {
 	// get the main page content from sqlite database
 	var entry model.Entry
@@ -39,15 +38,14 @@ func RenderMainPage(
 		}
 		return
 	}
-	renderEntry(w, r, entryTemplate, baseTemplate, entry)
+	renderEntry(w, r, templates, entry)
 }
 
 func RenderLinksPage(
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
-	baseTemplate *template.Template,
-	linksTemplate *template.Template,
+	templates map[string]*template.Template,
 ) {
 	// get the link categories from sqlite database
 	var linkCategories []model.LinkCategory
@@ -69,9 +67,9 @@ func RenderLinksPage(
 	}
 
 	var content bytes.Buffer
-	linksTemplate.Execute(&content, linkCategories)
+	templates["links"].Execute(&content, linkCategories)
 
-	baseTemplate.Execute(w, template.HTML(content.String()))
+	templates["base"].Execute(w, template.HTML(content.String()))
 }
 
 func RenderListPage(
@@ -79,8 +77,7 @@ func RenderListPage(
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
-	baseTemplate *template.Template,
-	listPageTemplate *template.Template,
+	templates map[string]*template.Template,
 ) {
 	var entries []model.Entry
 	err := db.Select(&entries, "SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY id DESC", entryType)
@@ -140,21 +137,28 @@ func RenderListPage(
 
 	locals := auth.GetLocals(r, db)
 
+	var entryTypeToTemplateName = map[string]string{
+		"nerdstuff":  "nerdstuff",
+		"cheatsheet": "cheatsheets",
+		// Add more mappings here
+	}
+	templateName := entryTypeToTemplateName[entryType]
+
 	var content bytes.Buffer
-	listPageTemplate.Execute(&content, model.ListPageData{
+	templates[templateName].Execute(&content, model.ListPageData{
 		Entries: entries,
 		Motd:    motd.String(),
 		Locals:  locals,
 	})
-	baseTemplate.Execute(w, template.HTML(content.String()))
+
+	templates["base"].Execute(w, template.HTML(content.String()))
 }
 
 func RenderListEntry(
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
-	baseTemplate *template.Template,
-	entryTemplate *template.Template,
+	templates map[string]*template.Template,
 ) {
 	vars := mux.Vars(r)
 	var entry model.Entry
@@ -169,14 +173,13 @@ func RenderListEntry(
 		return
 	}
 
-	renderEntry(w, r, entryTemplate, baseTemplate, entry)
+	renderEntry(w, r, templates, entry)
 }
 
 func renderEntry(
 	w http.ResponseWriter,
 	r *http.Request,
-	entryTemplate *template.Template,
-	baseTemplate *template.Template,
+	templates map[string]*template.Template,
 	entry model.Entry,
 ) {
 	// convert content to html
@@ -190,24 +193,23 @@ func renderEntry(
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
 
 	var content bytes.Buffer
-	entryTemplate.Execute(&content, model.EntryPageData{
+	templates["entry"].Execute(&content, model.EntryPageData{
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 	})
 
-	baseTemplate.Execute(w, template.HTML(content.String()))
+	templates["base"].Execute(w, template.HTML(content.String()))
 }
 
 func RenderLogin(
 	w http.ResponseWriter,
 	r *http.Request,
 	db *sqlx.DB,
-	baseTemplate *template.Template,
-	loginTemplate *template.Template,
+	templates map[string]*template.Template,
 ) {
 	locals := auth.GetLocals(r, db)
 	var content bytes.Buffer
-	loginTemplate.Execute(&content, locals)
-	baseTemplate.Execute(w, template.HTML(content.String()))
+	templates["login"].Execute(&content, locals)
+	templates["base"].Execute(w, template.HTML(content.String()))
 }
