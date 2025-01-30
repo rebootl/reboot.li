@@ -6,7 +6,7 @@
 	<meta name="description" content="my personal website" />
 	<meta name="author" content="Cem Aydin" />
 
-	<title>reboot.li - my personal website</title>
+	<title>{{ .Title }} - reboot.li</title>
 
 	<link rel="icon" href="/static/favicon.png" />
 	<link rel="stylesheet" href="/static/style.css"></link>
@@ -34,7 +34,7 @@
 	<div class="main-wrapper">
 		<main>
 
-			{{ . }}
+			{{ .Content }}
 
 		</main>
 	</div>

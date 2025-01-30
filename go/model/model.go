@@ -48,10 +48,12 @@ type LinkCategories struct {
 }
 
 type EntryPageData struct {
+	Id         int
 	Title      string
 	Content    template.HTML
 	ModifiedAt string
 	Tags       []Tag
+	Locals
 }
 
 type EditPageData struct {

@@ -13,6 +13,7 @@ import (
 
 	"mypersonalwebsite/auth"
 	"mypersonalwebsite/model"
+	"mypersonalwebsite/public"
 )
 
 func RouteEditEntry(
@@ -63,7 +64,7 @@ func RouteEditEntry(
 		Ref:        ref,
 	})
 
-	templates["base"].Execute(w, template.HTML(content.String()))
+	public.RenderBaseTemplate(w, templates, "Edit Entry", &content, locals)
 }
 
 func RouteUpdateEntry(

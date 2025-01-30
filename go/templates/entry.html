@@ -1,4 +1,9 @@
 <h1>{{.Title }}</h1>
+{{if .LoggedIn}}
+  <div class="entry-item-r">
+    <a href="/edit-entry/{{.Id}}?ref=/entry/{{.Id}}">Edit</a>
+  </div>
+{{end}}
 
 {{ .Content }}
 

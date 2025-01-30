@@ -41,7 +41,7 @@ var routes = []Route{
 		HandlerFunc: public.RouteListPage,
 	},
 	{
-		Path:        "/cheatsheets/{id}",
+		Path:        "/entry/{id}",
 		HandlerFunc: public.RouteListEntry,
 	},
 	{
@@ -49,10 +49,10 @@ var routes = []Route{
 		EntryType:   "nerdstuff",
 		HandlerFunc: public.RouteListPage,
 	},
-	{
-		Path:        "/nerdstuff/{id}",
-		HandlerFunc: public.RouteListEntry,
-	},
+	// {
+	// 	Path:        "/nerdstuff/{id}",
+	// 	HandlerFunc: public.RouteListEntry,
+	// },
 	{
 		Path:        "/login",
 		HandlerFunc: public.RouteLogin,

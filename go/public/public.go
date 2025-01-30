@@ -38,7 +38,7 @@ func RouteMainPage(
 		}
 		return
 	}
-	renderEntry(w, r, templates, entry)
+	renderEntry(w, r, templates, entry, auth.GetLocals(r, db))
 }
 
 func RouteLinksPage(
@@ -70,7 +70,7 @@ func RouteLinksPage(
 	var content bytes.Buffer
 	templates["links"].Execute(&content, linkCategories)
 
-	templates["base"].Execute(w, template.HTML(content.String()))
+	RenderBaseTemplate(w, templates, "Links", &content, auth.GetLocals(r, db))
 }
 
 func RouteListPage(
@@ -157,7 +157,12 @@ func RouteListPage(
 		Locals:  locals,
 	})
 
-	templates["base"].Execute(w, template.HTML(content.String()))
+	var entryTypeToTitle = map[string]string{
+		"nerdstuff":  "Nerd stuff",
+		"cheatsheet": "Cheat sheets",
+		// Add more mappings here
+	}
+	RenderBaseTemplate(w, templates, entryTypeToTitle[entryType], &content, locals)
 }
 
 func RouteListEntry(
@@ -182,7 +187,7 @@ func RouteListEntry(
 		return
 	}
 
-	renderEntry(w, r, templates, entry)
+	renderEntry(w, r, templates, entry, locals)
 }
 
 func renderEntry(
@@ -190,6 +195,7 @@ func renderEntry(
 	r *http.Request,
 	templates map[string]*template.Template,
 	entry model.Entry,
+	locals model.Locals,
 ) {
 	// convert content to html
 	// WARNING: apparently markdown does not sanitize the content,
@@ -203,13 +209,15 @@ func renderEntry(
 
 	var content bytes.Buffer
 	templates["entry"].Execute(&content, model.EntryPageData{
+		Id:         entry.Id,
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 		Tags:       entry.Tags,
+		Locals:     locals,
 	})
 
-	templates["base"].Execute(w, template.HTML(content.String()))
+	RenderBaseTemplate(w, templates, entry.Title, &content, locals)
 }
 
 func RouteLogin(
@@ -222,15 +230,19 @@ func RouteLogin(
 	locals := auth.GetLocals(r, db)
 	var content bytes.Buffer
 	templates["login"].Execute(&content, locals)
-	templates["base"].Execute(w, template.HTML(content.String()))
+	RenderBaseTemplate(w, templates, "Login", &content, locals)
 }
 
-func renderBaseTemplate(
+func RenderBaseTemplate(
 	w http.ResponseWriter,
 	templates map[string]*template.Template,
 	title string,
 	content *bytes.Buffer,
 	locals model.Locals,
 ) {
-	templates["base"].Execute(w, template.HTML(content.String()))
+	templates["base"].Execute(w, model.BasePageData{
+		Title:   title,
+		Content: template.HTML(content.String()),
+		Locals:  locals,
+	})
 }
