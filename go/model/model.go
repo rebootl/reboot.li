@@ -70,6 +70,12 @@ type ListPageData struct {
 	Locals
 }
 
+type BasePageData struct {
+	Title   string
+	Content template.HTML
+	Locals
+}
+
 type User struct {
 	Id       int
 	UserName string
@@ -90,9 +96,16 @@ type Locals struct {
 	UserName string
 }
 
-func GetEntryById(db *sqlx.DB, id string) (Entry, error) {
+func GetEntryById(db *sqlx.DB, locals Locals, id string) (Entry, error) {
+	var q string
+	if locals.LoggedIn {
+		q = "SELECT * FROM entries WHERE id = ?"
+	} else {
+		q = "SELECT * FROM entries WHERE id = ? AND private = 0"
+	}
+
 	var entry Entry
-	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", id)
+	err := db.Get(&entry, q, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")

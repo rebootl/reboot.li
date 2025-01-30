@@ -80,12 +80,19 @@ func RouteListPage(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
+	locals := auth.GetLocals(r, db)
+	var q string
+	if locals.LoggedIn {
+		q = "SELECT * FROM entries WHERE type = ? ORDER BY id DESC"
+	} else {
+		q = "SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY id DESC"
+	}
 	var entries []model.Entry
-	err := db.Select(&entries, "SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY id DESC", entryType)
+	err := db.Select(&entries, q, entryType)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")
-			// TODO: return a 404 page
+			http.Error(w, "404 Not found", http.StatusNotFound)
 		} else {
 			fmt.Println(err)
 		}
@@ -107,7 +114,7 @@ func RouteListPage(
 		WHERE et.entry_id IN (
 			SELECT id
 			FROM entries
-			WHERE type = ? AND private = 0
+			WHERE type = ?
 		)
 	`, entryType)
 	if err != nil {
@@ -136,8 +143,6 @@ func RouteListPage(
 		motdTemplate.Execute(&motd, nil)
 	}
 
-	locals := auth.GetLocals(r, db)
-
 	var entryTypeToTemplateName = map[string]string{
 		"nerdstuff":  "nerdstuff",
 		"cheatsheet": "cheatsheets",
@@ -163,13 +168,14 @@ func RouteListEntry(
 	templates map[string]*template.Template,
 ) {
 	vars := mux.Vars(r)
+	locals := auth.GetLocals(r, db)
 	// var entry model.Entry
 	// err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", vars["id"])
-	entry, err := model.GetEntryById(db, vars["id"])
+	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")
-			// TODO: return a 404 page
+			http.Error(w, "404 Not found", http.StatusNotFound)
 		} else {
 			fmt.Println(err)
 		}
@@ -216,5 +222,15 @@ func RouteLogin(
 	locals := auth.GetLocals(r, db)
 	var content bytes.Buffer
 	templates["login"].Execute(&content, locals)
+	templates["base"].Execute(w, template.HTML(content.String()))
+}
+
+func renderBaseTemplate(
+	w http.ResponseWriter,
+	templates map[string]*template.Template,
+	title string,
+	content *bytes.Buffer,
+	locals model.Locals,
+) {
 	templates["base"].Execute(w, template.HTML(content.String()))
 }

@@ -58,6 +58,7 @@ func RouteEditEntry(
 		Id:         entry.Id,
 		Title:      entry.Title,
 		Content:    entry.Content,
+		Private:    entry.Private,
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 		Ref:        ref,
 	})

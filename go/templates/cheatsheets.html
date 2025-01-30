@@ -8,12 +8,14 @@
 </details>
 <p></p>
 
-
 <div class="entry-list">
   {{range .Entries}}
     <div class="entry-item">
       <div class="entry-item-l">
         <a href="/cheatsheets/{{.Id}}">{{.Title}}</a>
+        {{if .Private}}
+          <span class="private-label">&#x1F512;<small>Private</small></span>
+        {{end}}
         <div class="tag-list">
           {{range .Tags}}
             <div class="tag"><small>{{.Name}}</small></div>

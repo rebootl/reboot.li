@@ -127,6 +127,10 @@ pre {
 	gap: 10px;
 }
 
+.private-label {
+	color: var(--text-color-dimmed);
+}
+
 .tag-list {
 	display: flex;
 	gap: 10px;

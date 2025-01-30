@@ -20,6 +20,15 @@
 				<li><a href="/cheatsheets">cheat sheets</a></li>
 				<li><a href="/links">links</a></li>
 			</ul>
+			{{if .LoggedIn }}
+				<ul>
+					<li><a href="/logout">logout</a></li>
+				</ul>
+			{{ else }}
+				<ul>
+					<li><a href="/login">login</a></li>
+				</ul>
+			{{ end }}
 		</nav>
 	</header>
 	<div class="main-wrapper">
