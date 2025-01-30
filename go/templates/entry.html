@@ -3,3 +3,10 @@
 {{ .Content }}
 
 <small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
+
+{{/* TODO: make this a block */}}
+<div class="tag-list">
+  {{range .Tags}}
+    <div class="tag"><small>{{.Name}}</small></div>
+  {{end}}
+</div>

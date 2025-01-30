@@ -163,8 +163,9 @@ func RouteListEntry(
 	templates map[string]*template.Template,
 ) {
 	vars := mux.Vars(r)
-	var entry model.Entry
-	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", vars["id"])
+	// var entry model.Entry
+	// err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", vars["id"])
+	entry, err := model.GetEntryById(db, vars["id"])
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")
@@ -199,6 +200,7 @@ func renderEntry(
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
+		Tags:       entry.Tags,
 	})
 
 	templates["base"].Execute(w, template.HTML(content.String()))

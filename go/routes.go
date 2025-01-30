@@ -2,12 +2,14 @@ package main
 
 import (
 	"html/template"
-	"mypersonalwebsite/auth"
-	"mypersonalwebsite/public"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+
+	"mypersonalwebsite/auth"
+	"mypersonalwebsite/private"
+	"mypersonalwebsite/public"
 )
 
 type Route struct {
@@ -64,6 +66,15 @@ var routes = []Route{
 	{
 		Path:        "/logout",
 		HandlerFunc: auth.RouteLogout,
+	},
+	{
+		Path:        "/edit-entry/{id}",
+		HandlerFunc: private.RouteEditEntry,
+	},
+	{
+		Path:        "/update-entry",
+		HandlerFunc: private.RouteUpdateEntry,
+		Methods:     []string{"POST"},
 	},
 }
 

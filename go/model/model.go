@@ -1,7 +1,11 @@
 package model
 
 import (
+	"database/sql"
+	"fmt"
 	"html/template"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Entry struct {
@@ -47,6 +51,17 @@ type EntryPageData struct {
 	Title      string
 	Content    template.HTML
 	ModifiedAt string
+	Tags       []Tag
+}
+
+type EditPageData struct {
+	Id         int
+	Title      string
+	Content    string
+	Private    bool
+	ModifiedAt string
+	Tags       []Tag
+	Ref        string
 }
 
 type ListPageData struct {
@@ -73,4 +88,27 @@ type Session struct {
 type Locals struct {
 	LoggedIn bool
 	UserName string
+}
+
+func GetEntryById(db *sqlx.DB, id string) (Entry, error) {
+	var entry Entry
+	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("No rows found")
+			// TODO: return a 404 page
+		} else {
+			fmt.Println(err)
+		}
+		return entry, err
+	}
+
+	var tags []Tag
+	err = db.Select(&tags, "SELECT t.id, t.name, t.color FROM entry_tags t JOIN entry_to_tag et ON t.id = et.tag_id WHERE et.entry_id = ?", id)
+	if err != nil {
+		fmt.Println(err)
+		return entry, err
+	}
+	entry.Tags = tags
+	return entry, nil
 }
