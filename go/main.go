@@ -7,6 +7,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
+
+	"mypersonalwebsite/config"
 )
 
 func main() {
@@ -24,5 +26,6 @@ func main() {
 
 	loadRoutes(r, routes, db, templates)
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	port := config.Port
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
