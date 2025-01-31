@@ -21,9 +21,10 @@ type Entry struct {
 }
 
 type Tag struct {
-	Id    int
-	Name  string
-	Color string
+	Id     int
+	UserId int `db:"user_id"`
+	Name   string
+	Color  string
 }
 
 type Link struct {
@@ -63,7 +64,13 @@ type EditPageData struct {
 	Private    bool
 	ModifiedAt string
 	Tags       []Tag
+	AllTags    []TagWithStatus
 	Ref        string
+}
+
+type TagWithStatus struct {
+	Tag      Tag
+	Selected bool
 }
 
 type ListPageData struct {
@@ -118,8 +125,7 @@ func GetEntryById(db *sqlx.DB, locals Locals, id string) (Entry, error) {
 		return entry, err
 	}
 
-	var tags []Tag
-	err = db.Select(&tags, "SELECT t.id, t.name, t.color FROM entry_tags t JOIN entry_to_tag et ON t.id = et.tag_id WHERE et.entry_id = ?", id)
+	tags, err := GetTagsByEntryId(db, id)
 	if err != nil {
 		fmt.Println(err)
 		return entry, err
@@ -127,3 +133,79 @@ func GetEntryById(db *sqlx.DB, locals Locals, id string) (Entry, error) {
 	entry.Tags = tags
 	return entry, nil
 }
+
+func GetTagsByEntryId(db *sqlx.DB, id string) ([]Tag, error) {
+	var tags []Tag
+	err := db.Select(&tags, `SELECT t.id, t.name, t.color
+		FROM entry_tags t
+		JOIN entry_to_tag et ON t.id = et.tag_id
+		WHERE et.entry_id = ?`, id)
+	return tags, err
+}
+
+func GetAllTags(db *sqlx.DB) ([]Tag, error) {
+	var tags []Tag
+	err := db.Select(&tags, `SELECT * FROM entry_tags`)
+	return tags, err
+}
+
+func UpdateEntryTags(db *sqlx.DB, id string, selectedTagNames []string) error {
+
+	existingTags, err := GetTagsByEntryId(db, id)
+	if err != nil {
+		return err
+	}
+
+	selectedTagsByNames := make(map[string]bool)
+	for _, tagName := range selectedTagNames {
+		selectedTagsByNames[tagName] = true
+	}
+
+	for _, tag := range existingTags {
+		if !selectedTagsByNames[tag.Name] {
+			_, err = db.Exec(
+				"DELETE FROM entry_to_tag WHERE entry_id = ? AND tag_id = ?",
+				id, tag.Id,
+			)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	allTags, err := GetAllTags(db)
+	if err != nil {
+		return err
+	}
+	allTagsByNames := make(map[string]Tag)
+	for _, tag := range allTags {
+		allTagsByNames[tag.Name] = tag
+	}
+
+	existingTagNames := make(map[string]bool)
+	for _, tag := range existingTags {
+		existingTagNames[tag.Name] = true
+	}
+
+	for _, tagName := range selectedTagNames {
+		if !existingTagNames[tagName] {
+			_, err = db.Exec(
+				"INSERT INTO entry_to_tag (entry_id, tag_id) VALUES (?, ?)",
+				id, allTagsByNames[tagName].Id,
+			)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+/* func contains[T comparable](s []T, str T) bool {
+	m := make(map[T]bool)
+	for _, v := range s {
+		m[v] = true
+	}
+	return m[str]
+} */

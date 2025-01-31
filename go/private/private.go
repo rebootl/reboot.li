@@ -31,24 +31,46 @@ func RouteEditEntry(
 
 	vars := mux.Vars(r)
 
-	var entry model.Entry
-	err := db.Get(&entry, "SELECT * FROM entries WHERE id = ?", vars["id"])
+	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No rows found")
-			// TODO: return a 404 page
+			http.Error(w, "404 Not found", http.StatusNotFound)
 		} else {
 			fmt.Println(err)
 		}
 		return
 	}
 
-	// convert content to html
-	// WARNING: apparently markdown does not sanitize the content,
-	//          so if we insert content from a random source this is a security risk,
-	//          however I'm only planning to insert my own content here for now,
-	//          so I leave it like this for now
-	// htmlContent := markdown.ToHTML([]byte(entry.Content), nil, nil)
+	// get all tags from db
+	var allTags []model.Tag
+	err = db.Select(&allTags, "SELECT * FROM entry_tags")
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var allTagsSelected []model.TagWithStatus
+	entryTags := make(map[string]bool)
+	for _, tag := range entry.Tags {
+		entryTags[tag.Name] = true
+	}
+	for _, tag := range allTags {
+		var tagWithStatus model.TagWithStatus
+		if entryTags[tag.Name] {
+			tagWithStatus = model.TagWithStatus{
+				Tag:      tag,
+				Selected: true,
+			}
+		} else {
+			tagWithStatus = model.TagWithStatus{
+				Tag:      tag,
+				Selected: false,
+			}
+		}
+		allTagsSelected = append(allTagsSelected, tagWithStatus)
+	}
 
 	// preprocesse date
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
@@ -61,6 +83,8 @@ func RouteEditEntry(
 		Content:    entry.Content,
 		Private:    entry.Private,
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
+		Tags:       entry.Tags,
+		AllTags:    allTagsSelected,
 		Ref:        ref,
 	})
 
@@ -109,7 +133,14 @@ func RouteUpdateEntry(
 		SET title = $1, content = $2, private = $3, modified_at = $4
 		WHERE id = $5
 	`, title, content, privateBool, timestamp, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 
+	selectedTagNames := r.Form["tags"]
+	err = model.UpdateEntryTags(db, id, selectedTagNames)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)

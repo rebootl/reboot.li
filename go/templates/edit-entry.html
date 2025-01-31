@@ -13,6 +13,14 @@
         Private
       </label>
     </div>
+    <label>
+      Tags:
+      <select name="tags" multiple>
+        {{range .AllTags}}
+          <option value="{{.Tag.Name}}" {{if .Selected}}selected{{end}}>{{.Tag.Name}}</option>
+        {{end}}
+      </select>
+    </label>
     <div class="buttons">
       <div>
         <button>Save</button>
@@ -20,14 +28,16 @@
       </div>
       <!-- <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button> -->
     </div>
+
+    {{/* TODO: make this a block */}}
+    <div class="tag-list">
+      {{range .Tags}}
+        <div class="tag"><small>{{.Name}}</small></div>
+      {{end}}
+    </div>
+
   </form>
 
-  {{/* TODO: make this a block */}}
-  <div class="tag-list">
-    {{range .Tags}}
-      <div class="tag"><small>{{.Name}}</small></div>
-    {{end}}
-  </div>
 {{/*else*/}}
   <!-- <h1>New Note</h1>
   <form method="POST" action="/editNote/new?/createEntry">
