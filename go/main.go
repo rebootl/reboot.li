@@ -14,7 +14,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	db, err := sqlx.Connect("sqlite3", "db/db.sqlite")
+	db, err := sqlx.Connect("sqlite3", "file:db/db.sqlite?_foreign_keys=on")
 	if err != nil {
 		log.Fatalln(err)
 	}

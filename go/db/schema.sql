@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "link_to_tag" (
 	"tag_id"	INTEGER NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("tag_id") REFERENCES "link_tags"("id"),
-	FOREIGN KEY("link_id") REFERENCES "link"("id")
+	FOREIGN KEY("link_id") REFERENCES "links"("id")
 );
 CREATE TABLE IF NOT EXISTS "entry_tags" (
 	"id"	INTEGER NOT NULL UNIQUE,
