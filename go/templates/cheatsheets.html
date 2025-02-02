@@ -18,7 +18,7 @@
         {{end}}
         <div class="tag-list">
           {{range .Tags}}
-            <div class="tag"><small>{{.Name}}</small></div>
+            <div class="tag" style="color: {{ .Color }}; border-color: {{ .Color }};"><small><strong>{{.Name}}</strong></small></div>
           {{end}}
         </div>
       </div>

@@ -134,6 +134,11 @@ pre {
 	gap: 10px;
 }
 
+.entry-item-r {
+	display: flex;
+	gap: 10px;
+}
+
 .private-label {
 	color: var(--text-color-dimmed);
 }
@@ -168,6 +173,7 @@ form {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-bottom: 10px;
 }
 
 textarea {

@@ -1,0 +1,14 @@
+<h1>Edit tags</h1>
+
+<a href="/edit-tag/new">New tag</a>
+
+<div class="entry-list">
+  {{range .Tags}}
+    <div class="entry-item">
+      <div class="tag" style="color: {{ .Color }}; border-color: {{ .Color }};"><small><strong>{{.Name}}</strong></small></div>
+      <div class="entry-item-r">
+        <a href="/edit-tag/{{.Id}}">Edit</a>
+      </div>
+    </div>
+  {{end}}
+</div>

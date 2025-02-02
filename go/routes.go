@@ -76,6 +76,23 @@ var routes = []Route{
 		HandlerFunc: private.RouteUpdateEntry,
 		Methods:     []string{"POST"},
 	},
+	{
+		Path:        "/edit-tags",
+		HandlerFunc: private.RouteEditTags,
+	},
+	{
+		Path:        "/edit-tag/{id}",
+		HandlerFunc: private.RouteEditTag,
+	},
+	{
+		Path:        "/update-tag",
+		HandlerFunc: private.RouteUpdateTag,
+	},
+	{
+		Path:        "/delete-tag",
+		HandlerFunc: private.RouteDeleteTag,
+		Methods:     []string{"POST"},
+	},
 }
 
 func loadRoutes(r *mux.Router, routes []Route, db *sqlx.DB, templates map[string]*template.Template) {

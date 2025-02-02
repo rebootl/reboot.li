@@ -143,9 +143,9 @@ func GetTagsByEntryId(db *sqlx.DB, id string) ([]Tag, error) {
 	return tags, err
 }
 
-func GetAllTags(db *sqlx.DB) ([]Tag, error) {
+func GetAllEntryTags(db *sqlx.DB) ([]Tag, error) {
 	var tags []Tag
-	err := db.Select(&tags, `SELECT * FROM entry_tags`)
+	err := db.Select(&tags, `SELECT * FROM entry_tags ORDER BY name`)
 	return tags, err
 }
 
@@ -173,7 +173,7 @@ func UpdateEntryTags(db *sqlx.DB, id string, selectedTagNames []string) error {
 		}
 	}
 
-	allTags, err := GetAllTags(db)
+	allTags, err := GetAllEntryTags(db)
 	if err != nil {
 		return err
 	}
@@ -202,10 +202,8 @@ func UpdateEntryTags(db *sqlx.DB, id string, selectedTagNames []string) error {
 	return nil
 }
 
-/* func contains[T comparable](s []T, str T) bool {
-	m := make(map[T]bool)
-	for _, v := range s {
-		m[v] = true
-	}
-	return m[str]
-} */
+func GetEntryTagById(db *sqlx.DB, id string) (Tag, error) {
+	var tag Tag
+	err := db.Get(&tag, "SELECT * FROM entry_tags WHERE id = ?", id)
+	return tag, err
+}

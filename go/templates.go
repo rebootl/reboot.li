@@ -10,6 +10,8 @@ var templatePaths = map[string]string{
 	"nerdstuff":   "templates/nerdstuff.html",
 	"login":       "templates/login.html",
 	"edit-entry":  "templates/edit-entry.html",
+	"edit-tags":   "templates/edit-tags.html",
+	"edit-tag":    "templates/edit-tag.html",
 }
 
 func getTemplate(filePath string) *template.Template {
