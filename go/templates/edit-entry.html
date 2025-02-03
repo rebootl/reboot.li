@@ -25,7 +25,7 @@
       <button>Save</button>
       <a href="{{ .Ref }}">Cancel</a>
     </div>
-    <!-- <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button> -->
+    <button type="button" class="danger-button" onClick="confirmDelete()">Delete</button>
   </div>
 
   {{/* TODO: make this a block */}}
@@ -40,3 +40,12 @@
 {{if gt .Entry.Id 0 }}
   <small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
 {{end}}
+
+<script>
+  function confirmDelete() {
+    if (confirm("Are you sure you want to delete this entry?")) {
+      document.querySelector("form").setAttribute("action", "/delete-entry");
+      document.querySelector("form").submit();
+    }
+  }
+</script>

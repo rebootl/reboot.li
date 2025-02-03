@@ -77,6 +77,11 @@ var routes = []Route{
 		Methods:     []string{"POST"},
 	},
 	{
+		Path:        "/delete-entry",
+		HandlerFunc: private.RouteDeleteEntry,
+		Methods:     []string{"POST"},
+	},
+	{
 		Path:        "/edit-tags",
 		HandlerFunc: private.RouteEditTags,
 	},

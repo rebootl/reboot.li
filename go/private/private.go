@@ -188,6 +188,54 @@ func RouteUpdateEntry(
 	ref := r.FormValue("ref")
 	http.Redirect(w, r, ref, 302)
 }
+func RouteDeleteEntry(
+	entryType string,
+	w http.ResponseWriter,
+	r *http.Request,
+	db *sqlx.DB,
+	templates map[string]*template.Template,
+) {
+	locals := auth.GetLocals(r, db)
+	if !locals.LoggedIn {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+	id := r.FormValue("id")
+
+	// var res sql.Result
+	// delete entry to tag links first
+	_, err = db.Exec(`
+		DELETE FROM entry_to_tag
+		WHERE entry_id = $1
+	`, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
+	_, err = db.Exec(`
+		DELETE FROM entries
+		WHERE id = $1
+	`, id)
+	// fmt.Println(res)
+	// fmt.Println(err)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
+	ref := r.FormValue("ref")
+	http.Redirect(w, r, ref, 302)
+}
 
 func RouteEditTags(
 	entryType string,
