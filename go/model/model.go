@@ -214,3 +214,13 @@ func GetAllLinkCategories(db *sqlx.DB) ([]LinkCategory, error) {
 	}
 	return categories, nil
 }
+
+func GetLinkCategoryById(db *sqlx.DB, id string) (LinkCategory, error) {
+	var category LinkCategory
+	err := db.Get(&category, "SELECT * FROM link_categories WHERE id = ?", id)
+	if err != nil {
+		return category, err
+	}
+	// category.Links, err = GetLinksByCategoryId(db, id)
+	return category, err
+}

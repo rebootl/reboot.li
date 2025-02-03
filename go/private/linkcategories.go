@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"net/http"
 
-	// "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 
 	"mypersonalwebsite/auth"
@@ -51,7 +51,7 @@ func RouteEditLinkCategories(
 	public.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
-/* func RouteEditTag(
+func RouteEditLinkCategory(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -66,18 +66,14 @@ func RouteEditLinkCategories(
 
 	vars := mux.Vars(r)
 
-	var tag model.Tag
+	var linkCategory model.LinkCategory
 	var title string
 	if vars["id"] == "new" {
-		tag = model.Tag{
-			Id:    0,
-			Name:  "",
-			Color: "",
-		}
-		title = "New Tag"
+		linkCategory = model.LinkCategory{}
+		title = "New link category"
 	} else {
 		var err error
-		tag, err = model.GetEntryTagById(db, vars["id"])
+		linkCategory, err = model.GetLinkCategoryById(db, vars["id"])
 		if err != nil {
 			if err == sql.ErrNoRows {
 				http.Error(w, "404 Not found", http.StatusNotFound)
@@ -87,21 +83,21 @@ func RouteEditLinkCategories(
 			}
 			return
 		}
-		title = "Edit Tag"
+		title = "Edit link category"
 	}
 
 	var content bytes.Buffer
-	templates["edit-tag"].Execute(&content, struct {
-		Title string
-		Tag   model.Tag
+	templates["edit-link-category"].Execute(&content, struct {
+		Title        string
+		LinkCategory model.LinkCategory
 	}{
-		Title: title,
-		Tag:   tag,
+		Title:        title,
+		LinkCategory: linkCategory,
 	})
-	public.RenderBaseTemplate(w, templates, "Edit Tag", &content, locals)
+	public.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
-func RouteUpdateTag(
+func RouteUpdateLinkCategory(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -122,36 +118,35 @@ func RouteUpdateTag(
 	}
 	id := r.FormValue("id")
 	name := r.FormValue("name")
-	color := r.FormValue("color")
 
 	// Validate the form data
-	if name == "" || color == "" {
-		http.Error(w, "Name and color are required", http.StatusBadRequest)
+	if name == "" {
+		http.Error(w, "Name is required", http.StatusBadRequest)
 		return
 	}
 
 	if id == "0" {
 		_, err = db.Exec(`
-			INSERT INTO entry_tags (name, user_id, color)
-			VALUES ($1, $2, $3)
-		`, name, 1, color)
+			INSERT INTO link_categories (name)
+			VALUES ($1)
+		`, name)
 	} else {
 		_, err = db.Exec(`
-			UPDATE entry_tags
-			SET name = $1, color = $2
-			WHERE id = $3
-		`, name, color, id)
+			UPDATE link_categories
+			SET name = $1
+			WHERE id = $2
+		`, name, id)
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
-	http.Redirect(w, r, "/edit-tags", 302)
+	http.Redirect(w, r, "/edit-link-categories", 302)
 	return
 }
 
-func RouteDeleteTag(
+func RouteDeleteLinkCategory(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -174,7 +169,7 @@ func RouteDeleteTag(
 
 	var res sql.Result
 	res, err = db.Exec(`
-		DELETE FROM entry_tags
+		DELETE FROM link_categories
 		WHERE id = $1
 	`, id)
 	fmt.Println(res)
@@ -184,5 +179,5 @@ func RouteDeleteTag(
 		fmt.Println(err)
 		return
 	}
-	http.Redirect(w, r, "/edit-tags", 302)
-} */
+	http.Redirect(w, r, "/edit-link-categories", 302)
+}
