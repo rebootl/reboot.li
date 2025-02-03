@@ -1,0 +1,24 @@
+
+<h1>{{ .Title }}</h1>
+
+<form method="POST" action="/update-tag" id="edit-tag-form">
+  <input type="hidden" name="id" value="{{ .Tag.Id }}" />
+  <input type="text" name="name" placeholder="Name" value="{{ .Tag.Name }}" />
+  <input type="color" name="color" value="{{ .Tag.Color }}" />
+  <div class="buttons">
+    <div>
+      <button>Save</button>
+      <a href="/edit-tags">Cancel</a>
+    </div>
+    <button type="button" class="danger-button" onClick="confirmDelete()">Delete</button>
+  </div>
+</form>
+
+<script>
+  function confirmDelete() {
+    if (confirm("Are you sure you want to delete this tag?")) {
+      document.getElementById("edit-tag-form").setAttribute("action", "/delete-tag");
+      document.getElementById("edit-tag-form").submit();
+    }
+  }
+</script>

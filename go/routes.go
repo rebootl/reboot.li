@@ -98,6 +98,10 @@ var routes = []Route{
 		HandlerFunc: private.RouteDeleteTag,
 		Methods:     []string{"POST"},
 	},
+	{
+		Path:        "/edit-link-categories",
+		HandlerFunc: private.RouteEditLinkCategories,
+	},
 }
 
 func loadRoutes(r *mux.Router, routes []Route, db *sqlx.DB, templates map[string]*template.Template) {

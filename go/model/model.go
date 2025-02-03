@@ -205,3 +205,12 @@ func GetEntryTagById(db *sqlx.DB, id string) (Tag, error) {
 	err := db.Get(&tag, "SELECT * FROM entry_tags WHERE id = ?", id)
 	return tag, err
 }
+
+func GetAllLinkCategories(db *sqlx.DB) ([]LinkCategory, error) {
+	var categories []LinkCategory
+	err := db.Select(&categories, `SELECT * FROM link_categories ORDER BY name`)
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
+}
