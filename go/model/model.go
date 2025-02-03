@@ -58,12 +58,10 @@ type EntryPageData struct {
 }
 
 type EditPageData struct {
-	Id         int
+	Entry      Entry
 	Title      string
-	Content    string
-	Private    bool
+	Type       string
 	ModifiedAt string
-	Tags       []Tag
 	AllTags    []TagWithStatus
 	Ref        string
 }

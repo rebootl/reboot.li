@@ -1,59 +1,42 @@
+<h1>{{ .Title }}</h1>
 
-{{/*if data.entry*/}}
-  <h1>Edit Note {{ .Id }}</h1>
-
-  <form method="POST" action="/update-entry">
-    <input type="hidden" name="id" value="{{ .Id }}" />
-    <input type="hidden" name="ref" value="{{ .Ref }}" />
-    <input type="text" name="title" placeholder="Title" value="{{ .Title }}" />
-    <textarea name="content" placeholder="Text...">{{ .Content }}</textarea>
-    <div>
-      <label>
-        <input type="checkbox" name="private" {{ if .Private }}checked{{ end }} />
-        Private
-      </label>
-    </div>
+<form method="POST" action="/update-entry">
+  <input type="hidden" name="id" value="{{ .Entry.Id }}" />
+  <input type="hidden" name="ref" value="{{ .Ref }}" />
+  <input type="hidden" name="type" value="{{ .Type }}" />
+  <input type="text" name="title" placeholder="Title" value="{{ .Entry.Title }}" />
+  <textarea name="content" placeholder="Text...">{{ .Entry.Content }}</textarea>
+  <div>
     <label>
-      Tags:
-      <select name="tags" multiple>
-        {{range .AllTags}}
-          <option value="{{.Tag.Name}}" {{if .Selected}}selected{{end}}>{{.Tag.Name}}</option>
-        {{end}}
-      </select>
+      <input type="checkbox" name="private" {{ if .Entry.Private }}checked{{ end }} />
+      Private
     </label>
-    <div class="buttons">
-      <div>
-        <button>Save</button>
-        <a href="{{ .Ref }}">Cancel</a>
-      </div>
-      <!-- <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button> -->
-    </div>
-
-    {{/* TODO: make this a block */}}
-    <div class="tag-list">
-      {{range .Tags}}
-        <div class="tag"><small>{{.Name}}</small></div>
+  </div>
+  <label>
+    Tags:
+    <select name="tags" multiple>
+      {{range .AllTags}}
+        <option value="{{.Tag.Name}}" {{if .Selected}}selected{{end}}>{{.Tag.Name}}</option>
       {{end}}
-    </div>
-
-  </form>
-
-{{/*else*/}}
-  <!-- <h1>New Note</h1>
-  <form method="POST" action="/editNote/new?/createEntry">
-    <input type="text" name="title" placeholder="Title" />
-    <textarea name="content" placeholder="Text..."></textarea>
+    </select>
+  </label>
+  <div class="buttons">
     <div>
-      <label>
-        <input type="checkbox" name="isPrivate" />
-        Private
-      </label>
+      <button>Save</button>
+      <a href="{{ .Ref }}">Cancel</a>
     </div>
-    <div class="buttons">
-      <button>Create</button>
-      <a href="/notes">Cancel</a>
-    </div>
-  </form> -->
-{{/*end*/}}
+    <!-- <button type="button" class="danger-button" onclick={() => confirmDelete()}>Delete</button> -->
+  </div>
 
-<small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
+  {{/* TODO: make this a block */}}
+  <div class="tag-list">
+    {{range .Entry.Tags}}
+      <div class="tag"><small>{{.Name}}</small></div>
+    {{end}}
+  </div>
+
+</form>
+
+{{if gt .Entry.Id 0 }}
+  <small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
+{{end}}

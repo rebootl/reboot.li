@@ -31,15 +31,35 @@ func RouteEditEntry(
 
 	vars := mux.Vars(r)
 
-	entry, err := model.GetEntryById(db, locals, vars["id"])
-	if err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("No rows found")
-			http.Error(w, "404 Not found", http.StatusNotFound)
-		} else {
-			fmt.Println(err)
+	var (
+		entry model.Entry
+		title string
+		err   error
+	)
+
+	if vars["id"] == "new" {
+		entry = model.Entry{
+			Id:         0,
+			Title:      "",
+			Content:    "",
+			Private:    false,
+			Tags:       []model.Tag{},
+			ModifiedAt: "",
 		}
-		return
+		title = "New Entry"
+		entryType = r.URL.Query().Get("type")
+	} else {
+		entry, err = model.GetEntryById(db, locals, vars["id"])
+		if err != nil {
+			if err == sql.ErrNoRows {
+				fmt.Println("No rows found")
+				http.Error(w, "404 Not found", http.StatusNotFound)
+			} else {
+				fmt.Println(err)
+			}
+			return
+		}
+		title = "Edit Entry"
 	}
 
 	// get all tags from db
@@ -78,17 +98,15 @@ func RouteEditEntry(
 	ref := r.URL.Query().Get("ref")
 	var content bytes.Buffer
 	templates["edit-entry"].Execute(&content, model.EditPageData{
-		Id:         entry.Id,
-		Title:      entry.Title,
-		Content:    entry.Content,
-		Private:    entry.Private,
+		Type:       entryType,
+		Entry:      entry,
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
-		Tags:       entry.Tags,
+		Title:      title,
 		AllTags:    allTagsSelected,
 		Ref:        ref,
 	})
 
-	public.RenderBaseTemplate(w, templates, "Edit Entry", &content, locals)
+	public.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 func RouteUpdateEntry(
@@ -127,20 +145,40 @@ func RouteUpdateEntry(
 	}
 
 	timestamp := time.Now().Format(time.RFC3339)
-	// Update the entry in the database
-	_, err = db.Exec(`
-		UPDATE entries
-		SET title = $1, content = $2, private = $3, modified_at = $4
-		WHERE id = $5
-	`, title, content, privateBool, timestamp, id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
-		return
+	var dbId string
+	if id == "0" {
+		entryType = r.FormValue("type")
+
+		// Insert a new entry into the database
+		var res sql.Result
+		res, err = db.Exec(`
+			INSERT INTO entries (title, type, user_id, content, private, created_at, modified_at)
+			VALUES ($1, $2, $3, $4, $5, $6, $6)
+		`, title, entryType, 1, content, privateBool, timestamp)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
+			return
+		}
+		InsertId, _ := res.LastInsertId()
+		dbId = fmt.Sprintf("%v", InsertId)
+	} else {
+		// Update the entry in the database
+		_, err = db.Exec(`
+			UPDATE entries
+			SET title = $1, content = $2, private = $3, modified_at = $4
+			WHERE id = $5
+		`, title, content, privateBool, timestamp, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
+			return
+		}
+		dbId = id
 	}
 
 	selectedTagNames := r.Form["tags"]
-	err = model.UpdateEntryTags(db, id, selectedTagNames)
+	err = model.UpdateEntryTags(db, dbId, selectedTagNames)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)
