@@ -19,6 +19,7 @@ import (
 
 func GetLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	// Check if the user is logged in
+	// NOTE: if it can't find a cookie this will return an error
 	cookie, err := r.Cookie(config.CookieName)
 	if err != nil {
 		// fmt.Println("No cookie found")
@@ -26,6 +27,7 @@ func GetLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	}
 
 	// Get the session from the database
+	// NOTE: if no rows are found it will also return an error
 	var session model.Session
 	err = db.Get(&session, "SELECT * FROM sessions WHERE uuid = ?", cookie.Value)
 	if err != nil {
@@ -34,6 +36,7 @@ func GetLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	}
 
 	// Get the user from the database
+	// NOTE: if no rows are found it will also return an error
 	var user model.User
 	err = db.Get(&user, "SELECT * FROM users WHERE id = ?", session.UserId)
 	if err != nil {
@@ -52,18 +55,31 @@ func RouteCheckLogin(
 	templates map[string]*template.Template,
 ) {
 	// Get the username and password from the request
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
+	if username == "" || password == "" {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		fmt.Println("Empty username or password")
+		return
+	}
+
 	// Check if the username and password are valid
 	var user model.User
-	err := db.Get(&user, "SELECT * FROM users WHERE username = ?", username)
+	err = db.Get(&user, "SELECT * FROM users WHERE username = ?", username)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
@@ -74,15 +90,16 @@ func RouteCheckLogin(
 	}
 
 	// Generate a random session ID
-	sessionID, err := generateRandomString(32)
+	sessionId, err := generateRandomString(32)
 	if err != nil {
+		// NOTE: at this point we're authenticated so let's see the error
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Store the session in the database
-	_, err = db.Exec("INSERT INTO sessions (id, uuid, user_id, user_agent, ip, created_at) VALUES (NULL, ?, ?, ?, ?, ?)",
-		sessionID, user.Id, r.UserAgent(), r.RemoteAddr, time.Now().Format(time.RFC3339))
+	_, err = db.Exec("INSERT INTO sessions (uuid, user_id, user_agent, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+		sessionId, user.Id, r.UserAgent(), r.RemoteAddr, time.Now().Format(time.RFC3339))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -91,7 +108,7 @@ func RouteCheckLogin(
 	// Set the session cookie
 	cookie := &http.Cookie{
 		Name:  config.CookieName,
-		Value: sessionID,
+		Value: sessionId,
 		// Expires:  time.Now().Add(30 * 24 * time.Hour),
 		// MaxAge:   60 * 60 * 24 * 365 * 10, // 10 years
 		Path:     "/",
@@ -114,6 +131,7 @@ func RouteLogout(
 	// Get the session from the cookie
 	cookie, err := r.Cookie(config.CookieName)
 	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusFound)
 		fmt.Println("No cookie found")
 		return
 	}
@@ -121,6 +139,7 @@ func RouteLogout(
 	// Delete the session from the database
 	_, err = db.Exec("DELETE FROM sessions WHERE uuid = ?", cookie.Value)
 	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
