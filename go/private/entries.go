@@ -52,9 +52,10 @@ func RouteEditEntry(
 		entry, err = model.GetEntryById(db, locals, vars["id"])
 		if err != nil {
 			if err == sql.ErrNoRows {
-				fmt.Println("No rows found")
-				http.Error(w, "404 Not found", http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
+				fmt.Println(err)
 			} else {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 				fmt.Println(err)
 			}
 			return
@@ -63,14 +64,19 @@ func RouteEditEntry(
 	}
 
 	// get all tags from db
-	var allTags []model.Tag
-	err = db.Select(&allTags, "SELECT * FROM entry_tags")
+	allTags, err := model.GetAllEntryTags(db)
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if err == sql.ErrNoRows {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			fmt.Println(err)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
+		}
 		return
 	}
 
+	// built structure for multiselect
 	var allTagsSelected []model.TagWithStatus
 	entryTags := make(map[string]bool)
 	for _, tag := range entry.Tags {
@@ -97,7 +103,7 @@ func RouteEditEntry(
 
 	ref := r.URL.Query().Get("ref")
 	var content bytes.Buffer
-	templates["edit-entry"].Execute(&content, model.EditPageData{
+	err = templates["edit-entry"].Execute(&content, model.EditPageData{
 		Type:       entryType,
 		Entry:      entry,
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
@@ -105,6 +111,11 @@ func RouteEditEntry(
 		AllTags:    allTagsSelected,
 		Ref:        ref,
 	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 
 	public.RenderBaseTemplate(w, templates, title, &content, locals)
 }

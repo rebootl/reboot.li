@@ -208,9 +208,12 @@ func RenderBaseTemplate(
 	content *bytes.Buffer,
 	locals model.Locals,
 ) {
-	templates["base"].Execute(w, model.BasePageData{
+	err := templates["base"].Execute(w, model.BasePageData{
 		Title:   title,
 		Content: template.HTML(content.String()),
 		Locals:  locals,
 	})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
