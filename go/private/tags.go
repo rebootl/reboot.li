@@ -31,20 +31,25 @@ func RouteEditTags(
 	allTags, err := model.GetAllEntryTags(db)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.Error(w, "404 Not found", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
 		}
+		fmt.Println(err)
 		return
 	}
 
 	var content bytes.Buffer
-	templates["edit-tags"].Execute(&content, struct {
+	err = templates["edit-tags"].Execute(&content, struct {
 		Tags []model.Tag
 	}{
 		Tags: allTags,
 	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 	public.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
@@ -77,25 +82,30 @@ func RouteEditTag(
 		tag, err = model.GetEntryTagById(db, vars["id"])
 		if err != nil {
 			if err == sql.ErrNoRows {
-				http.Error(w, "404 Not found", http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			} else {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				fmt.Println(err)
 			}
+			fmt.Println(err)
 			return
 		}
 		title = "Edit Tag"
 	}
 
 	var content bytes.Buffer
-	templates["edit-tag"].Execute(&content, struct {
+	err := templates["edit-tag"].Execute(&content, struct {
 		Title string
 		Tag   model.Tag
 	}{
 		Title: title,
 		Tag:   tag,
 	})
-	public.RenderBaseTemplate(w, templates, "Edit Tag", &content, locals)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+	public.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 func RouteUpdateTag(
@@ -169,13 +179,10 @@ func RouteDeleteTag(
 	}
 	id := r.FormValue("id")
 
-	var res sql.Result
-	res, err = db.Exec(`
+	_, err = db.Exec(`
 		DELETE FROM entry_tags
 		WHERE id = $1
 	`, id)
-	fmt.Println(res)
-	fmt.Println(err)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)
