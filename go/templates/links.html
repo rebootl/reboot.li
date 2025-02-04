@@ -1,6 +1,6 @@
 <h1>Links</h1>
 
-<p>Some links I found useful and/or interesting.</p>
+<p>Collected links I found useful and/or interesting.</p>
 
 <details>
   <summary><small><b>DISCLAIMER</b></small></summary>
@@ -33,7 +33,7 @@ access them <b>at your own risk</b>.</small></p>
     {{range .Links}}
       <li>
         <div>
-          <a href="{{.Url}}" target="_blank">{{.Title}}</a>
+          <a href="{{.Url}}" target="_blank" class="link">{{.Title}}</a>
           {{if $.LoggedIn}}
             <a href="/edit-link/{{.Id}}">Edit</a>
           {{end}}

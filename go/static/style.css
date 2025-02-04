@@ -166,7 +166,7 @@ pre {
   justify-content: space-between;
 }
 
-.link-list a {
+.link-list .link {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
