@@ -53,11 +53,10 @@ func RouteEditEntry(
 		if err != nil {
 			if err == sql.ErrNoRows {
 				http.Error(w, err.Error(), http.StatusNotFound)
-				fmt.Println(err)
 			} else {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				fmt.Println(err)
 			}
+			fmt.Println(err)
 			return
 		}
 		title = "Edit Entry"
@@ -68,11 +67,10 @@ func RouteEditEntry(
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, err.Error(), http.StatusNotFound)
-			fmt.Println(err)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
 		}
+		fmt.Println(err)
 		return
 	}
 
@@ -166,11 +164,7 @@ func RouteUpdateEntry(
 			INSERT INTO entries (title, type, user_id, content, private, created_at, modified_at)
 			VALUES ($1, $2, $3, $4, $5, $6, $6)
 		`, title, entryType, 1, content, privateBool, timestamp)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
-			return
-		}
+
 		InsertId, _ := res.LastInsertId()
 		dbId = fmt.Sprintf("%v", InsertId)
 	} else {
@@ -180,12 +174,13 @@ func RouteUpdateEntry(
 			SET title = $1, content = $2, private = $3, modified_at = $4
 			WHERE id = $5
 		`, title, content, privateBool, timestamp, id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
-			return
-		}
+
 		dbId = id
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
 	}
 
 	selectedTagNames := r.Form["tags"]

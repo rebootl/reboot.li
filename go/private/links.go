@@ -49,12 +49,11 @@ func RouteEditLink(
 		link, err = model.GetLinkById(db, vars["id"])
 		if err != nil {
 			if err == sql.ErrNoRows {
-				http.Error(w, "404 Not found", http.StatusNotFound)
-				fmt.Println(err)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			} else {
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				fmt.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
+			fmt.Println(err)
 			return
 		}
 		title = "Edit Entry"
@@ -63,12 +62,11 @@ func RouteEditLink(
 	allCategories, err := model.GetAllLinkCategories(db)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.Error(w, "404 Not found", http.StatusNotFound)
-			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+		fmt.Println(err)
 		return
 	}
 
@@ -83,7 +81,7 @@ func RouteEditLink(
 		AllCategories: allCategories,
 	})
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
@@ -124,21 +122,12 @@ func RouteUpdateLink(
 	}
 
 	timestamp := time.Now().Format(time.RFC3339)
-	// var dbId string
 	if id == "0" {
 		// Insert a new entry into the database
-		// var res sql.Result
 		_, err = db.Exec(`
 			INSERT INTO links (url, title, comment, category_id, created_at, modified_at, user_id)
 				VALUES ($1, $2, $3, $4, $5, $5, $6)
 		`, url, title, comment, category_id, timestamp, 1)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
-			return
-		}
-		// InsertId, _ := res.LastInsertId()
-		// dbId = fmt.Sprintf("%v", InsertId)
 	} else {
 		// Update the entry in the database
 		_, err = db.Exec(`
@@ -146,12 +135,11 @@ func RouteUpdateLink(
 			SET url = $1, title = $2, comment = $3, category_id = $4, modified_at = $5
 			WHERE id = $6
 		`, url, title, comment, category_id, timestamp, id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
-			return
-		}
-		// dbId = id
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
 	}
 
 	http.Redirect(w, r, "/links", 302)
@@ -178,7 +166,6 @@ func RouteDeleteLink(
 	}
 	id := r.FormValue("id")
 
-	// var res sql.Result
 	// delete link to tag links first
 	_, err = db.Exec(`
 		DELETE FROM link_to_tag

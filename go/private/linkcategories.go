@@ -30,24 +30,26 @@ func RouteEditLinkCategories(
 
 	categories, err := model.GetAllLinkCategories(db)
 	if err != nil {
-		// TODO: better error handling, this isn't necessarily a
-		// internal server error it could also be just rows not found
-		// -> DBReturnErrorHandler
 		if err == sql.ErrNoRows {
-			http.Error(w, "404 Not found", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			fmt.Println(err)
 		}
+		fmt.Println(err)
 		return
 	}
 
 	var content bytes.Buffer
-	templates["edit-link-categories"].Execute(&content, struct {
+	err = templates["edit-link-categories"].Execute(&content, struct {
 		LinkCategories []model.LinkCategory
 	}{
 		LinkCategories: categories,
 	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 	public.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
@@ -76,24 +78,29 @@ func RouteEditLinkCategory(
 		linkCategory, err = model.GetLinkCategoryById(db, vars["id"])
 		if err != nil {
 			if err == sql.ErrNoRows {
-				http.Error(w, "404 Not found", http.StatusNotFound)
+				http.Error(w, err.Error(), http.StatusNotFound)
 			} else {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				fmt.Println(err)
 			}
+			fmt.Println(err)
 			return
 		}
 		title = "Edit link category"
 	}
 
 	var content bytes.Buffer
-	templates["edit-link-category"].Execute(&content, struct {
+	err := templates["edit-link-category"].Execute(&content, struct {
 		Title        string
 		LinkCategory model.LinkCategory
 	}{
 		Title:        title,
 		LinkCategory: linkCategory,
 	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 	public.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
