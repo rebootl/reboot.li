@@ -8,6 +8,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// database models
+
 type Entry struct {
 	Id         int
 	UserId     int `db:"user_id"`
@@ -17,7 +19,7 @@ type Entry struct {
 	Title      string
 	Content    string
 	Private    bool
-	Tags       []Tag
+	Tags       []Tag // not actually in the entry table FIXME where is this used?
 }
 
 type Tag struct {
@@ -41,8 +43,25 @@ type Link struct {
 type LinkCategory struct {
 	Id    int
 	Name  string
-	Links []Link
+	Links []Link // not actually in the entry table FIXME where is this used?
 }
+
+type User struct {
+	Id       int
+	UserName string
+	PwHash   string
+}
+
+type Session struct {
+	Id        int
+	Uuid      string
+	UserId    int    `db:"user_id"`
+	UserAgent string `db:"user_agent"`
+	Ip        string
+	CreatedAt string `db:"created_at"`
+}
+
+// page data models, these are used to pass data to the templates
 
 type LinkCategories struct {
 	Categories []LinkCategory
@@ -91,25 +110,12 @@ type BasePageData struct {
 	Locals
 }
 
-type User struct {
-	Id       int
-	UserName string
-	PwHash   string
-}
-
-type Session struct {
-	Id        int
-	Uuid      string
-	UserId    int    `db:"user_id"`
-	UserAgent string `db:"user_agent"`
-	Ip        string
-	CreatedAt string `db:"created_at"`
-}
-
 type Locals struct {
 	LoggedIn bool
 	UserName string
 }
+
+// database functions
 
 func GetEntryById(db *sqlx.DB, locals Locals, id string) (Entry, error) {
 	var q string
@@ -235,6 +241,5 @@ func GetLinkCategoryById(db *sqlx.DB, id string) (LinkCategory, error) {
 	if err != nil {
 		return category, err
 	}
-	// category.Links, err = GetLinksByCategoryId(db, id)
 	return category, err
 }
