@@ -14,6 +14,7 @@ var templatePaths = map[string]string{
 	"edit-tag":             "templates/edit-tag.html",
 	"edit-link-categories": "templates/edit-link-categories.html",
 	"edit-link-category":   "templates/edit-link-category.html",
+	"edit-link":            "templates/edit-link.html",
 }
 
 func getTemplate(filePath string) *template.Template {

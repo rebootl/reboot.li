@@ -38,8 +38,16 @@ func RouteLinksPage(
 		linkCategories[i] = category
 	}
 
-	var content bytes.Buffer
-	templates["links"].Execute(&content, linkCategories)
+	locals := auth.GetLocals(r, db)
 
-	RenderBaseTemplate(w, templates, "Links", &content, auth.GetLocals(r, db))
+	var content bytes.Buffer
+	templates["links"].Execute(&content, struct {
+		LinkCategories []model.LinkCategory
+		LoggedIn       bool
+	}{
+		LinkCategories: linkCategories,
+		LoggedIn:       locals.LoggedIn,
+	})
+
+	RenderBaseTemplate(w, templates, "Links", &content, locals)
 }

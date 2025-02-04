@@ -1,0 +1,49 @@
+<h1>{{ .Title }}</h1>
+
+<form method="POST" action="/update-link">
+  {{if gt .Link.Id 0 }}
+    <a href="{{ .Link.Url }}" target="_blank">{{ .Link.Url }}</a>
+    <input type="hidden" name="url" placeholder="Url" value="{{ .Link.Url }}" />
+  {{else}}
+    <input type="text" name="url" placeholder="Url" value="{{ .Link.Url }}" />
+  {{end}}
+  <input type="hidden" name="id" value="{{ .Link.Id }}" />
+  <input type="text" name="title" placeholder="Title" value="{{ .Link.Title }}" />
+  <input type="text" name="comment" placeholder="Comment" value="{{ .Link.Comment }}" />
+  <label>
+    Category:
+    <select name="categories">
+      {{range .AllCategories}}
+        <option value="{{.Id}}" {{if eq .Id $.Link.CategoryId}}selected{{end}}>{{.Name}}</option>
+      {{end}}
+    </select>
+  </label>
+  <div class="buttons">
+    <div>
+      <button>Save</button>
+      <a href="/links">Cancel</a>
+    </div>
+    <button type="button" class="danger-button" onClick="confirmDelete()">Delete</button>
+  </div>
+
+  {{/* TODO: make this a block 
+  <div class="tag-list">
+    {{range .Link.Tags}}
+      <div class="tag"><small>{{.Name}}</small></div>
+    {{end}}
+  </div>*/}}
+
+</form>
+
+{{if gt .Link.Id 0 }}
+  <small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
+{{end}}
+
+<script>
+  function confirmDelete() {
+    if (confirm("Are you sure you want to delete this link?")) {
+      document.querySelector("form").setAttribute("action", "/delete-link");
+      document.querySelector("form").submit();
+    }
+  }
+</script>

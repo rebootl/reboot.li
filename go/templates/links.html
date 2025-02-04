@@ -14,18 +14,34 @@ access them <b>at your own risk</b>.</small></p>
 </details>
 <p></p>
 
+{{if .LoggedIn}}
+  <p><a href="/edit-link/new">New link</a></p>
+{{end}}
+
 <b>Contents:</b>
 <ol>
-  {{range .}}
-    <li><a href="#{{.Name}}">{{.Name}}</a></li>
+  {{range .LinkCategories}}
+    <li>
+        <a href="#{{.Name}}">{{.Name}}</a>
+    </li>
   {{end}}
 </ol>
 
-{{range .}}
+{{range .LinkCategories}}
   <h2>{{.Name}}<a name="{{.Name}}"></a></h2>
-  <ul>
+  <ul class="link-list">
     {{range .Links}}
-      <li><a href="{{.Url}}" target="_blank">{{.Title}}</a></li>
+      <li>
+        <div>
+          <a href="{{.Url}}" target="_blank">{{.Title}}</a>
+          {{if $.LoggedIn}}
+            <a href="/edit-link/{{.Id}}">Edit</a>
+          {{end}}
+        </div>
+        {{if .Comment}}
+          <span class="link-comment"><small>Comment: {{.Comment}}</small></span>
+        {{end}}
+      </li>
     {{end}}
   </ul>
 {{end}}

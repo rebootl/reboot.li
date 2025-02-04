@@ -116,6 +116,20 @@ var routes = []Route{
 		HandlerFunc: private.RouteDeleteLinkCategory,
 		Methods:     []string{"POST"},
 	},
+	{
+		Path:        "/edit-link/{id}",
+		HandlerFunc: private.RouteEditLink,
+	},
+	{
+		Path:        "/update-link",
+		HandlerFunc: private.RouteUpdateLink,
+		Methods:     []string{"POST"},
+	},
+	{
+		Path:        "/delete-link",
+		HandlerFunc: private.RouteDeleteLink,
+		Methods:     []string{"POST"},
+	},
 }
 
 func loadRoutes(r *mux.Router, routes []Route, db *sqlx.DB, templates map[string]*template.Template) {

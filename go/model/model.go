@@ -35,7 +35,7 @@ type Link struct {
 	Title      string
 	Url        string
 	Comment    string
-	CategoryId string `db:"category_id"`
+	CategoryId int `db:"category_id"`
 }
 
 type LinkCategory struct {
@@ -64,6 +64,14 @@ type EditPageData struct {
 	ModifiedAt string
 	AllTags    []TagWithStatus
 	Ref        string
+}
+
+type EditLinkPageData struct {
+	Link          Link
+	Title         string
+	ModifiedAt    string
+	AllCategories []LinkCategory
+	Ref           string
 }
 
 type TagWithStatus struct {
@@ -204,6 +212,12 @@ func GetEntryTagById(db *sqlx.DB, id string) (Tag, error) {
 	var tag Tag
 	err := db.Get(&tag, "SELECT * FROM entry_tags WHERE id = ?", id)
 	return tag, err
+}
+
+func GetLinkById(db *sqlx.DB, id string) (Link, error) {
+	var link Link
+	err := db.Get(&link, "SELECT * FROM links WHERE id = ?", id)
+	return link, err
 }
 
 func GetAllLinkCategories(db *sqlx.DB) ([]LinkCategory, error) {
