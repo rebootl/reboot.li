@@ -31,11 +31,11 @@ func RouteMainPage(
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println("No rows found")
-			// TODO: return a 404 page
+			http.Error(w, "404 Not found", http.StatusNotFound)
 		} else {
-			fmt.Println(err)
+			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		}
+		fmt.Println(err)
 		return
 	}
 	renderEntry(w, r, templates, entry, auth.GetLocals(r, db))
@@ -57,17 +57,14 @@ func RouteListPage(
 	}
 	var entries []model.Entry
 	err := db.Select(&entries, q, entryType)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("No rows found")
-			http.Error(w, "404 Not found", http.StatusNotFound)
-		} else {
-			fmt.Println(err)
-		}
+	if err != nil && err != sql.ErrNoRows {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
 	// select all tags from the database
+	// HINT: this could be simplified it maybe it is overly optimized
 	var tags []struct {
 		Id       int    `db:"id"`
 		EntryId  int    `db:"entry_id"`
@@ -85,7 +82,8 @@ func RouteListPage(
 			WHERE type = ?
 		)
 	`, entryType)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
@@ -114,21 +112,24 @@ func RouteListPage(
 	var entryTypeToTemplateName = map[string]string{
 		"nerdstuff":  "nerdstuff",
 		"cheatsheet": "cheatsheets",
-		// Add more mappings here
 	}
 	templateName := entryTypeToTemplateName[entryType]
 
 	var content bytes.Buffer
-	templates[templateName].Execute(&content, model.ListPageData{
+	err = templates[templateName].Execute(&content, model.ListPageData{
 		Entries: entries,
 		Motd:    motd.String(),
 		Locals:  locals,
 	})
+	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 
 	var entryTypeToTitle = map[string]string{
 		"nerdstuff":  "Nerd stuff",
 		"cheatsheet": "Cheat sheets",
-		// Add more mappings here
 	}
 	RenderBaseTemplate(w, templates, entryTypeToTitle[entryType], &content, locals)
 }
@@ -142,16 +143,14 @@ func RouteListEntry(
 ) {
 	vars := mux.Vars(r)
 	locals := auth.GetLocals(r, db)
-	// var entry model.Entry
-	// err := db.Get(&entry, "SELECT * FROM entries WHERE id = ? AND type = 'cheatsheet' AND private = 0", vars["id"])
 	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println("No rows found")
 			http.Error(w, "404 Not found", http.StatusNotFound)
 		} else {
-			fmt.Println(err)
+			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		}
+		fmt.Println(err)
 		return
 	}
 
@@ -176,7 +175,7 @@ func renderEntry(
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
 
 	var content bytes.Buffer
-	templates["entry"].Execute(&content, model.EntryPageData{
+	err := templates["entry"].Execute(&content, model.EntryPageData{
 		Id:         entry.Id,
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
@@ -184,6 +183,11 @@ func renderEntry(
 		Tags:       entry.Tags,
 		Locals:     locals,
 	})
+	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 
 	RenderBaseTemplate(w, templates, entry.Title, &content, locals)
 }
@@ -197,7 +201,12 @@ func RouteLogin(
 ) {
 	locals := auth.GetLocals(r, db)
 	var content bytes.Buffer
-	templates["login"].Execute(&content, locals)
+	err := templates["login"].Execute(&content, locals)
+	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 	RenderBaseTemplate(w, templates, "Login", &content, locals)
 }
 
@@ -214,6 +223,7 @@ func RenderBaseTemplate(
 		Locals:  locals,
 	})
 	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		fmt.Println(err)
 	}
 }

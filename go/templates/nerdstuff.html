@@ -9,7 +9,7 @@ MOTD:
 <p>More nerd stuff to come...</p>
 
 <ul>
-  {{range .}}
+  {{range .Entries}}
     <li><a href="/nerdstuff/{{.Id}}">{{.Title}}</a></li>
   {{end}}
 </ul>
