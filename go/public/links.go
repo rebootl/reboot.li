@@ -2,6 +2,7 @@ package public
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -20,18 +21,18 @@ func RouteLinksPage(
 	templates map[string]*template.Template,
 ) {
 	// get the link categories from sqlite database
-	var linkCategories []model.LinkCategory
-	err := db.Select(&linkCategories, "SELECT * FROM link_categories ORDER BY name ASC")
-	if err != nil {
+	linkCategories, err := model.GetAllLinkCategories(db)
+	if err != nil && err != sql.ErrNoRows {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
-	// fmt.Println(linkCategories)
 
 	// get the links
 	for i, category := range linkCategories {
 		err := db.Select(&category.Links, "SELECT * FROM links WHERE category_id = ? ORDER BY title ASC", category.Id)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 			fmt.Println(err)
 			return
 		}
