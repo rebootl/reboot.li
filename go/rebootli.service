@@ -1,0 +1,15 @@
+[Unit]
+Description=Rebootli Service
+After=network.target
+
+[Service]
+User=<your_username>
+Group=<your_groupname>
+WorkingDirectory=/path/to/your/project
+Environment="REBOOTLI_PORT=5041"
+Environment="REBOOTLI_COOKIE_NAME=rebootli-session-123-prod"
+ExecStart=/usr/bin/go run main.go routes.go templates.go
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
