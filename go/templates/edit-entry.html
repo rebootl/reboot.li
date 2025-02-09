@@ -11,6 +11,10 @@
       <input type="checkbox" name="private" {{ if .Entry.Private }}checked{{ end }} />
       Private
     </label>
+    <label>
+      <input type="checkbox" name="version" checked />
+      Save version (previous state)
+    </label>
   </div>
   <label>
     Tags:
@@ -27,19 +31,19 @@
     </div>
     <button type="button" class="danger-button" onClick="confirmDelete()">Delete</button>
   </div>
-
-  {{/* TODO: make this a block */}}
-  <div class="tag-list">
-    {{range .Entry.Tags}}
-      <div class="tag"><small>{{.Name}}</small></div>
-    {{end}}
-  </div>
-
 </form>
 
+{{/* NOTE: check here because it could be a new entry */}}
 {{if gt .Entry.Id 0 }}
-  <small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
+  <p><small class="text-dimmed">Last modified: {{ .ModifiedAt }}</small></p>
 {{end}}
+
+{{/* TODO: make this a block */}}
+<div class="tag-list margin-top">
+  {{range .Entry.Tags}}
+    <div class="tag"><small>{{.Name}}</small></div>
+  {{end}}
+</div>
 
 <script>
   function confirmDelete() {

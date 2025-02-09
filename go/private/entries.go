@@ -141,6 +141,7 @@ func RouteUpdateEntry(
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	private := r.FormValue("private")
+	version := r.FormValue("version")
 
 	// Validate the form data
 	if title == "" || content == "" {
@@ -151,6 +152,15 @@ func RouteUpdateEntry(
 	privateBool := false
 	if private == "on" {
 		privateBool = true
+	}
+
+	if version == "on" {
+		err = model.SaveVersion(db, locals, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
+			return
+		}
 	}
 
 	timestamp := time.Now().Format(time.RFC3339)

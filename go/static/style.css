@@ -102,11 +102,11 @@ pre {
   color: var(--text-color-dimmed);
 }
 
-.last-modified {
+/* .last-modified {
 	padding-top: 20px;
 	padding-bottom: 20px;
   display: block;
-}
+} */
 
 .motd {
 	padding: 10px;
@@ -147,6 +147,10 @@ pre {
 	display: flex;
 	gap: 10px;
 	flex-wrap: wrap;
+}
+
+.margin-top {
+	margin-top: 20px;
 }
 
 .tag {

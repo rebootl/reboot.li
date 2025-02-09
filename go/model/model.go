@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -20,6 +21,14 @@ type Entry struct {
 	Content    string
 	Private    bool
 	Tags       []Tag // not actually in the entry table FIXME where is this used?
+}
+
+type EntryVersion struct {
+	Id        int
+	EntryId   int `db:"entry_id"`
+	Title     string
+	Content   string
+	CreatedAt string `db:"created_at"`
 }
 
 type Tag struct {
@@ -73,6 +82,8 @@ type EntryPageData struct {
 	Content    template.HTML
 	ModifiedAt string
 	Tags       []Tag
+	VersionIds []int
+	IsVersion  bool
 	Locals
 }
 
@@ -242,4 +253,41 @@ func GetLinkCategoryById(db *sqlx.DB, id string) (LinkCategory, error) {
 		return category, err
 	}
 	return category, err
+}
+
+func SaveVersion(db *sqlx.DB, locals Locals, id string) error {
+	// get the entry
+	entry, err := GetEntryById(db, locals, id)
+	if err != nil {
+		return err
+	}
+
+	timestamp := time.Now().Format(time.RFC3339)
+	_, err = db.Exec(`
+			INSERT INTO entries_versions (entry_id, title, content, created_at)
+			VALUES ($1, $2, $3, $4)
+			`, id, entry.Title, entry.Content, timestamp)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetVersionIds(db *sqlx.DB, id int) ([]int, error) {
+	var versionIds []int
+	err := db.Select(&versionIds, "SELECT id FROM entries_versions WHERE entry_id = ? ORDER BY id ASC", id)
+	if err != nil {
+		return nil, err
+	}
+	return versionIds, nil
+}
+
+func GetEntryVersion(db *sqlx.DB, id int, versionId string) (EntryVersion, error) {
+	var version EntryVersion
+	err := db.Get(&version, "SELECT * FROM entries_versions WHERE entry_id = ? AND id = ?", id, versionId)
+	if err != nil {
+		return version, err
+	}
+	return version, nil
 }

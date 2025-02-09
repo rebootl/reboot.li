@@ -73,6 +73,15 @@ CREATE TABLE IF NOT EXISTS "entries" (
 	FOREIGN KEY("user_id") REFERENCES "users"("id"),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
+CREATE TABLE IF NOT EXISTS "entries_versions" (
+	"id"	INTEGER NOT NULL UNIQUE,
+	"entry_id"	INTEGER NOT NULL,
+	"created_at"	TEXT NOT NULL,
+	"title"	TEXT NOT NULL,
+	"content"	TEXT NOT NULL,
+	FOREIGN KEY("entry_id") REFERENCES "entries"("id"),
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
 CREATE TABLE IF NOT EXISTS "links" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,

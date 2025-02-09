@@ -23,6 +23,9 @@ func RouteMainPage(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
+	version := r.URL.Query().Get("version")
+	fmt.Println(version)
+
 	// get the main page content from sqlite database
 	var entry model.Entry
 	err := db.Get(&entry,
@@ -38,7 +41,7 @@ func RouteMainPage(
 		fmt.Println(err)
 		return
 	}
-	renderEntry(w, r, templates, entry, auth.GetLocals(r, db))
+	renderEntry(w, r, db, templates, entry, version, auth.GetLocals(r, db))
 }
 
 func RouteListPage(
@@ -134,7 +137,7 @@ func RouteListPage(
 	RenderBaseTemplate(w, templates, entryTypeToTitle[entryType], &content, locals)
 }
 
-func RouteListEntry(
+func RouteEntry(
 	entryType string,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -143,6 +146,10 @@ func RouteListEntry(
 ) {
 	vars := mux.Vars(r)
 	locals := auth.GetLocals(r, db)
+
+	version := r.URL.Query().Get("version")
+	fmt.Println(version)
+
 	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -154,16 +161,33 @@ func RouteListEntry(
 		return
 	}
 
-	renderEntry(w, r, templates, entry, locals)
+	renderEntry(w, r, db, templates, entry, version, locals)
 }
 
 func renderEntry(
 	w http.ResponseWriter,
 	r *http.Request,
+	db *sqlx.DB,
 	templates map[string]*template.Template,
 	entry model.Entry,
+	version string,
 	locals model.Locals,
 ) {
+	if version != "" {
+		entryVersion, err := model.GetEntryVersion(db, entry.Id, version)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.Error(w, "404 Not found", http.StatusNotFound)
+			} else {
+				http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+			}
+			fmt.Println(err)
+			return
+		}
+		entry.Title = entryVersion.Title
+		entry.Content = entryVersion.Content
+		entry.ModifiedAt = entryVersion.CreatedAt
+	}
 	// convert content to html
 	// WARNING: apparently markdown does not sanitize the content,
 	//          so if we insert content from a random source this is a security risk,
@@ -174,13 +198,18 @@ func renderEntry(
 	// preprocesse date
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
 
+	// get version ids
+	versionIds, err := model.GetVersionIds(db, entry.Id)
+
 	var content bytes.Buffer
-	err := templates["entry"].Execute(&content, model.EntryPageData{
+	err = templates["entry"].Execute(&content, model.EntryPageData{
 		Id:         entry.Id,
 		Title:      entry.Title,
 		Content:    template.HTML(htmlContent),
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 		Tags:       entry.Tags,
+		VersionIds: versionIds,
+		IsVersion:  version != "",
 		Locals:     locals,
 	})
 	if err != nil {

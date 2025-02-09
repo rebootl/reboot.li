@@ -1,4 +1,10 @@
 <h1>{{.Title }}</h1>
+
+{{if .IsVersion}}
+  <p><small class="text-dimmed">NOTE: You're viewing a previous version of this entry.<br>
+  <a href="/entry/{{.Id}}">View current page.</a></small></p>
+{{end}}
+
 {{if .LoggedIn}}
   <div class="entry-item-r">
     <a href="/edit-entry/{{.Id}}?ref=/entry/{{.Id}}">Edit</a>
@@ -7,11 +13,26 @@
 
 {{ .Content }}
 
-<small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
+{{if .IsVersion}}
+  <p><small class="text-dimmed">Version date: {{ .ModifiedAt }}</small></p>
+{{else}}
+  <p><small class="text-dimmed">Last modified: {{ .ModifiedAt }}</small></p>
+{{end}}
+
+{{if gt (len .VersionIds) 0}}
+  <p><small class="text-dimmed">
+    Versions:
+    {{range .VersionIds}}
+        <a href="/entry/{{$.Id}}?version={{.}}">{{.}}</a>
+    {{end}}
+  </small></p>
+{{end}}
 
 {{/* TODO: make this a block */}}
-<div class="tag-list">
-  {{range .Tags}}
-    <div class="tag"><small>{{.Name}}</small></div>
-  {{end}}
-</div>
+{{if gt (len .Tags) 0}}
+  <div class="tag-list margin-top">
+    {{range .Tags}}
+      <div class="tag"><small>{{.Name}}</small></div>
+    {{end}}
+  </div>
+{{end}}

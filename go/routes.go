@@ -42,7 +42,7 @@ var routes = []Route{
 	},
 	{
 		Path:        "/entry/{id}",
-		HandlerFunc: public.RouteListEntry,
+		HandlerFunc: public.RouteEntry,
 	},
 	{
 		Path:        "/nerdstuff",
