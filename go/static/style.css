@@ -74,7 +74,7 @@ main {
   width: var(--max-main-width);
   padding-left: 10px;
   padding-right: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 
 	/* fixes scaling of pre and links in short width (mobile) */
 	overflow-x: auto;
