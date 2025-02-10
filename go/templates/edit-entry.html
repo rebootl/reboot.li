@@ -12,7 +12,7 @@
       Private
     </label>
     <label>
-      <input type="checkbox" name="version" checked />
+      <input type="checkbox" name="version" {{if gt .Entry.Id 0}}checked{{else}}disabled{{end}} />
       Save version (previous state)
     </label>
   </div>
