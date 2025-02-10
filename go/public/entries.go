@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gomarkdown/markdown"
@@ -66,44 +67,15 @@ func RouteListPage(
 		return
 	}
 
-	// select all tags from the database
-	// HINT: this could be simplified it maybe it is overly optimized
-	var tags []struct {
-		Id       int    `db:"id"`
-		EntryId  int    `db:"entry_id"`
-		TagId    int    `db:"id"`
-		TagName  string `db:"name"`
-		TagColor string `db:"color"`
-	}
-	err = db.Select(&tags, `
-		SELECT et.entry_id, t.id, t.name, t.color
-		FROM entry_tags t
-		JOIN entry_to_tag et ON t.id = et.tag_id
-		WHERE et.entry_id IN (
-			SELECT id
-			FROM entries
-			WHERE type = ?
-		)
-	`, entryType)
-	if err != nil && err != sql.ErrNoRows {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
-		return
-	}
-
-	// add tags to entries
-	for _, tag := range tags {
-		for i, entry := range entries {
-			if entry.Id == tag.EntryId {
-				t := model.Tag{
-					Id:    tag.TagId,
-					Name:  tag.TagName,
-					Color: tag.TagColor,
-				}
-
-				entries[i].Tags = append(entries[i].Tags, t)
-			}
+	for i, entry := range entries {
+		// get tags for each entry
+		tags, err := model.GetTagsByEntryId(db, strconv.Itoa(entry.Id))
+		if err != nil {
+			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+			fmt.Println(err)
+			return
 		}
+		entries[i].Tags = tags
 	}
 
 	var motd bytes.Buffer
