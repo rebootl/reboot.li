@@ -67,8 +67,8 @@ func RouteListPage(
 		return
 	}
 
+	// get tags for entries
 	for i, entry := range entries {
-		// get tags for each entry
 		tags, err := model.GetTagsByEntryId(db, strconv.Itoa(entry.Id))
 		if err != nil {
 			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
@@ -84,16 +84,20 @@ func RouteListPage(
 		motdTemplate.Execute(&motd, nil)
 	}
 
-	var entryTypeToTemplateName = map[string]string{
-		"nerdstuff":  "nerdstuff",
-		"cheatsheet": "cheatsheets",
-	}
-	templateName := entryTypeToTemplateName[entryType]
+	listPageType := entryType + "-list"
+	listPage, err := model.GetEntryByType(db, locals, listPageType)
+
+	ref := r.URL.Path
 
 	var content bytes.Buffer
-	err = templates[templateName].Execute(&content, model.ListPageData{
-		Entries: entries,
+	err = templates["entries-list"].Execute(&content, model.ListPageData{
+		Id:      listPage.Id,
+		Title:   listPage.Title,
 		Motd:    motd.String(),
+		Content: template.HTML(md2Html(listPage.Content)),
+		Ref:     ref,
+		Type:    entryType,
+		Entries: entries,
 		Locals:  locals,
 	})
 	if err != nil {
@@ -102,11 +106,7 @@ func RouteListPage(
 		return
 	}
 
-	var entryTypeToTitle = map[string]string{
-		"nerdstuff":  "Nerd stuff",
-		"cheatsheet": "Cheat sheets",
-	}
-	RenderBaseTemplate(w, templates, entryTypeToTitle[entryType], &content, locals)
+	RenderBaseTemplate(w, templates, listPage.Title, &content, locals)
 }
 
 func RouteEntry(
@@ -161,11 +161,7 @@ func renderEntry(
 		entry.ModifiedAt = entryVersion.CreatedAt
 	}
 	// convert content to html
-	// WARNING: apparently markdown does not sanitize the content,
-	//          so if we insert content from a random source this is a security risk,
-	//          however I'm only planning to insert my own content here for now,
-	//          so I leave it like this for now
-	htmlContent := markdown.ToHTML([]byte(entry.Content), nil, nil)
+	htmlContent := md2Html(entry.Content)
 
 	// preprocesse date
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
@@ -227,4 +223,12 @@ func RenderBaseTemplate(
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		fmt.Println(err)
 	}
+}
+
+func md2Html(md string) string {
+	// WARNING: apparently markdown does not sanitize the content,
+	//          so if we insert content from a random source this is a security risk,
+	//          however I'm only planning to insert my own content here for now,
+	//          so I leave it like this for now
+	return string(markdown.ToHTML([]byte(md), nil, nil))
 }

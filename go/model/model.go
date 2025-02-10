@@ -110,8 +110,13 @@ type TagWithStatus struct {
 }
 
 type ListPageData struct {
-	Entries []Entry
+	Id      int
+	Title   string
 	Motd    string
+	Content template.HTML
+	Ref     string
+	Type    string
+	Entries []Entry
 	Locals
 }
 
@@ -127,6 +132,17 @@ type Locals struct {
 }
 
 // database functions
+func GetEntryByType(db *sqlx.DB, locals Locals, entryType string) (Entry, error) {
+	var q string
+	if locals.LoggedIn {
+		q = "SELECT * FROM entries WHERE type = ? ORDER BY modified_at DESC LIMIT 1"
+	} else {
+		q = "SELECT * FROM entries WHERE type = ? AND private = 0 ORDER BY modified_at DESC LIMIT 1"
+	}
+	var entry Entry
+	err := db.Get(&entry, q, entryType)
+	return entry, err
+}
 
 func GetEntryById(db *sqlx.DB, locals Locals, id string) (Entry, error) {
 	var q string

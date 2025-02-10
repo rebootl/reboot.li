@@ -3,11 +3,11 @@ package main
 import "html/template"
 
 var templatePaths = map[string]string{
-	"base":                 "templates/index.html",
-	"entry":                "templates/entry.html",
-	"links":                "templates/links.html",
-	"cheatsheets":          "templates/cheatsheets.html",
-	"nerdstuff":            "templates/nerdstuff.html",
+	"base":  "templates/index.html",
+	"entry": "templates/entry.html",
+	"links": "templates/links.html",
+	// "cheatsheets":          "templates/cheatsheets.html",
+	// "nerdstuff":            "templates/nerdstuff.html",
 	"login":                "templates/login.html",
 	"edit-entry":           "templates/edit-entry.html",
 	"edit-tags":            "templates/edit-tags.html",
@@ -15,6 +15,7 @@ var templatePaths = map[string]string{
 	"edit-link-categories": "templates/edit-link-categories.html",
 	"edit-link-category":   "templates/edit-link-category.html",
 	"edit-link":            "templates/edit-link.html",
+	"entries-list":         "templates/entries-list.html",
 }
 
 func getTemplate(filePath string) *template.Template {

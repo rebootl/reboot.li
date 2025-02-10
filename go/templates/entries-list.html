@@ -1,14 +1,16 @@
-<h1>Cheat sheets</h1>
+<h1>{{.Title}}</h1>
 
-<p>A collection of useful code snippets and commands etc.</p>
+{{if .Motd}}
+  MOTD:
 
-<details>
-  <summary><small><b>DISCLAIMER</b></small></summary>
-  <p><small><b>Use at your own risk</b>.</small></p>
-</details>
+  <blockquote class="motd">{{.Motd}}</blockquote>
+{{end}}
+
+{{.Content}}
 
 {{if .Locals.LoggedIn}}
-  <p><a href="/edit-entry/new?ref=/cheatsheets&type=cheatsheet">New entry</a></p>
+  <p><a href="/edit-entry/{{.Id}}?ref={{.Ref}}">Edit</a></p>
+  <p><a href="/edit-entry/new?ref={{.Ref}}&type={{.Type}}">New entry</a></p>
 {{end}}
 
 <div class="entry-list">
@@ -29,7 +31,7 @@
       </div>
       {{if $.Locals.LoggedIn}}
         <div class="entry-item-r">
-          <a href="/edit-entry/{{.Id}}?ref=/cheatsheets">Edit</a>
+          <a href="/edit-entry/{{.Id}}?ref={{$.Ref}}">Edit</a>
         </div>
       {{end}}
     </div>
