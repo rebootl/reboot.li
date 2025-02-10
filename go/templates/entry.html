@@ -32,7 +32,9 @@
 {{if gt (len .Tags) 0}}
   <div class="tag-list margin-top">
     {{range .Tags}}
-      <div class="tag"><small>{{.Name}}</small></div>
+      <div class="tag" style="color: {{ .Color }}; border-color: {{ .Color }}; background-color: {{ .Color }}30;">
+        <small><strong>{{.Name}}</strong></small>
+      </div>
     {{end}}
   </div>
 {{end}}
