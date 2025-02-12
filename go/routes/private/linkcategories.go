@@ -10,9 +10,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 
-	"mypersonalwebsite/auth"
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
-	"mypersonalwebsite/public"
+	"mypersonalwebsite/routes/public"
 )
 
 func RouteEditLinkCategories(
@@ -22,7 +22,7 @@ func RouteEditLinkCategories(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -50,7 +50,7 @@ func RouteEditLinkCategories(
 		fmt.Println(err)
 		return
 	}
-	public.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
+	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
 func RouteEditLinkCategory(
@@ -60,7 +60,7 @@ func RouteEditLinkCategory(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -101,7 +101,7 @@ func RouteEditLinkCategory(
 		fmt.Println(err)
 		return
 	}
-	public.RenderBaseTemplate(w, templates, title, &content, locals)
+	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 func RouteUpdateLinkCategory(
@@ -111,7 +111,7 @@ func RouteUpdateLinkCategory(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -160,7 +160,7 @@ func RouteDeleteLinkCategory(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return

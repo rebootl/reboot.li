@@ -10,7 +10,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"mypersonalwebsite/auth"
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
 )
 
@@ -21,7 +21,7 @@ func RouteListPage(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	var q string
 	if locals.LoggedIn {
 		q = "SELECT * FROM entries WHERE type = ? ORDER BY id DESC"
@@ -63,7 +63,7 @@ func RouteListPage(
 		Id:      listPage.Id,
 		Title:   listPage.Title,
 		Motd:    motd.String(),
-		Content: template.HTML(md2Html(listPage.Content)),
+		Content: template.HTML(common.Md2Html(listPage.Content)),
 		Ref:     ref,
 		Type:    entryType,
 		Entries: entries,
@@ -75,5 +75,5 @@ func RouteListPage(
 		return
 	}
 
-	RenderBaseTemplate(w, templates, listPage.Title, &content, locals)
+	common.RenderBaseTemplate(w, templates, listPage.Title, &content, locals)
 }

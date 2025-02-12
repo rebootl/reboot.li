@@ -11,9 +11,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 
-	"mypersonalwebsite/auth"
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
-	"mypersonalwebsite/public"
+	"mypersonalwebsite/routes/public"
 )
 
 func RouteEditEntry(
@@ -23,7 +23,7 @@ func RouteEditEntry(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -115,7 +115,7 @@ func RouteEditEntry(
 		return
 	}
 
-	public.RenderBaseTemplate(w, templates, title, &content, locals)
+	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 func RouteUpdateEntry(
@@ -125,7 +125,7 @@ func RouteUpdateEntry(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -212,7 +212,7 @@ func RouteDeleteEntry(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return

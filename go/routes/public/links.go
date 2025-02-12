@@ -9,7 +9,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"mypersonalwebsite/auth"
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
 )
 
@@ -39,7 +39,7 @@ func RouteLinksPage(
 		linkCategories[i] = category
 	}
 
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 
 	var content bytes.Buffer
 	templates["links"].Execute(&content, struct {
@@ -50,5 +50,5 @@ func RouteLinksPage(
 		LoggedIn:       locals.LoggedIn,
 	})
 
-	RenderBaseTemplate(w, templates, "Links", &content, locals)
+	common.RenderBaseTemplate(w, templates, "Links", &content, locals)
 }

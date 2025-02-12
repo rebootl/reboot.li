@@ -14,7 +14,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 
-	"mypersonalwebsite/auth"
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/config"
 	"mypersonalwebsite/model"
 )
@@ -26,7 +26,7 @@ func RouteLogin(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	var content bytes.Buffer
 	err := templates["login"].Execute(&content, locals)
 	if err != nil {
@@ -34,7 +34,7 @@ func RouteLogin(
 		fmt.Println(err)
 		return
 	}
-	RenderBaseTemplate(w, templates, "Login", &content, locals)
+	common.RenderBaseTemplate(w, templates, "Login", &content, locals)
 }
 
 func RouteCheckLogin(

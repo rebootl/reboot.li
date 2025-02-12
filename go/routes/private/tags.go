@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 
-	"mypersonalwebsite/auth"
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
 	"mypersonalwebsite/public"
 )
@@ -22,7 +22,7 @@ func RouteEditTags(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -50,7 +50,7 @@ func RouteEditTags(
 		fmt.Println(err)
 		return
 	}
-	public.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
+	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
 func RouteEditTag(
@@ -60,7 +60,7 @@ func RouteEditTag(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -105,7 +105,7 @@ func RouteEditTag(
 		fmt.Println(err)
 		return
 	}
-	public.RenderBaseTemplate(w, templates, title, &content, locals)
+	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 func RouteUpdateTag(
@@ -115,7 +115,7 @@ func RouteUpdateTag(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -165,7 +165,7 @@ func RouteDeleteTag(
 	db *sqlx.DB,
 	templates map[string]*template.Template,
 ) {
-	locals := auth.GetLocals(r, db)
+	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
