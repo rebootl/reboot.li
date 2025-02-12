@@ -7,9 +7,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 
-	"mypersonalwebsite/auth"
-	"mypersonalwebsite/private"
-	"mypersonalwebsite/public"
+	"mypersonalwebsite/routes/private"
+	"mypersonalwebsite/routes/public"
 )
 
 type Route struct {
@@ -60,12 +59,12 @@ var routes = []Route{
 	},
 	{
 		Path:        "/login",
-		HandlerFunc: auth.RouteCheckLogin,
+		HandlerFunc: public.RouteCheckLogin,
 		Methods:     []string{"POST"},
 	},
 	{
 		Path:        "/logout",
-		HandlerFunc: auth.RouteLogout,
+		HandlerFunc: public.RouteLogout,
 	},
 	{
 		Path:        "/edit-entry/{id}",
