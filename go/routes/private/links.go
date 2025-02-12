@@ -13,9 +13,9 @@ import (
 
 	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
-	"mypersonalwebsite/routes/public"
 )
 
+// Path: "/edit-link/{id}"
 func RouteEditLink(
 	entryType string,
 	w http.ResponseWriter,
@@ -89,6 +89,8 @@ func RouteEditLink(
 	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
+// Path: "/update-link"
+// Method: POST
 func RouteUpdateLink(
 	entryType string,
 	w http.ResponseWriter,
@@ -145,6 +147,8 @@ func RouteUpdateLink(
 	http.Redirect(w, r, "/links", 302)
 }
 
+// Path: "/delete-link"
+// Method: POST
 func RouteDeleteLink(
 	entryType string,
 	w http.ResponseWriter,

@@ -12,9 +12,9 @@ import (
 
 	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
-	"mypersonalwebsite/public"
 )
 
+// Path: "/edit-tags"
 func RouteEditTags(
 	entryType string,
 	w http.ResponseWriter,
@@ -53,6 +53,7 @@ func RouteEditTags(
 	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
+// Path: "/edit-tag/{id}"
 func RouteEditTag(
 	entryType string,
 	w http.ResponseWriter,
@@ -108,6 +109,8 @@ func RouteEditTag(
 	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
+// Path: "/update-tag"
+// Method: POST
 func RouteUpdateTag(
 	entryType string,
 	w http.ResponseWriter,
@@ -158,6 +161,8 @@ func RouteUpdateTag(
 	return
 }
 
+// Path: "/delete-tag"
+// Method: POST
 func RouteDeleteTag(
 	entryType string,
 	w http.ResponseWriter,

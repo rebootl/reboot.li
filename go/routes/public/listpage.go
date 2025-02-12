@@ -14,6 +14,10 @@ import (
 	"mypersonalwebsite/model"
 )
 
+// Path: "/cheatsheets", "/nerdstuff"
+//
+// this uses entryType to create a list of all entries of that type
+// it also uses entryType+"-list" to display content above the list
 func RouteListPage(
 	entryType string,
 	w http.ResponseWriter,

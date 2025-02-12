@@ -13,9 +13,9 @@ import (
 
 	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
-	"mypersonalwebsite/routes/public"
 )
 
+// Path: "/edit-entry/{id}"
 func RouteEditEntry(
 	entryType string,
 	w http.ResponseWriter,
@@ -118,6 +118,8 @@ func RouteEditEntry(
 	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
+// Path: "/update-entry"
+// Method: POST
 func RouteUpdateEntry(
 	entryType string,
 	w http.ResponseWriter,
@@ -205,6 +207,8 @@ func RouteUpdateEntry(
 	http.Redirect(w, r, ref, 302)
 }
 
+// Path: "/delete-entry"
+// Method: POST
 func RouteDeleteEntry(
 	entryType string,
 	w http.ResponseWriter,
@@ -226,7 +230,6 @@ func RouteDeleteEntry(
 	}
 	id := r.FormValue("id")
 
-	// var res sql.Result
 	// delete entry to tag links first
 	_, err = db.Exec(`
 		DELETE FROM entry_to_tag
@@ -242,8 +245,6 @@ func RouteDeleteEntry(
 		DELETE FROM entries
 		WHERE id = $1
 	`, id)
-	// fmt.Println(res)
-	// fmt.Println(err)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)

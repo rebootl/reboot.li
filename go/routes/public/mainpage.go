@@ -12,6 +12,9 @@ import (
 	"mypersonalwebsite/model"
 )
 
+// Path: "/", "/privacypolicy"
+//
+// this uses the entryType to determine the page content
 func RouteMainPage(
 	entryType string,
 	w http.ResponseWriter,
@@ -20,7 +23,6 @@ func RouteMainPage(
 	templates map[string]*template.Template,
 ) {
 	version := r.URL.Query().Get("version")
-	fmt.Println(version)
 
 	// get the main page content from sqlite database
 	var entry model.Entry

@@ -11,6 +11,7 @@ import (
 	"mypersonalwebsite/config"
 )
 
+// Path: "/logout"
 func RouteLogout(
 	entryType string,
 	w http.ResponseWriter,

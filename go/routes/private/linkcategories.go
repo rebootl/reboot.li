@@ -12,9 +12,9 @@ import (
 
 	"mypersonalwebsite/common"
 	"mypersonalwebsite/model"
-	"mypersonalwebsite/routes/public"
 )
 
+// Path: "/edit-link-categories"
 func RouteEditLinkCategories(
 	entryType string,
 	w http.ResponseWriter,
@@ -53,6 +53,7 @@ func RouteEditLinkCategories(
 	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
+// Path: "/edit-link-category/{id}"
 func RouteEditLinkCategory(
 	entryType string,
 	w http.ResponseWriter,
@@ -104,6 +105,8 @@ func RouteEditLinkCategory(
 	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
+// Path: "/update-link-category"
+// Method: POST
 func RouteUpdateLinkCategory(
 	entryType string,
 	w http.ResponseWriter,
@@ -153,6 +156,8 @@ func RouteUpdateLinkCategory(
 	return
 }
 
+// Path: "/delete-link-category"
+// Method: POST
 func RouteDeleteLinkCategory(
 	entryType string,
 	w http.ResponseWriter,

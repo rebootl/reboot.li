@@ -13,6 +13,7 @@ import (
 	"mypersonalwebsite/model"
 )
 
+// Path: "/links"
 func RouteLinksPage(
 	entryType string,
 	w http.ResponseWriter,

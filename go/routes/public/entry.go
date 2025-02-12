@@ -13,6 +13,7 @@ import (
 	"mypersonalwebsite/model"
 )
 
+// Path: "/entry/{id}"
 func RouteEntry(
 	entryType string,
 	w http.ResponseWriter,

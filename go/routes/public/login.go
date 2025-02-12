@@ -19,6 +19,7 @@ import (
 	"mypersonalwebsite/model"
 )
 
+// Path: "/login"
 func RouteLogin(
 	entryType string,
 	w http.ResponseWriter,
@@ -37,6 +38,8 @@ func RouteLogin(
 	common.RenderBaseTemplate(w, templates, "Login", &content, locals)
 }
 
+// Path: "/login"
+// Method: POST
 func RouteCheckLogin(
 	entryType string,
 	w http.ResponseWriter,

@@ -48,10 +48,6 @@ var routes = []Route{
 		EntryType:   "nerdstuff",
 		HandlerFunc: public.RouteListPage,
 	},
-	// {
-	// 	Path:        "/nerdstuff/{id}",
-	// 	HandlerFunc: public.RouteListEntry,
-	// },
 	{
 		Path:        "/login",
 		HandlerFunc: public.RouteLogin,
@@ -91,6 +87,7 @@ var routes = []Route{
 	{
 		Path:        "/update-tag",
 		HandlerFunc: private.RouteUpdateTag,
+		Methods:     []string{"POST"},
 	},
 	{
 		Path:        "/delete-tag",
