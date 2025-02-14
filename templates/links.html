@@ -1,0 +1,49 @@
+<h1>Links</h1>
+
+<p>Collected links I found useful and/or interesting.</p>
+
+<details>
+  <summary><small><b>Contents</b></small></summary>
+  <ol>
+    {{range .LinkCategories}}
+      <li>
+          <a href="#{{.Name}}">{{.Name}}</a>
+      </li>
+    {{end}}
+  </ol>
+</details>
+<p></p>
+
+<details>
+  <summary><small><b>DISCLAIMER</b></small></summary>
+  <p><small>Naturally, I do not control the contents of
+external links. The contents of external links may change over time and links
+may become unaccessible. The title displayed here may not be representative of
+the content of the external website. I do not endorse or guarantee the content
+of external websites, and I am not responsible for their accuracy, completeness,
+suitability, or safety. By clicking on these links, you acknowledge that you
+access them <b>at your own risk</b>.</small></p>
+</details>
+
+{{if .LoggedIn}}
+  <p><a href="/edit-link/new">New link</a></p>
+{{end}}
+
+{{range .LinkCategories}}
+  <h2>{{.Name}}<a name="{{.Name}}"></a></h2>
+  <ul class="link-list">
+    {{range .Links}}
+      <li>
+        <div>
+          <a href="{{.Url}}" target="_blank" class="link">{{.Title}}</a>
+          {{if $.LoggedIn}}
+            <a href="/edit-link/{{.Id}}">Edit</a>
+          {{end}}
+        </div>
+        {{if .Comment}}
+          <span class="link-comment"><small>Comment: {{.Comment}}</small></span>
+        {{end}}
+      </li>
+    {{end}}
+  </ul>
+{{end}}

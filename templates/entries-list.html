@@ -1,0 +1,39 @@
+<h1>{{.Title}}</h1>
+
+{{if .Motd}}
+  MOTD:
+
+  <blockquote class="motd">{{.Motd}}</blockquote>
+{{end}}
+
+{{.Content}}
+
+{{if .Locals.LoggedIn}}
+  <p><a href="/edit-entry/{{.Id}}?ref={{.Ref}}">Edit</a></p>
+  <p><a href="/edit-entry/new?ref={{.Ref}}&type={{.Type}}">New entry</a></p>
+{{end}}
+
+<div class="entry-list">
+  {{range .Entries}}
+    <div class="entry-item">
+      <div class="entry-item-l">
+        <a href="/entry/{{.Id}}">{{.Title}}</a>
+        {{if .Private}}
+          <span class="private-label">&#x1F512;<small>Private</small></span>
+        {{end}}
+        <div class="tag-list">
+          {{range .Tags}}
+            <div class="tag" style="color: {{ .Color }}; border-color: {{ .Color }}; background-color: {{ .Color }}30;">
+              <small><strong>{{.Name}}</strong></small>
+            </div>
+          {{end}}
+        </div>
+      </div>
+      {{if $.Locals.LoggedIn}}
+        <div class="entry-item-r">
+          <a href="/edit-entry/{{.Id}}?ref={{$.Ref}}">Edit</a>
+        </div>
+      {{end}}
+    </div>
+  {{end}}
+</div>

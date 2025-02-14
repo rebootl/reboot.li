@@ -1,0 +1,14 @@
+<h1>Edit link categories</h1>
+
+<p><a href="/edit-link-category/new">New link category</a></p>
+
+<div class="entry-list">
+  {{range .LinkCategories}}
+    <div class="entry-item">
+      <div class=""><strong>{{.Name}}</strong></div>
+      <div class="entry-item-r">
+        <a href="/edit-link-category/{{.Id}}">Edit</a>
+      </div>
+    </div>
+  {{end}}
+</div>

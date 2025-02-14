@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="my personal website" />
+	<meta name="author" content="Cem Aydin" />
+
+	<title>{{ .Title }} - reboot.li</title>
+
+	<link rel="icon" href="/static/favicon.png" />
+	<link rel="stylesheet" href="/static/style.css"></link>
+</head>
+<body>
+	<header>
+		<nav>
+			<ul>
+				<li><a href="/">🏠 home</a></li>
+				<li><a href="/nerdstuff">🤓 nerd stuff</a></li>
+				<li><a href="/cheatsheets">📋 cheat sheets</a></li>
+				<li><a href="/links">🖇️ links</a></li>
+			</ul>
+			{{if .LoggedIn }}
+				<ul>
+					<li><a href="/logout">🚪 logout</a></li>
+					<li><a href="/edit-tags">🏷️ edit tags</a></li>
+					<li><a href="/edit-link-categories">🏷️ edit link categories</a></li>
+				</ul>
+			{{ else }}
+				<ul>
+					<li><a href="/login">🔑 login</a></li>
+				</ul>
+			{{ end }}
+		</nav>
+	</header>
+	<div class="main-wrapper">
+		<main>
+
+			{{ .Content }}
+
+		</main>
+	</div>
+	<footer>
+		🏳️‍🌈 Everyone is welcome 🏳️‍⚧️<br>
+		Copyright 2025 Cem Aydin<br>
+		Built using <a href="https://go.dev/" target="_blank">Go</a> and <a href="https://www.sqlite.org/" target="_blank">sqlite</a><br>
+		<small><a href="/privacypolicy">Privacy Policy</a></small><br>
+	</footer>
+</body>
+</html>

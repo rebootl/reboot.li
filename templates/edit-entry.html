@@ -1,0 +1,55 @@
+<h1>{{ .Title }}</h1>
+
+<form method="POST" action="/update-entry">
+  <input type="hidden" name="id" value="{{ .Entry.Id }}" />
+  <input type="hidden" name="ref" value="{{ .Ref }}" />
+  <input type="hidden" name="type" value="{{ .Type }}" />
+  <input type="text" name="title" placeholder="Title" value="{{ .Entry.Title }}" />
+  <textarea name="content" placeholder="Text...">{{ .Entry.Content }}</textarea>
+  <div>
+    <label>
+      <input type="checkbox" name="private" {{ if .Entry.Private }}checked{{ end }} />
+      Private
+    </label>
+    <label>
+      <input type="checkbox" name="version" {{if gt .Entry.Id 0}}checked{{else}}disabled{{end}} />
+      Save version (previous state)
+    </label>
+  </div>
+  <label>
+    Tags:
+    <select name="tags" multiple>
+      {{range .AllTags}}
+        <option value="{{.Tag.Name}}" {{if .Selected}}selected{{end}}>{{.Tag.Name}}</option>
+      {{end}}
+    </select>
+  </label>
+  <div class="buttons">
+    <div>
+      <button>Save</button>
+      <a href="{{ .Ref }}">Cancel</a>
+    </div>
+    <button type="button" class="danger-button" onClick="confirmDelete()">Delete</button>
+  </div>
+</form>
+
+{{/* NOTE: check here because it could be a new entry */}}
+{{if gt .Entry.Id 0 }}
+  <p><small class="text-dimmed">Last modified: {{ .ModifiedAt }}</small></p>
+{{end}}
+
+{{/* TODO: make this a block */}}
+<div class="tag-list margin-top">
+  {{range .Entry.Tags}}
+    <div class="tag"><small>{{.Name}}</small></div>
+  {{end}}
+</div>
+
+<script>
+  function confirmDelete() {
+    if (confirm("Are you sure you want to delete this entry?")) {
+      document.querySelector("form").setAttribute("action", "/delete-entry");
+      document.querySelector("form").submit();
+    }
+  }
+</script>
