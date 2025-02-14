@@ -1,5 +1,0 @@
-
-tmp/
-db/db.sqlite*
-db.backup/
-templates/motd.txt

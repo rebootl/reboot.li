@@ -1,9 +1,0 @@
-.DS_Store
-node_modules
-/.svelte-kit
-/package
-
-/build
-/static/media
-/config_prod.js
-/.env
