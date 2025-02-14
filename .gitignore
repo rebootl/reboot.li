@@ -25,3 +25,13 @@ docker-compose.yml
 /my-app/
 
 .DS_Store
+
+dbtosqlite/convert
+dbtosqlite/entries.json
+dbtosqlite/db.sqlite
+dbtosqlite/db.sqlite-*
+
+tmp/
+db/db.sqlite*
+db.backup/
+templates/motd.txt
