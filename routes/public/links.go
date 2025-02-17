@@ -3,7 +3,6 @@ package public
 import (
 	"bytes"
 	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -24,8 +23,7 @@ func RouteLinksPage(
 	// get the link categories from sqlite database
 	linkCategories, err := model.GetAllLinkCategories(db)
 	if err != nil && err != sql.ErrNoRows {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorInternalServerError(w, err)
 		return
 	}
 
@@ -33,8 +31,7 @@ func RouteLinksPage(
 	for i, category := range linkCategories {
 		err := db.Select(&category.Links, "SELECT * FROM links WHERE category_id = ? ORDER BY title ASC", category.Id)
 		if err != nil && err != sql.ErrNoRows {
-			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-			fmt.Println(err)
+			common.ErrorInternalServerError(w, err)
 			return
 		}
 		linkCategories[i] = category
@@ -42,14 +39,26 @@ func RouteLinksPage(
 
 	locals := common.GetLocals(r, db)
 
+	linksPage, err := model.GetEntryByType(db, locals, "linkscontent")
+	if err != nil {
+		common.ErrorSQLNotFound(w, err)
+		return
+	}
+
 	var content bytes.Buffer
 	templates["links"].Execute(&content, struct {
+		Id             int
+		Title          string
+		Content        template.HTML
 		LinkCategories []model.LinkCategory
 		LoggedIn       bool
 	}{
+		Id:             linksPage.Id,
+		Title:          linksPage.Title,
+		Content:        template.HTML(common.Md2Html(linksPage.Content)),
 		LinkCategories: linkCategories,
 		LoggedIn:       locals.LoggedIn,
 	})
 
-	common.RenderBaseTemplate(w, templates, "Links", &content, locals)
+	common.RenderBaseTemplate(w, templates, linksPage.Title, &content, locals)
 }

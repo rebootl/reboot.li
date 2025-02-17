@@ -1,6 +1,8 @@
-<h1>Links</h1>
+<h1>{{.Title}}</h1>
 
-<p>Collected links I found useful and/or interesting.</p>
+{{.Content}}
+
+<p></p>
 
 <details>
   <summary><small><b>Contents</b></small></summary>
@@ -12,20 +14,9 @@
     {{end}}
   </ol>
 </details>
-<p></p>
-
-<details>
-  <summary><small><b>DISCLAIMER</b></small></summary>
-  <p><small>Naturally, I do not control the contents of
-external links. The contents of external links may change over time and links
-may become unaccessible. The title displayed here may not be representative of
-the content of the external website. I do not endorse or guarantee the content
-of external websites, and I am not responsible for their accuracy, completeness,
-suitability, or safety. By clicking on these links, you acknowledge that you
-access them <b>at your own risk</b>.</small></p>
-</details>
 
 {{if .LoggedIn}}
+  <p><a href="/edit-entry/{{.Id}}?ref=/links">Edit</a></p>
   <p><a href="/edit-link/new">New link</a></p>
 {{end}}
 
