@@ -68,7 +68,7 @@ func RenderEntry(
 		}
 		entry.Title = entryVersion.Title
 		entry.Content = entryVersion.Content
-		entry.ModifiedAt = entryVersion.CreatedAt
+		entry.ModifiedAt = entryVersion.LastModifiedAt
 	}
 	// convert content to html
 	htmlContent := Md2Html(entry.Content)

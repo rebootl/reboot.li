@@ -24,11 +24,12 @@ type Entry struct {
 }
 
 type EntryVersion struct {
-	Id        int
-	EntryId   int `db:"entry_id"`
-	Title     string
-	Content   string
-	CreatedAt string `db:"created_at"`
+	Id             int
+	EntryId        int `db:"entry_id"`
+	Title          string
+	Content        string
+	CreatedAt      string `db:"created_at"`
+	LastModifiedAt string `db:"last_modified_at"`
 }
 
 type Tag struct {
@@ -280,9 +281,9 @@ func SaveVersion(db *sqlx.DB, locals Locals, id string) error {
 
 	timestamp := time.Now().Format(time.RFC3339)
 	_, err = db.Exec(`
-			INSERT INTO entries_versions (entry_id, title, content, created_at)
-			VALUES ($1, $2, $3, $4)
-			`, id, entry.Title, entry.Content, timestamp)
+			INSERT INTO entries_versions (entry_id, title, content, created_at, last_modified_at)
+			VALUES ($1, $2, $3, $4, $5)
+			`, id, entry.Title, entry.Content, timestamp, entry.ModifiedAt)
 	if err != nil {
 		return err
 	}

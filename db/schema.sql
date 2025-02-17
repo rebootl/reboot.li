@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS "entries_versions" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"entry_id"	INTEGER NOT NULL,
 	"created_at"	TEXT NOT NULL,
+	"last_modified_at"	TEXT NOT NULL,
 	"title"	TEXT NOT NULL,
 	"content"	TEXT NOT NULL,
 	FOREIGN KEY("entry_id") REFERENCES "entries"("id"),

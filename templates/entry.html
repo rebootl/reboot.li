@@ -13,15 +13,11 @@
 
 {{ .Content }}
 
-{{if .IsVersion}}
-  <p><small class="text-dimmed">Version date: {{ .ModifiedAt }}</small></p>
-{{else}}
-  <p><small class="text-dimmed">Last modified: {{ .ModifiedAt }}</small></p>
-{{end}}
+<p><small class="text-dimmed">Last modified: {{ .ModifiedAt }}</small></p>
 
 {{if gt (len .VersionIds) 0}}
   <p><small class="text-dimmed">
-    Versions:
+    Previous versions:
     {{range .VersionIds}}
         <a href="/entry/{{$.Id}}?version={{.}}">{{.}}</a>
     {{end}}
