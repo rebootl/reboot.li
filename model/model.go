@@ -83,9 +83,15 @@ type EntryPageData struct {
 	Content    template.HTML
 	ModifiedAt string
 	Tags       []Tag
-	VersionIds []int
 	IsVersion  bool
+	Versions   PageVersions
 	Locals
+}
+
+type PageVersions struct {
+	Previous   int
+	Next       int
+	VersionIds []int
 }
 
 type EditPageData struct {

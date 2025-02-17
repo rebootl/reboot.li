@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gomarkdown/markdown"
@@ -77,7 +78,11 @@ func RenderEntry(
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
 
 	// get version ids
-	versionIds, err := model.GetVersionIds(db, entry.Id)
+	versions, err := getVersions(db, entry.Id, version)
+	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		fmt.Println(err)
+	}
 
 	var content bytes.Buffer
 	err = templates["entry"].Execute(&content, model.EntryPageData{
@@ -86,8 +91,8 @@ func RenderEntry(
 		Content:    template.HTML(htmlContent),
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 		Tags:       entry.Tags,
-		VersionIds: versionIds,
 		IsVersion:  version != "",
+		Versions:   versions,
 		Locals:     locals,
 	})
 	if err != nil {
@@ -123,4 +128,38 @@ func Md2Html(md string) string {
 	//          however I'm only planning to insert my own content here for now,
 	//          so I leave it like this for now
 	return string(markdown.ToHTML([]byte(md), nil, nil))
+}
+
+func getVersions(db *sqlx.DB, entryId int, version string) (model.PageVersions, error) {
+	var v model.PageVersions
+	versionIds, err := model.GetVersionIds(db, entryId)
+	if err != nil {
+		return v, err
+	}
+	v.VersionIds = versionIds
+	v.Previous = 0
+	v.Next = 0
+	if version != "" {
+		versionInt, err := strconv.Atoi(version)
+		if err != nil {
+			return v, err
+		}
+		for i, id := range versionIds {
+			if id == versionInt {
+				if i > 0 {
+					v.Previous = versionIds[i-1]
+				}
+				if i < len(versionIds)-1 {
+					v.Next = versionIds[i+1]
+				}
+				break
+			}
+		}
+	} else {
+		if len(versionIds) > 0 {
+			v.Previous = versionIds[len(versionIds)-1]
+		}
+	}
+
+	return v, nil
 }

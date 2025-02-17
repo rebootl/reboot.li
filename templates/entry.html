@@ -15,11 +15,19 @@
 
 <p><small class="text-dimmed">Last modified: {{ .ModifiedAt }}</small></p>
 
-{{if gt (len .VersionIds) 0}}
+{{/* first previous next last versions handler */}}
+
+{{if gt (len .Versions.VersionIds) 0}}
   <p><small class="text-dimmed">
-    Previous versions:
-    {{range .VersionIds}}
-        <a href="/entry/{{$.Id}}?version={{.}}">{{.}}</a>
+    Versions:
+    {{if .Versions.Previous}}
+      <a href="/entry/{{$.Id}}?version={{.Versions.Previous}}">Previous</a>
+    {{end}}
+    {{if .Versions.Next}}
+      <a href="/entry/{{$.Id}}?version={{.Versions.Next}}">Next</a>
+    {{end}}
+    {{if .IsVersion}}
+      <a href="/entry/{{.Id}}">Current</a></small></p>
     {{end}}
   </small></p>
 {{end}}
