@@ -17,6 +17,37 @@ import (
 	"mypersonalwebsite/model"
 )
 
+func ErrorInternalServerError(w http.ResponseWriter, err error) {
+	http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+	fmt.Println(err)
+}
+
+func ErrorNotFound(w http.ResponseWriter, err error) {
+	http.Error(w, "404 Not found", http.StatusNotFound)
+	fmt.Println(err)
+}
+
+func ErrorUnauthorized(w http.ResponseWriter) {
+	http.Error(w, "Unauthorized", http.StatusUnauthorized)
+}
+
+func ErrorSQLNotFound(w http.ResponseWriter, err error) {
+	if err == sql.ErrNoRows {
+		ErrorNotFound(w, err)
+	} else {
+		ErrorInternalServerError(w, err)
+	}
+}
+
+func ErrorSQLNotFoundWithOutput(w http.ResponseWriter, err error) {
+	if err == sql.ErrNoRows {
+		http.Error(w, err.Error(), http.StatusNotFound)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	fmt.Println(err)
+}
+
 func GetLocals(r *http.Request, db *sqlx.DB) model.Locals {
 	// Check if the user is logged in
 	// NOTE: if it can't find a cookie this will return an error
@@ -59,12 +90,7 @@ func RenderEntry(
 	if version != "" {
 		entryVersion, err := model.GetEntryVersion(db, entry.Id, version)
 		if err != nil {
-			if err == sql.ErrNoRows {
-				http.Error(w, "404 Not found", http.StatusNotFound)
-			} else {
-				http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-			}
-			fmt.Println(err)
+			ErrorSQLNotFound(w, err)
 			return
 		}
 		entry.Title = entryVersion.Title
@@ -80,8 +106,8 @@ func RenderEntry(
 	// get version ids
 	versions, err := getVersions(db, entry.Id, version)
 	if err != nil {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		ErrorInternalServerError(w, err)
+		return
 	}
 
 	var content bytes.Buffer
@@ -96,8 +122,7 @@ func RenderEntry(
 		Locals:     locals,
 	})
 	if err != nil {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		ErrorInternalServerError(w, err)
 		return
 	}
 
@@ -117,8 +142,8 @@ func RenderBaseTemplate(
 		Locals:  locals,
 	})
 	if err != nil {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		ErrorInternalServerError(w, err)
+		return
 	}
 }
 

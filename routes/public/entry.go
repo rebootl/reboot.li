@@ -1,7 +1,7 @@
 package public
 
 import (
-	"database/sql"
+	// "database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -29,12 +29,7 @@ func RouteEntry(
 
 	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "404 Not found", http.StatusNotFound)
-		} else {
-			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		}
-		fmt.Println(err)
+		common.ErrorSQLNotFound(w, err)
 		return
 	}
 
