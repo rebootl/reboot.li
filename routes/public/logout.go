@@ -8,6 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 
+	"mypersonalwebsite/common"
 	"mypersonalwebsite/config"
 )
 
@@ -30,8 +31,7 @@ func RouteLogout(
 	// Delete the session from the database
 	_, err = db.Exec("DELETE FROM sessions WHERE uuid = ?", cookie.Value)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 

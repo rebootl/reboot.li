@@ -31,8 +31,7 @@ func RouteLogin(
 	var content bytes.Buffer
 	err := templates["login"].Execute(&content, locals)
 	if err != nil {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 	common.RenderBaseTemplate(w, templates, "Login", &content, locals)
@@ -50,8 +49,7 @@ func RouteCheckLogin(
 	// Get the username and password from the request
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 	username := r.FormValue("username")
@@ -71,8 +69,7 @@ func RouteCheckLogin(
 			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			return
 		}
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -86,7 +83,7 @@ func RouteCheckLogin(
 	sessionId, err := generateRandomString(32)
 	if err != nil {
 		// NOTE: at this point we're authenticated so let's see the error
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -94,7 +91,7 @@ func RouteCheckLogin(
 	_, err = db.Exec("INSERT INTO sessions (uuid, user_id, user_agent, ip, created_at) VALUES (?, ?, ?, ?, ?)",
 		sessionId, user.Id, r.UserAgent(), r.RemoteAddr, time.Now().Format(time.RFC3339))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		common.SqlError(w, err)
 		return
 	}
 
