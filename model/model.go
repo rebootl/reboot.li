@@ -91,6 +91,7 @@ type EntryPageData struct {
 type PageVersions struct {
 	Previous   int
 	Next       int
+	Current    int
 	VersionIds []int
 }
 

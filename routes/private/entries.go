@@ -236,3 +236,39 @@ func RouteDeleteEntry(
 	ref := r.FormValue("ref")
 	http.Redirect(w, r, ref, 302)
 }
+
+// Path: "/delete-version"
+// Method: POST
+func RouteDeleteVersion(
+	entryType string,
+	w http.ResponseWriter,
+	r *http.Request,
+	db *sqlx.DB,
+	templates map[string]*template.Template,
+) {
+	locals := common.GetLocals(r, db)
+	if !locals.LoggedIn {
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		common.ErrorPage(w, err, http.StatusBadRequest)
+		return
+	}
+	id := r.FormValue("id")
+	version := r.FormValue("version")
+
+	_, err = db.Exec(`
+		DELETE FROM entries_versions
+		WHERE entry_id = $1 AND id = $2
+	`, id, version)
+	if err != nil {
+		common.SqlError(w, err)
+		return
+	}
+
+	ref := r.FormValue("ref")
+	http.Redirect(w, r, ref, 302)
+}

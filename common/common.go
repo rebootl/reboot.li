@@ -162,13 +162,16 @@ func getVersions(db *sqlx.DB, entryId int, version string) (model.PageVersions, 
 		return v, err
 	}
 	v.VersionIds = versionIds
-	v.Previous = 0
-	v.Next = 0
+	// zeroing is not needed because the struct is already zeroed
+	// v.Previous = 0
+	// v.Next = 0
+	// v.Current = 0
 	if version != "" {
 		versionInt, err := strconv.Atoi(version)
 		if err != nil {
 			return v, err
 		}
+		v.Current = versionInt
 		for i, id := range versionIds {
 			if id == versionInt {
 				if i > 0 {

@@ -6,9 +6,27 @@
 {{end}}
 
 {{if .LoggedIn}}
-  <div class="entry-item-r">
-    <a href="/edit-entry/{{.Id}}?ref=/entry/{{.Id}}">Edit</a>
-  </div>
+  {{if .IsVersion}}
+    <form method="POST" action="/delete-version" id="delete-version-form">
+      <input type="hidden" name="id" value="{{.Id}}">
+      <input type="hidden" name="version" value="{{.Versions.Current}}">
+      <div>
+        <button type="button" class="danger-button small-button" onclick="confirmDelete()">Delete this version</button>
+      </div>
+    </form>
+
+    <script>
+      function confirmDelete() {
+          if (confirm("Are you sure you want to delete this version?")) {
+            document.getElementById("delete-version-form").submit();
+          }
+      }
+    </script>
+  {{else}}
+    <div class="entry-item-r">
+      <a href="/edit-entry/{{.Id}}?ref=/entry/{{.Id}}">Edit</a>
+    </div>
+  {{end}}
 {{end}}
 
 {{ .Content }}
@@ -27,7 +45,7 @@
       <a href="/entry/{{$.Id}}?version={{.Versions.Next}}">Next</a>
     {{end}}
     {{if .IsVersion}}
-      <a href="/entry/{{.Id}}">Current</a></small></p>
+      <a href="/entry/{{.Id}}">Current</a>
     {{end}}
   </small></p>
 {{end}}

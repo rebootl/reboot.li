@@ -1,8 +1,6 @@
 package public
 
 import (
-	// "database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -25,7 +23,6 @@ func RouteEntry(
 	locals := common.GetLocals(r, db)
 
 	version := r.URL.Query().Get("version")
-	fmt.Println(version)
 
 	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
