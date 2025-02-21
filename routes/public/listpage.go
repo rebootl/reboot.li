@@ -3,7 +3,6 @@ package public
 import (
 	"bytes"
 	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -35,8 +34,7 @@ func RouteListPage(
 	var entries []model.Entry
 	err := db.Select(&entries, q, entryType)
 	if err != nil && err != sql.ErrNoRows {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
@@ -44,8 +42,7 @@ func RouteListPage(
 	for i, entry := range entries {
 		tags, err := model.GetTagsByEntryId(db, strconv.Itoa(entry.Id))
 		if err != nil {
-			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-			fmt.Println(err)
+			common.SqlError(w, err)
 			return
 		}
 		entries[i].Tags = tags
@@ -74,8 +71,7 @@ func RouteListPage(
 		Locals:  locals,
 	})
 	if err != nil {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 

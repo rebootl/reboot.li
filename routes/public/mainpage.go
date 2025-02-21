@@ -1,8 +1,6 @@
 package public
 
 import (
-	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -31,12 +29,7 @@ func RouteMainPage(
 		entryType,
 	)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "404 Not found", http.StatusNotFound)
-		} else {
-			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		}
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 	common.RenderEntry(w, r, db, templates, entry, version, common.GetLocals(r, db))
