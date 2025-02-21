@@ -124,7 +124,7 @@ func RouteUpdateEntry(
 
 	err := r.ParseForm()
 	if err != nil {
-		common.ErrorPage(w, err, http.StatusInternalServerError)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
@@ -209,7 +209,7 @@ func RouteDeleteEntry(
 
 	err := r.ParseForm()
 	if err != nil {
-		common.ErrorPage(w, err, http.StatusInternalServerError)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")

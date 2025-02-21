@@ -2,8 +2,6 @@ package private
 
 import (
 	"bytes"
-	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -24,18 +22,13 @@ func RouteEditLinkCategories(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	categories, err := model.GetAllLinkCategories(db)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, err.Error(), http.StatusNotFound)
-		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
@@ -46,8 +39,7 @@ func RouteEditLinkCategories(
 		LinkCategories: categories,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
@@ -63,7 +55,7 @@ func RouteEditLinkCategory(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
@@ -78,12 +70,7 @@ func RouteEditLinkCategory(
 		var err error
 		linkCategory, err = model.GetLinkCategoryById(db, vars["id"])
 		if err != nil {
-			if err == sql.ErrNoRows {
-				http.Error(w, err.Error(), http.StatusNotFound)
-			} else {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			fmt.Println(err)
+			common.SqlError(w, err)
 			return
 		}
 		title = "Edit link category"
@@ -98,8 +85,7 @@ func RouteEditLinkCategory(
 		LinkCategory: linkCategory,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 	common.RenderBaseTemplate(w, templates, title, &content, locals)
@@ -116,14 +102,13 @@ func RouteUpdateLinkCategory(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
@@ -148,8 +133,7 @@ func RouteUpdateLinkCategory(
 		`, name, id)
 	}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 	http.Redirect(w, r, "/edit-link-categories", 302)
@@ -167,28 +151,23 @@ func RouteDeleteLinkCategory(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
 
-	var res sql.Result
-	res, err = db.Exec(`
+	_, err = db.Exec(`
 		DELETE FROM link_categories
 		WHERE id = $1
 	`, id)
-	fmt.Println(res)
-	fmt.Println(err)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 	http.Redirect(w, r, "/edit-link-categories", 302)
