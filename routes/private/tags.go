@@ -2,8 +2,6 @@ package private
 
 import (
 	"bytes"
-	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -24,18 +22,13 @@ func RouteEditTags(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	allTags, err := model.GetAllEntryTags(db)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, err.Error(), http.StatusNotFound)
-		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
@@ -46,8 +39,7 @@ func RouteEditTags(
 		Tags: allTags,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
@@ -63,7 +55,7 @@ func RouteEditTag(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
@@ -82,12 +74,7 @@ func RouteEditTag(
 		var err error
 		tag, err = model.GetEntryTagById(db, vars["id"])
 		if err != nil {
-			if err == sql.ErrNoRows {
-				http.Error(w, err.Error(), http.StatusNotFound)
-			} else {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			fmt.Println(err)
+			common.SqlError(w, err)
 			return
 		}
 		title = "Edit Tag"
@@ -102,8 +89,7 @@ func RouteEditTag(
 		Tag:   tag,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 	common.RenderBaseTemplate(w, templates, title, &content, locals)
@@ -120,14 +106,13 @@ func RouteUpdateTag(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
@@ -153,8 +138,7 @@ func RouteUpdateTag(
 		`, name, color, id)
 	}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 	http.Redirect(w, r, "/edit-tags", 302)
@@ -172,14 +156,13 @@ func RouteDeleteTag(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
@@ -189,8 +172,7 @@ func RouteDeleteTag(
 		WHERE id = $1
 	`, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 	http.Redirect(w, r, "/edit-tags", 302)
