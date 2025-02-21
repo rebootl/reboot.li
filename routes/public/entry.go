@@ -29,7 +29,7 @@ func RouteEntry(
 
 	entry, err := model.GetEntryById(db, locals, vars["id"])
 	if err != nil {
-		common.ErrorSQLNotFound(w, err)
+		common.SqlError(w, err)
 		return
 	}
 

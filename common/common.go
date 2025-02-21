@@ -17,34 +17,32 @@ import (
 	"mypersonalwebsite/model"
 )
 
-func ErrorInternalServerError(w http.ResponseWriter, err error) {
-	http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-	fmt.Println(err)
+func getMessage(msg string, err error) string {
+	if config.Mode == config.ModeDev {
+		return msg + ": " + err.Error()
+	}
+	return msg
 }
 
-func ErrorNotFound(w http.ResponseWriter, err error) {
-	http.Error(w, "404 Not found", http.StatusNotFound)
-	fmt.Println(err)
-}
-
-func ErrorUnauthorized(w http.ResponseWriter) {
-	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-}
-
-func ErrorSQLNotFound(w http.ResponseWriter, err error) {
+func SqlError(w http.ResponseWriter, err error) {
 	if err == sql.ErrNoRows {
-		ErrorNotFound(w, err)
+		ErrorPage(w, err, http.StatusNotFound)
 	} else {
-		ErrorInternalServerError(w, err)
+		ErrorPage(w, err, http.StatusInternalServerError)
 	}
 }
 
-func ErrorSQLNotFoundWithOutput(w http.ResponseWriter, err error) {
-	if err == sql.ErrNoRows {
-		http.Error(w, err.Error(), http.StatusNotFound)
-	} else {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+func ErrorPage(w http.ResponseWriter, err error, httpError int) {
+	var msg string
+	switch httpError {
+	case http.StatusNotFound:
+		msg = "404 Not Found"
+	case http.StatusUnauthorized:
+		msg = "401 Unauthorized"
+	default:
+		msg = "500 Internal Server Error"
 	}
+	http.Error(w, getMessage(msg, err), httpError)
 	fmt.Println(err)
 }
 
@@ -90,7 +88,7 @@ func RenderEntry(
 	if version != "" {
 		entryVersion, err := model.GetEntryVersion(db, entry.Id, version)
 		if err != nil {
-			ErrorSQLNotFound(w, err)
+			SqlError(w, err)
 			return
 		}
 		entry.Title = entryVersion.Title
@@ -106,7 +104,7 @@ func RenderEntry(
 	// get version ids
 	versions, err := getVersions(db, entry.Id, version)
 	if err != nil {
-		ErrorInternalServerError(w, err)
+		ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -122,7 +120,7 @@ func RenderEntry(
 		Locals:     locals,
 	})
 	if err != nil {
-		ErrorInternalServerError(w, err)
+		ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -142,7 +140,7 @@ func RenderBaseTemplate(
 		Locals:  locals,
 	})
 	if err != nil {
-		ErrorInternalServerError(w, err)
+		ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 }
@@ -155,6 +153,8 @@ func Md2Html(md string) string {
 	return string(markdown.ToHTML([]byte(md), nil, nil))
 }
 
+// getVersions returns the version ids of an entry and the previous and next version of a given version
+// this is used to create the "previous" and "next" links in the entry page
 func getVersions(db *sqlx.DB, entryId int, version string) (model.PageVersions, error) {
 	var v model.PageVersions
 	versionIds, err := model.GetVersionIds(db, entryId)

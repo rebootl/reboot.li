@@ -2,7 +2,6 @@ package public
 
 import (
 	"bytes"
-	"database/sql"
 	"html/template"
 	"net/http"
 
@@ -22,16 +21,16 @@ func RouteLinksPage(
 ) {
 	// get the link categories from sqlite database
 	linkCategories, err := model.GetAllLinkCategories(db)
-	if err != nil && err != sql.ErrNoRows {
-		common.ErrorInternalServerError(w, err)
+	if err != nil {
+		common.SqlError(w, err)
 		return
 	}
 
 	// get the links
 	for i, category := range linkCategories {
 		err := db.Select(&category.Links, "SELECT * FROM links WHERE category_id = ? ORDER BY title ASC", category.Id)
-		if err != nil && err != sql.ErrNoRows {
-			common.ErrorInternalServerError(w, err)
+		if err != nil {
+			common.SqlError(w, err)
 			return
 		}
 		linkCategories[i] = category
@@ -41,7 +40,7 @@ func RouteLinksPage(
 
 	linksPage, err := model.GetEntryByType(db, locals, "linkscontent")
 	if err != nil {
-		common.ErrorSQLNotFound(w, err)
+		common.SqlError(w, err)
 		return
 	}
 
