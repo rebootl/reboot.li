@@ -2,7 +2,6 @@ package private
 
 import (
 	"bytes"
-	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -25,7 +24,7 @@ func RouteEditLink(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
@@ -48,12 +47,7 @@ func RouteEditLink(
 	} else {
 		link, err = model.GetLinkById(db, vars["id"])
 		if err != nil {
-			if err == sql.ErrNoRows {
-				http.Error(w, err.Error(), http.StatusNotFound)
-			} else {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			fmt.Println(err)
+			common.SqlError(w, err)
 			return
 		}
 		title = "Edit Entry"
@@ -61,12 +55,7 @@ func RouteEditLink(
 
 	allCategories, err := model.GetAllLinkCategories(db)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, err.Error(), http.StatusNotFound)
-		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
@@ -81,8 +70,7 @@ func RouteEditLink(
 		AllCategories: allCategories,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -100,14 +88,13 @@ func RouteUpdateLink(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
@@ -139,8 +126,7 @@ func RouteUpdateLink(
 		`, url, title, comment, category_id, timestamp, id)
 	}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
@@ -158,14 +144,13 @@ func RouteDeleteLink(
 ) {
 	locals := common.GetLocals(r, db)
 	if !locals.LoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.ErrorPage(w, err, http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
@@ -176,8 +161,7 @@ func RouteDeleteLink(
 		WHERE link_id = $1
 	`, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
@@ -185,11 +169,8 @@ func RouteDeleteLink(
 		DELETE FROM links
 		WHERE id = $1
 	`, id)
-	// fmt.Println(res)
-	// fmt.Println(err)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err)
+		common.SqlError(w, err)
 		return
 	}
 
