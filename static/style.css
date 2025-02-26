@@ -267,6 +267,7 @@ button.small-button {
 button.secondary-button {
 	background-color: var(--card-background-color);
 	color: var(--primary-color);
+	border: 1px solid var(--primary-color-dimmed);
 }
 
 button.danger-button {
@@ -278,6 +279,13 @@ button:focus {
 	outline: 3px solid var(--secondary-color);
 }
 
+select {
+	padding: 5px;
+	border-radius: 5px;
+	background-color: var(--card-background-color);
+	color: var(--primary-color);
+	border: 1px solid var(--primary-color-dimmed);
+}
 
 a:focus {
 	outline: 3px solid var(--secondary-color);
