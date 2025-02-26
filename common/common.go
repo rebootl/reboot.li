@@ -124,7 +124,7 @@ func RenderEntry(
 		return
 	}
 
-	RenderBaseTemplate(w, templates, entry.Title, &content, locals)
+	RenderBaseTemplate(w, templates, entry.Title, &content, []string{}, locals)
 }
 
 func RenderBaseTemplate(
@@ -132,12 +132,14 @@ func RenderBaseTemplate(
 	templates map[string]*template.Template,
 	title string,
 	content *bytes.Buffer,
+	scripts []string,
 	locals model.Locals,
 ) {
 	err := templates["base"].Execute(w, model.BasePageData{
 		Title:   title,
 		Content: template.HTML(content.String()),
 		Locals:  locals,
+		Scripts: scripts,
 	})
 	if err != nil {
 		ErrorPage(w, err, http.StatusInternalServerError)

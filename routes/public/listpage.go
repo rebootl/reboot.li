@@ -75,5 +75,5 @@ func RouteListPage(
 		return
 	}
 
-	common.RenderBaseTemplate(w, templates, listPage.Title, &content, locals)
+	common.RenderBaseTemplate(w, templates, listPage.Title, &content, []string{}, locals)
 }

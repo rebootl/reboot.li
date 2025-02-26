@@ -104,7 +104,7 @@ func RouteEditEntry(
 		return
 	}
 
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
+	common.RenderBaseTemplate(w, templates, title, &content, []string{}, locals)
 }
 
 // Path: "/update-entry"
@@ -132,6 +132,9 @@ func RouteUpdateEntry(
 	content := r.FormValue("content")
 	private := r.FormValue("private")
 	version := r.FormValue("version")
+
+	test := r.FormValue("tagstest")
+	fmt.Println("tagstest: ", test)
 
 	// Validate the form data
 	if title == "" || content == "" {

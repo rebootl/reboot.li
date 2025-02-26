@@ -42,7 +42,7 @@ func RouteEditLinkCategories(
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
+	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, []string{}, locals)
 }
 
 // Path: "/edit-link-category/{id}"
@@ -88,7 +88,7 @@ func RouteEditLinkCategory(
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
+	common.RenderBaseTemplate(w, templates, title, &content, []string{}, locals)
 }
 
 // Path: "/update-link-category"

@@ -59,5 +59,5 @@ func RouteLinksPage(
 		LoggedIn:       locals.LoggedIn,
 	})
 
-	common.RenderBaseTemplate(w, templates, linksPage.Title, &content, locals)
+	common.RenderBaseTemplate(w, templates, linksPage.Title, &content, []string{}, locals)
 }

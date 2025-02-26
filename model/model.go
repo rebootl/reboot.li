@@ -131,6 +131,7 @@ type ListPageData struct {
 type BasePageData struct {
 	Title   string
 	Content template.HTML
+	Scripts []string
 	Locals
 }
 

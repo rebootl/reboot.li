@@ -74,7 +74,7 @@ func RouteEditLink(
 		return
 	}
 
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
+	common.RenderBaseTemplate(w, templates, title, &content, []string{}, locals)
 }
 
 // Path: "/update-link"
