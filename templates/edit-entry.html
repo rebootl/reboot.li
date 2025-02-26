@@ -27,23 +27,23 @@
           <option value="{{.Tag.Name}}">{{.Tag.Name}}</option>
         {{end}}
       </select>
-      <button class="add-button small-button secondary-button">Add</button>
-      <ul class="selected-items">
-        {{range .AllTags}}
-          {{if .Selected}}
-            <li class="selected-item">
-              <span>{{.Tag.Name}}</span>
-              <button class="remove-button small-button secondary-button" data-item-name="{{.Tag.Name}}">X</button>
-            </li>
-          {{end}}
-        {{end}}
-      </ul>
-      <select name="tags" class="multi-select" multiple style="display: none;">
-        {{range .AllTags}}
-          <option value="{{.Tag.Name}}" {{if .Selected}}selected{{end}}>{{.Tag.Name}}</option>
-        {{end}}
-      </select>
     </label>
+    <button class="add-button small-button secondary-button">Add</button>
+    <select name="tags" class="multi-select" multiple style="display: none;">
+      {{range .AllTags}}
+        <option value="{{.Tag.Name}}" {{if .Selected}}selected{{end}}>{{.Tag.Name}}</option>
+      {{end}}
+    </select>
+    <ul class="selected-items">
+      {{range .AllTags}}
+        {{if .Selected}}
+          <li class="selected-item">
+            <span>{{.Tag.Name}}</span>
+            <button class="remove-button small-button secondary-button" data-item-name="{{.Tag.Name}}">X</button>
+          </li>
+        {{end}}
+      {{end}}
+    </ul>
   </multi-selector>
 
   <div class="buttons">
