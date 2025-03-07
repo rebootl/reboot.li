@@ -5,11 +5,25 @@ class MultiSelector extends HTMLElement {
   }
 
   connectedCallback() {
+    /** @type {HTMLSelectElement} */
     this.baseSelectElement = this.querySelector('.multi-select');
+    /** @type {HTMLSelectElement} */
     this.itemSelectElement = this.querySelector('.item-selector');
+    /** @type {HTMLButtonElement} */
     this.addButton = this.querySelector('.add-button');
+    /** @type {HTMLUListElement} */
     this.listElement = this.querySelector('.selected-items');
+    /** @type {HTMLCollectionOf<HTMLButtonElement>} */
     this.removeButtons = this.querySelectorAll('.remove-button');
+    /** @type {HTMLTemplateElement} */
+    this.selectedItemTemplate = document.querySelector('.selected-item-template');
+
+    /** Array of required elements */
+    const elements = [this.baseSelectElement, this.itemSelectElement, this.addButton, this.listElement, this.selectedItemTemplate];
+    if (elements.some((element) => !element)) {
+      console.error('No required element found');
+      return;
+    }
 
     // NOTE: the use of the arrow function here preserves the 'this' context
     // otherwise this.addItem.bind(this)) has to be used instead, this is
@@ -20,6 +34,9 @@ class MultiSelector extends HTMLElement {
     });
   }
 
+  /**
+   * @param {Event} e
+   */
   addItem(e) {
       e.preventDefault();
       const selectedOption = this.itemSelectElement.options[this.itemSelectElement.selectedIndex];
@@ -33,6 +50,9 @@ class MultiSelector extends HTMLElement {
       }
   }
 
+  /**
+   * @param {Event} e
+   */
   removeItem(e) {
     e.preventDefault();
     const itemName = e.target.getAttribute('data-item-name');
@@ -43,8 +63,11 @@ class MultiSelector extends HTMLElement {
     option.removeAttribute('selected');
   }
 
+  /**
+   * @param {string} text
+   */
   addListElement(text) {
-    const newListitem = document.querySelector('.selected-item').cloneNode(true);
+    const newListitem = this.selectedItemTemplate.content.cloneNode(true);
     const span = newListitem.querySelector('span');
     span.textContent = text;
 
