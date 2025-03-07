@@ -1,3 +1,7 @@
+/** @typedef {HTMLElement} HTMLElement
+  * @description This is a custom element that provides a multi-select feature.
+  * The user can select an item from a list and add it to a list of selected items.
+*/
 class MultiSelector extends HTMLElement {
 
   constructor() {
@@ -19,7 +23,13 @@ class MultiSelector extends HTMLElement {
     this.selectedItemTemplate = document.querySelector('.selected-item-template');
 
     /** Array of required elements */
-    const elements = [this.baseSelectElement, this.itemSelectElement, this.addButton, this.listElement, this.selectedItemTemplate];
+    const elements = [
+      this.baseSelectElement,
+      this.itemSelectElement,
+      this.addButton,
+      this.listElement,
+      this.selectedItemTemplate
+    ];
     if (elements.some((element) => !element)) {
       console.error('No required element found');
       return;
