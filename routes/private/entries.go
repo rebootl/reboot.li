@@ -224,12 +224,17 @@ func RouteDeleteEntry(
 		return
 	}
 
-	_, err = db.Exec(`
+	var res sql.Result
+	res, err = db.Exec(`
 		DELETE FROM entries
 		WHERE id = $1
 	`, id)
 	if err != nil {
 		common.SqlError(w, err)
+		return
+	}
+	if affected, _ := res.RowsAffected(); affected == 0 {
+		http.Error(w, "Entry not found", http.StatusNotFound)
 		return
 	}
 

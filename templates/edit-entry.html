@@ -58,9 +58,12 @@
       <button>Save</button>
       <a href="{{ .Ref }}">Cancel</a>
     </div>
-    <confirm-submit replaceAction="/delete-entry" message="Are you sure you want to delete this entry?">
-      <button type="button" class="danger-button">Delete</button>
-    </confirm-submit>
+    {{/* NOTE: check here because it could be a new entry */}}
+    {{if gt .Entry.Id 0 }}
+      <confirm-submit replaceAction="/delete-entry" message="Are you sure you want to delete this entry?">
+        <button type="button" class="danger-button">Delete</button>
+      </confirm-submit>
+    {{end}}
   </div>
 </form>
 
