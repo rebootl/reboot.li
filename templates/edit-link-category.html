@@ -1,3 +1,4 @@
+<script src="/static/confirm-submit.js" type="module"></script>
 
 <h1>{{ .Title }}</h1>
 
@@ -9,15 +10,8 @@
       <button>Save</button>
       <a href="/edit-link-categories">Cancel</a>
     </div>
-    <button type="button" class="danger-button" onClick="confirmDelete()">Delete</button>
+    <confirm-submit replaceAction="/delete-link-category" message="Are you sure you want to delete this link category?">
+      <button type="button" class="danger-button">Delete</button>
+    </confirm-submit>
   </div>
 </form>
-
-<script>
-  function confirmDelete() {
-      if (confirm("Are you sure you want to delete this link category?")) {
-        document.getElementById("edit-link-category-form").setAttribute("action", "/delete-link-category");
-        document.getElementById("edit-link-category-form").submit();
-      }
-  }
-</script>

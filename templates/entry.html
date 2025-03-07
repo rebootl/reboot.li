@@ -7,21 +7,17 @@
 
 {{if .LoggedIn}}
   {{if .IsVersion}}
+    <script src="/static/confirm-submit.js" type="module"></script>
+
     <form method="POST" action="/delete-version" id="delete-version-form">
       <input type="hidden" name="id" value="{{.Id}}">
       <input type="hidden" name="version" value="{{.Versions.Current}}">
       <div>
-        <button type="button" class="danger-button small-button" onclick="confirmDelete()">Delete this version</button>
+        <confirm-submit message="Are you sure you want to delete this version?">
+          <button type="button" class="danger-button small-button">Delete this version</button>
+        </confirm-submit>
       </div>
     </form>
-
-    <script>
-      function confirmDelete() {
-          if (confirm("Are you sure you want to delete this version?")) {
-            document.getElementById("delete-version-form").submit();
-          }
-      }
-    </script>
   {{else}}
     <div class="entry-item-r">
       <a href="/edit-entry/{{.Id}}?ref=/entry/{{.Id}}">Edit</a>
