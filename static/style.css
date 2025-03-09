@@ -305,6 +305,12 @@ a:focus {
 	outline: 3px solid var(--secondary-color);
 }
 
+fetch-link-title {
+	display: flex;
+	flex-direction: column;
+  gap: 20px;
+}
+
 /* aside {
   margin-top: var(--header-height);
   width: var(--side-width);

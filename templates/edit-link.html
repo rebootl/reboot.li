@@ -1,16 +1,20 @@
 <script src="/static/confirm-submit.js" type="module"></script>
+<script src="/static/fetch-link-title.js" type="module"></script>
 
 <h1>{{ .Title }}</h1>
 
 <form method="POST" action="/update-link">
-  {{if gt .Link.Id 0 }}
-    <a href="{{ .Link.Url }}" target="_blank">{{ .Link.Url }}</a>
-    <input type="hidden" name="url" placeholder="Url" value="{{ .Link.Url }}" />
-  {{else}}
-    <input type="text" name="url" placeholder="Url" value="{{ .Link.Url }}" />
-  {{end}}
   <input type="hidden" name="id" value="{{ .Link.Id }}" />
-  <input type="text" name="title" placeholder="Title" value="{{ .Link.Title }}" />
+  <fetch-link-title>
+    {{if gt .Link.Id 0 }}
+      <a href="{{ .Link.Url }}" target="_blank">{{ .Link.Url }}</a>
+      <input type="hidden" name="url" placeholder="Url" value="{{ .Link.Url }}" />
+    {{else}}
+      <input type="text" name="url" placeholder="Url" value="{{ .Link.Url }}" />
+    {{end}}
+    <small><span title-status class="text-dimmed"></span></small>
+    <input type="text" name="title" placeholder="Title" value="{{ .Link.Title }}" />
+  </fetch-link-title>
   <input type="text" name="comment" placeholder="Comment" value="{{ .Link.Comment }}" />
   <label>
     Category:

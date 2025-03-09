@@ -2,9 +2,12 @@ package private
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -175,4 +178,79 @@ func RouteDeleteLink(
 	}
 
 	http.Redirect(w, r, "/links", 302)
+}
+
+// Path: "/api/get-title/{url}"
+// Method: GET
+func RouteGetTitle(
+	entryType string,
+	w http.ResponseWriter,
+	r *http.Request,
+	db *sqlx.DB,
+	templates map[string]*template.Template,
+) {
+	locals := common.GetLocals(r, db)
+	if !locals.LoggedIn {
+		common.ErrorPage(w, nil, http.StatusUnauthorized)
+		return
+	}
+
+	url := r.URL.Query().Get("url")
+
+	fmt.Println(url)
+	if url == "" {
+		http.Error(w, "URL is required", http.StatusBadRequest)
+		fmt.Println("URL is required")
+		return
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		http.Error(w, "Error requesting page: "+err.Error(), 255)
+		fmt.Println("Error requesting page")
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "Error requesting page: "+resp.Status, 255)
+		fmt.Println("Error requesting page: " + resp.Status)
+		return
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Error reading page: "+err.Error(), 255)
+		fmt.Println("Error reading page")
+		return
+	}
+
+	title, err := getTitle(string(body))
+	if err != nil {
+		http.Error(w, "Error getting title: "+err.Error(), 255)
+		fmt.Println("Error getting title")
+		return
+	}
+
+	jsonResponse, err := json.Marshal(struct {
+		Title string `json:"title"`
+	}{Title: title})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
+}
+
+func getTitle(html string) (string, error) {
+	re := regexp.MustCompile(`<title>(.*?)</title>`)
+	matches := re.FindAllStringSubmatch(html, -1)
+
+	if len(matches) == 0 {
+		return "", fmt.Errorf("title not found")
+	}
+
+	return matches[0][1], nil
 }
