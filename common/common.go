@@ -18,7 +18,7 @@ import (
 )
 
 func getMessage(msg string, err error) string {
-	if config.Mode == config.ModeDev {
+	if config.Mode == config.ModeDev && err != nil {
 		return msg + ": " + err.Error()
 	}
 	return msg
