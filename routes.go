@@ -132,7 +132,7 @@ var routes = []Route{
 		Methods:     []string{"POST"},
 	},
 	{
-		Path:        "/api/get-title/",
+		Path:        "/api/get-title",
 		HandlerFunc: private.RouteGetTitle,
 	},
 }

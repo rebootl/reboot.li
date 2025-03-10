@@ -55,23 +55,25 @@ class FetchLinkTitle extends HTMLElement {
   async fetchTitle() {
     /** @type {string} */
     const url = this.urlInput.value.trim();
-    if (url) {
-      this.titleStatus.textContent = 'Fetching title...';
-      try {
-        const response = await fetch(`/api/get-title/?url=${encodeURIComponent(url)}`);
-        if (response.status === 200) {
-          const data = await response.json();
+    if (!url) return;
+
+    this.titleStatus.textContent = 'Fetching title...';
+    try {
+      const response = await fetch(`/api/get-title?url=${encodeURIComponent(url)}`);
+      if (response.status === 200) {
+        const data = await response.json();
+        if (data.success) {
           this.titleStatus.textContent = 'Title fetched.';
           this.titleInput.value = data.title;
-        } else if (response.status === 255) {
-          this.titleStatus.textContent = await response.text();
         } else {
-          this.titleStatus.textContent = `${response.status}: ${response.statusText}`;
+          this.titleStatus.textContent = `Error getting title: ${data.error}`;
         }
-      } catch (error) {
-        this.titleStatus.textContent = 'Error connecting to server.';
-        console.error('Error:', error);
+      } else {
+        this.titleStatus.textContent = `${response.status}: ${response.statusText}`;
       }
+    } catch (error) {
+      this.titleStatus.textContent = `Error: ${error.message}`;
+      console.error('Error:', error);
     }
   }
 }

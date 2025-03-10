@@ -14,6 +14,7 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"mypersonalwebsite/common"
+	"mypersonalwebsite/config"
 	"mypersonalwebsite/model"
 )
 
@@ -180,8 +181,15 @@ func RouteDeleteLink(
 	http.Redirect(w, r, "/links", 302)
 }
 
-// Path: "/api/get-title/{url}"
+// Path: "/api/get-title?url=<url>"
 // Method: GET
+
+type getTitleResponse struct {
+	Success bool   `json:"success"`
+	Title   string `json:"title"`
+	Error   string `json:"error"`
+}
+
 func RouteGetTitle(
 	entryType string,
 	w http.ResponseWriter,
@@ -197,46 +205,41 @@ func RouteGetTitle(
 
 	url := r.URL.Query().Get("url")
 
-	fmt.Println(url)
 	if url == "" {
-		http.Error(w, "URL is required", http.StatusBadRequest)
-		fmt.Println("URL is required")
+		common.ErrorPage(w, fmt.Errorf("URL is required"), http.StatusBadRequest)
 		return
 	}
 
 	resp, err := http.Get(url)
 	if err != nil {
-		http.Error(w, "Error requesting page: "+err.Error(), 255)
-		fmt.Println("Error requesting page")
+		errorGetTitle(w, err)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		http.Error(w, "Error requesting page: "+resp.Status, 255)
-		fmt.Println("Error requesting page: " + resp.Status)
+		errorGetTitle(w, fmt.Errorf("HTTP status code: %d", resp.StatusCode))
 		return
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		http.Error(w, "Error reading page: "+err.Error(), 255)
-		fmt.Println("Error reading page")
+		errorGetTitle(w, err)
 		return
 	}
 
 	title, err := getTitle(string(body))
 	if err != nil {
-		http.Error(w, "Error getting title: "+err.Error(), 255)
-		fmt.Println("Error getting title")
+		errorGetTitle(w, err)
 		return
 	}
 
-	jsonResponse, err := json.Marshal(struct {
-		Title string `json:"title"`
-	}{Title: title})
+	jsonResponse, err := json.Marshal(getTitleResponse{
+		Title:   title,
+		Success: true,
+	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -253,4 +256,21 @@ func getTitle(html string) (string, error) {
 	}
 
 	return matches[0][1], nil
+}
+
+func errorGetTitle(w http.ResponseWriter, err error) {
+	if config.Mode == config.ModeDev {
+		fmt.Println("Error getting title: " + err.Error())
+	}
+
+	jsonResponse, err := json.Marshal(getTitleResponse{
+		Success: false,
+		Error:   err.Error(),
+	})
+	if err != nil {
+		common.ErrorPage(w, err, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 }
