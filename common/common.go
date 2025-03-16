@@ -1,7 +1,6 @@
 package common
 
 import (
-	"bytes"
 	"database/sql"
 	"fmt"
 	"html/template"
@@ -108,25 +107,25 @@ func RenderEntry(
 		return
 	}
 
-	var content bytes.Buffer
-	err = templates["entry"].Execute(&content, model.EntryPageData{
-		Id:         entry.Id,
-		Title:      entry.Title,
+	err = templates["entry"].ExecuteTemplate(w, "base", model.EntryPageData{
+		BasePageData: model.BasePageData{
+			Title:  entry.Title,
+			Locals: locals,
+		},
 		Content:    template.HTML(htmlContent),
+		Id:         entry.Id,
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
 		Tags:       entry.Tags,
 		IsVersion:  version != "",
 		Versions:   versions,
-		Locals:     locals,
 	})
 	if err != nil {
 		ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-
-	RenderBaseTemplate(w, templates, entry.Title, &content, locals)
 }
 
+/*
 func RenderBaseTemplate(
 	w http.ResponseWriter,
 	templates map[string]*template.Template,
@@ -135,15 +134,16 @@ func RenderBaseTemplate(
 	locals model.Locals,
 ) {
 	err := templates["base"].Execute(w, model.BasePageData{
-		Title:   title,
-		Content: template.HTML(content.String()),
-		Locals:  locals,
+		Title: title,
+		// Content: template.HTML(content.String()),
+		Locals: locals,
 	})
 	if err != nil {
 		ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
 }
+*/
 
 func Md2Html(md string) string {
 	// WARNING: apparently markdown does not sanitize the content,

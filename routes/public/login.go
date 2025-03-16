@@ -34,7 +34,14 @@ func RouteLogin(
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, "Login", &content, locals)
+	err = templates["login"].ExecuteTemplate(w, "base", model.BasePageData{
+		Title:  "Login",
+		Locals: locals,
+	})
+	if err != nil {
+		common.ErrorPage(w, err, http.StatusInternalServerError)
+		return
+	}
 }
 
 // Path: "/login"

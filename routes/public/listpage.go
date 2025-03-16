@@ -59,21 +59,20 @@ func RouteListPage(
 
 	ref := r.URL.Path
 
-	var content bytes.Buffer
-	err = templates["entries-list"].Execute(&content, model.ListPageData{
+	err = templates["entries-list"].ExecuteTemplate(w, "base", model.ListPageData{
+		BasePageData: model.BasePageData{
+			Title:  listPage.Title,
+			Locals: locals,
+		},
 		Id:      listPage.Id,
-		Title:   listPage.Title,
 		Motd:    motd.String(),
 		Content: template.HTML(common.Md2Html(listPage.Content)),
 		Ref:     ref,
 		Type:    entryType,
 		Entries: entries,
-		Locals:  locals,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-
-	common.RenderBaseTemplate(w, templates, listPage.Title, &content, locals)
 }

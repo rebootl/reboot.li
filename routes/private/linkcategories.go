@@ -1,7 +1,6 @@
 package private
 
 import (
-	"bytes"
 	"html/template"
 	"net/http"
 
@@ -32,17 +31,20 @@ func RouteEditLinkCategories(
 		return
 	}
 
-	var content bytes.Buffer
-	err = templates["edit-link-categories"].Execute(&content, struct {
+	err = templates["edit-link-categories"].ExecuteTemplate(w, "base", struct {
+		model.BasePageData
 		LinkCategories []model.LinkCategory
 	}{
+		BasePageData: model.BasePageData{
+			Title:  "Edit Link Categories",
+			Locals: locals,
+		},
 		LinkCategories: categories,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
 // Path: "/edit-link-category/{id}"
@@ -76,19 +78,20 @@ func RouteEditLinkCategory(
 		title = "Edit link category"
 	}
 
-	var content bytes.Buffer
-	err := templates["edit-link-category"].Execute(&content, struct {
-		Title        string
+	err := templates["edit-link-category"].ExecuteTemplate(w, "base", struct {
+		model.BasePageData
 		LinkCategory model.LinkCategory
 	}{
-		Title:        title,
+		BasePageData: model.BasePageData{
+			Title:  title,
+			Locals: locals,
+		},
 		LinkCategory: linkCategory,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 // Path: "/update-link-category"

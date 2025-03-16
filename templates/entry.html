@@ -1,4 +1,5 @@
-<h1>{{.Title }}</h1>
+{{define "content"}}
+<h1>{{ .Title }}</h1>
 
 {{if .IsVersion}}
   <p><small class="text-dimmed">NOTE: You're viewing a previous version of this entry.<br>
@@ -56,3 +57,4 @@
     {{end}}
   </div>
 {{end}}
+{{end}}{{/* define "content" */}}

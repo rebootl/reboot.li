@@ -1,3 +1,4 @@
+{{define "content"}}
 <script src="/static/confirm-submit.js" type="module"></script>
 <script src="/static/fetch-link-title.js" type="module"></script>
 
@@ -44,3 +45,4 @@
 {{if gt .Link.Id 0 }}
   <small class="text-dimmed last-modified">Last modified: {{ .ModifiedAt }}</small>
 {{end}}
+{{end}}{{/* define "content" */}}

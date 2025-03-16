@@ -1,7 +1,6 @@
 package public
 
 import (
-	"bytes"
 	"html/template"
 	"net/http"
 
@@ -44,20 +43,17 @@ func RouteLinksPage(
 		return
 	}
 
-	var content bytes.Buffer
-	templates["links"].Execute(&content, struct {
-		Id             int
-		Title          string
-		Content        template.HTML
-		LinkCategories []model.LinkCategory
-		LoggedIn       bool
-	}{
+	err = templates["links"].ExecuteTemplate(w, "base", model.LinkPageData{
+		BasePageData: model.BasePageData{
+			Title:  linksPage.Title,
+			Locals: locals,
+		},
 		Id:             linksPage.Id,
-		Title:          linksPage.Title,
 		Content:        template.HTML(common.Md2Html(linksPage.Content)),
 		LinkCategories: linkCategories,
-		LoggedIn:       locals.LoggedIn,
 	})
-
-	common.RenderBaseTemplate(w, templates, linksPage.Title, &content, locals)
+	if err != nil {
+		common.ErrorPage(w, err, http.StatusInternalServerError)
+		return
+	}
 }

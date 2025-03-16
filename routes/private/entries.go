@@ -1,7 +1,6 @@
 package private
 
 import (
-	"bytes"
 	"database/sql"
 	"fmt"
 	"html/template"
@@ -90,12 +89,14 @@ func RouteEditEntry(
 	modifiedAt, _ := time.Parse(time.RFC3339, entry.ModifiedAt)
 
 	ref := r.URL.Query().Get("ref")
-	var content bytes.Buffer
-	err = templates["edit-entry"].Execute(&content, model.EditPageData{
+	err = templates["edit-entry"].ExecuteTemplate(w, "base", model.EditPageData{
+		BasePageData: model.BasePageData{
+			Title:  title,
+			Locals: locals,
+		},
 		Type:       entryType,
 		Entry:      entry,
 		ModifiedAt: modifiedAt.Format("2006-01-02 15:04h"),
-		Title:      title,
 		AllTags:    allTagsSelected,
 		Ref:        ref,
 	})
@@ -103,8 +104,6 @@ func RouteEditEntry(
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 // Path: "/update-entry"

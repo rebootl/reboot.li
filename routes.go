@@ -40,13 +40,13 @@ var routes = []Route{
 		HandlerFunc: public.RouteListPage,
 	},
 	{
-		Path:        "/entry/{id}",
-		HandlerFunc: public.RouteEntry,
-	},
-	{
 		Path:        "/nerdstuff",
 		EntryType:   "nerdstuff",
 		HandlerFunc: public.RouteListPage,
+	},
+	{
+		Path:        "/entry/{id}",
+		HandlerFunc: public.RouteEntry,
 	},
 	{
 		Path:        "/login",

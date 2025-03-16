@@ -1,6 +1,8 @@
 package main
 
 import (
+	// "fmt"
+	// "html/template"
 	"log"
 	"net/http"
 
@@ -23,6 +25,12 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	templates := loadTemplates()
+	// t, err := template.ParseGlob("./templates/*.html")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// debug output t
+	// fmt.Println(t.DefinedTemplates())
 
 	loadRoutes(r, routes, db, templates)
 

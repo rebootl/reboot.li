@@ -1,7 +1,6 @@
 package private
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -66,19 +65,24 @@ func RouteEditLink(
 	// preprocesse date
 	modifiedAt, _ := time.Parse(time.RFC3339, link.ModifiedAt)
 
-	var content bytes.Buffer
-	err = templates["edit-link"].Execute(&content, model.EditLinkPageData{
+	err = templates["edit-link"].ExecuteTemplate(w, "base", struct {
+		model.BasePageData
+		Link          model.Link
+		ModifiedAt    string
+		AllCategories []model.LinkCategory
+	}{
+		BasePageData: model.BasePageData{
+			Title:  title,
+			Locals: locals,
+		},
 		Link:          link,
 		ModifiedAt:    modifiedAt.Format("2006-01-02 15:04h"),
-		Title:         title,
 		AllCategories: allCategories,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 // Path: "/update-link"

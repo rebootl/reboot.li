@@ -73,18 +73,13 @@ type Session struct {
 
 // page data models, these are used to pass data to the templates
 
-type LinkCategories struct {
-	Categories []LinkCategory
+type Locals struct {
+	LoggedIn bool
+	UserName string
 }
 
-type EntryPageData struct {
-	Id         int
-	Title      string
-	Content    template.HTML
-	ModifiedAt string
-	Tags       []Tag
-	IsVersion  bool
-	Versions   PageVersions
+type BasePageData struct {
+	Title string
 	Locals
 }
 
@@ -95,9 +90,40 @@ type PageVersions struct {
 	VersionIds []int
 }
 
+type EntryPageData struct {
+	BasePageData
+	Content    template.HTML
+	Id         int
+	ModifiedAt string
+	Tags       []Tag
+	IsVersion  bool
+	Versions   PageVersions
+}
+
+type LinkCategories struct {
+	Categories []LinkCategory
+}
+
+type LinkPageData struct {
+	BasePageData
+	Content        template.HTML
+	Id             int
+	LinkCategories []LinkCategory
+}
+
+type ListPageData struct {
+	BasePageData
+	Id      int
+	Motd    string
+	Content template.HTML
+	Ref     string
+	Type    string
+	Entries []Entry
+}
+
 type EditPageData struct {
+	BasePageData
 	Entry      Entry
-	Title      string
 	Type       string
 	ModifiedAt string
 	AllTags    []TagWithStatus
@@ -115,28 +141,6 @@ type EditLinkPageData struct {
 type TagWithStatus struct {
 	Tag      Tag
 	Selected bool
-}
-
-type ListPageData struct {
-	Id      int
-	Title   string
-	Motd    string
-	Content template.HTML
-	Ref     string
-	Type    string
-	Entries []Entry
-	Locals
-}
-
-type BasePageData struct {
-	Title   string
-	Content template.HTML
-	Locals
-}
-
-type Locals struct {
-	LoggedIn bool
-	UserName string
 }
 
 // database functions

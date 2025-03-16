@@ -1,7 +1,6 @@
 package private
 
 import (
-	"bytes"
 	"html/template"
 	"net/http"
 
@@ -32,17 +31,20 @@ func RouteEditTags(
 		return
 	}
 
-	var content bytes.Buffer
-	err = templates["edit-tags"].Execute(&content, struct {
+	err = templates["edit-tags"].ExecuteTemplate(w, "base", struct {
+		model.BasePageData
 		Tags []model.Tag
 	}{
+		BasePageData: model.BasePageData{
+			Title:  "Edit Tags",
+			Locals: locals,
+		},
 		Tags: allTags,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, "Edit Tags", &content, locals)
 }
 
 // Path: "/edit-tag/{id}"
@@ -80,19 +82,20 @@ func RouteEditTag(
 		title = "Edit Tag"
 	}
 
-	var content bytes.Buffer
-	err := templates["edit-tag"].Execute(&content, struct {
-		Title string
-		Tag   model.Tag
+	err := templates["edit-tag"].ExecuteTemplate(w, "base", struct {
+		model.BasePageData
+		Tag model.Tag
 	}{
-		Title: title,
-		Tag:   tag,
+		BasePageData: model.BasePageData{
+			Title:  title,
+			Locals: locals,
+		},
+		Tag: tag,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
 		return
 	}
-	common.RenderBaseTemplate(w, templates, title, &content, locals)
 }
 
 // Path: "/update-tag"
