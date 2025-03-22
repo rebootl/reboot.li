@@ -1,10 +1,10 @@
 package public
 
 import (
-	"bytes"
 	"database/sql"
 	"html/template"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
@@ -48,16 +48,21 @@ func RouteListPage(
 		entries[i].Tags = tags
 	}
 
-	var motd bytes.Buffer
-	if entryType == "nerdstuff" {
-		motdTemplate := template.Must(template.ParseFiles("templates/motd.txt"))
-		motdTemplate.Execute(&motd, nil)
-	}
-
 	listPageType := entryType + "-list"
 	listPage, err := model.GetEntryByType(db, locals, listPageType)
 
 	ref := r.URL.Path
+
+	var motd string
+	if entryType == "nerdstuff" {
+		// Read the MOTD content
+		motdContent, err := os.ReadFile("templates/motd.txt")
+		if err != nil {
+			common.ErrorPage(w, err, http.StatusInternalServerError)
+			return
+		}
+		motd = string(motdContent)
+	}
 
 	err = templates["entries-list"].ExecuteTemplate(w, "base", model.ListPageData{
 		BasePageData: model.BasePageData{
@@ -65,11 +70,11 @@ func RouteListPage(
 			Locals: locals,
 		},
 		Id:      listPage.Id,
-		Motd:    motd.String(),
 		Content: template.HTML(common.Md2Html(listPage.Content)),
 		Ref:     ref,
 		Type:    entryType,
 		Entries: entries,
+		Motd:    motd,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
