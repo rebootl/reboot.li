@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Low Poly Flower Field</title>
+    <style>
+        * {
+	        box-sizing: border-box;
+        }
+        body {
+            --background-color: #113d4d;
+            --text-color: #fff;
+
+            margin: 0;
+            padding: 0;
+
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: monospace;
+            font-size: 1.1em;
+        }
+        .main-container {
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        main {
+            width: 90vw;
+        }
+        flower-component {
+            display: block;
+            height: 75vh;
+        }
+        h1 {
+            text-align: center;
+        }
+        p {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <main>
+            <h1>Spring Flowers</h1>
+            <flower-component></flower-component>
+            <p>Low poly flower field generated using Three.js.</p>
+        </main>
+    </div>
+
+    <script type="module" src="/static/demo/flower/flower.js"></script>
+</body>
+</html> 
