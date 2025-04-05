@@ -114,7 +114,6 @@ type LinkPageData struct {
 type ListPageData struct {
 	BasePageData
 	Id      int
-	Motd    string
 	Content template.HTML
 	Ref     string
 	Type    string

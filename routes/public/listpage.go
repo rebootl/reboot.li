@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"html/template"
 	"net/http"
-	"os"
+	// "os"
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
@@ -53,17 +53,6 @@ func RouteListPage(
 
 	ref := r.URL.Path
 
-	var motd string
-	if entryType == "nerdstuff" {
-		// Read the MOTD content
-		motdContent, err := os.ReadFile("templates/motd.txt")
-		if err != nil {
-			common.ErrorPage(w, err, http.StatusInternalServerError)
-			return
-		}
-		motd = string(motdContent)
-	}
-
 	err = templates["entries-list"].ExecuteTemplate(w, "base", model.ListPageData{
 		BasePageData: model.BasePageData{
 			Title:  listPage.Title,
@@ -74,7 +63,6 @@ func RouteListPage(
 		Ref:     ref,
 		Type:    entryType,
 		Entries: entries,
-		Motd:    motd,
 	})
 	if err != nil {
 		common.ErrorPage(w, err, http.StatusInternalServerError)
