@@ -8,7 +8,7 @@
 
 {{if .LoggedIn}}
   {{if .IsVersion}}
-    <script src="/static/confirm-submit.js" type="module"></script>
+    <script src="/static/components/confirm-submit.js" type="module"></script>
 
     <form method="POST" action="/delete-version" id="delete-version-form">
       <input type="hidden" name="id" value="{{.Id}}">
