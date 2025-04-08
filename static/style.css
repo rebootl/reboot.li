@@ -32,10 +32,10 @@ body {
 	color: var(--text-color);
 	margin: 0;
 
-	line-height: 1.6em;
+	/* NOTE: this is recommended to use without unit */
+	line-height: 1.6;
 
-	font-family: monospace;
-	font-size: 1.1em;
+	font-family: sans-serif;
 
 	/* expand short pages to bottom of viewport */
 	min-height: 100vh;
@@ -59,6 +59,7 @@ header nav {
 header nav ul {
   list-style-type: none;
   padding-left: 25px;
+  line-height: 1.8;
 }
 
 .main-wrapper {
@@ -80,8 +81,27 @@ main {
 	overflow-x: auto;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: monospace;
+  /* NOTE: not using for now */
+  /* text-shadow: 3px 2px 0 var(--primary-color-dimmed); */
+  /* text-decoration: underline; */
+}
+
 h1 {
-	margin: 1.2em 0 1.2em 0;
+	font-size: 2.2em;
+}
+
+h2 {
+  font-size: 1.65em;
+}
+
+h3 {
+  font-size: 1.287em;
+}
+
+h4 {
+  font-size: 1.1em;
 }
 
 a {
@@ -96,6 +116,11 @@ pre {
   border-radius: 5px;
   border: 1px solid var(--primary-color-dimmed);
   overflow-x: auto;
+}
+
+hr {
+	border: none;
+	border-bottom: 1px solid var(--primary-color-dimmed);
 }
 
 .text-dimmed {
@@ -179,6 +204,8 @@ footer {
   background-color: var(--card-background-color);
   color: var(--text-color-dimmed);
   text-align: center;
+  /* TODO: this needs some fixing in the heights */
+  /* line-height: 1.8; */
 
   /* stick footer to bottom on short pages */
   padding: 10px;
