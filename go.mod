@@ -4,12 +4,12 @@ go 1.23.4
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/mattn/go-sqlite3 v1.14.24
+	github.com/mattn/go-sqlite3 v1.14.28
 )
 
 require (
-	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62
-	golang.org/x/crypto v0.32.0
+	github.com/gomarkdown/markdown v0.0.0-20250311123330-531bef5e742b
+	golang.org/x/crypto v0.37.0
 )
 
 require github.com/jmoiron/sqlx v1.4.0
